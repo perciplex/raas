@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+   <body>
+   
+        <table>
+            {% for job in jobs %}
+                <tr>
+                    <th> {{ job['gist'] }} </th>
+                    <td> {{ job['status'] }} </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <form action = "/jobs" method = "POST">
+            <p>Gist <input type = "text" name = "gist" /></p>
+            <p><input type = "submit" value = "submit" /></p>
+         </form>
+      
+   </body>
+</html>
