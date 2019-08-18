@@ -15,9 +15,12 @@ tar_name = "./temp/package.tar"
 #cleanup temp folder
 #shutil.rmtree("./temp")
 
+# would it be possible to use temporary files for all of this?
+# https://docs.python.org/3/library/tempfile.html
+
 repo = git.Repo.clone_from("https://gist.github.com/a7ae5925ac4ace2292fa6fe192a56723.git",repo_dir)
 
-# make tar of git. Is this ridiculous?
+# make tar of git. Is this ridiculous? We can ask for a zip directly from github
 with tarfile.open(tar_name, "w:gz") as tar_handle:
     tar_handle.add(repo_dir,arcname="")
 
