@@ -1,21 +1,31 @@
 <!doctype html>
-<html>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-   <body>
-   
-        <table>
-            {% for job in jobs %}
-                <tr>
-                    <th> {{ job['gist'] }} </th>
-                    <td> {{ job['status'] }} </td>
-                </tr>
-            {% endfor %}
-        </table>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <title>Reality as a Service</title>
+    </head>
+    <body>
+        <div class="container">
+            
+        <img src="../static/banner.png" class="img-fluid"><img>
         <form action = "/jobs" method = "POST">
-            <p>Gist <input type = "text" name = "gist" /></p>
-            <p><input type = "submit" value = "submit" /></p>
-         </form>
-      
-   </body>
+            <p>Git URL</p><p> <input type = "text" name = "git" />
+            <input type = "submit" value = "submit" /></p>
+        </form>
+            <list class="list-group">
+                {% for job in jobs %}
+                    <li class="list-group-item">
+                        <span class="float-left">{{ job.git }} </span>
+                        <span class="float-right">{{ job.status_str() }} </span>
+                    </li>
+                {% endfor %}
+                </list>
+        </div>
+    </body>
 </html>
