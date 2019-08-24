@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, render_template, redirect
 app = Flask(__name__)
 from collections import namedtuple
 from enum import Enum
+import uuid
 
 
 class Status():
@@ -10,10 +11,8 @@ class Status():
     COMPLETE = 'COMPLETE'
 
 class Job:
-    id_counter = 0
     def __init__(self, git):
-        self.id = Job.id_counter
-        Job.id_counter += 1
+        self.id = uuid.uuid1()
         self.git = git
         self.status = Status.PENDING
         self.results = "Results pending."
