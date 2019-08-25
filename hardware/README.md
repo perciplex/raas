@@ -16,7 +16,7 @@ The pendulum is built using easily available hardware. The following are instruc
 - Aluminum Axle Mount plate 
 
 
-Amazon shopping cart link : 
+Amazon shopping cart link : https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO
 
 ## Pi Setup
 Use Raspbian lite edition
