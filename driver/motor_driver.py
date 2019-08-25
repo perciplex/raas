@@ -41,6 +41,8 @@ socket.bind("tcp://*:%s" % port)
 while True:
     #regular loop
     message = socket.recv()
+    # This message actually does need be scrubbed.
+    # in pricniple it is coming from user controlled code.
     print "Received request: ", message
     motor.set_torqu(message.torque)
     pendulum_state = encoder.get_state():

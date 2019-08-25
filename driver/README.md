@@ -8,3 +8,17 @@ We need a driver program that will
 
 run `python3 driver.py` to pull a test repo and run it in a docker container.
 WARNING: WILL DESTROY ./TEMP FOLDER
+
+
+Security Issues:
+https://docs.docker.com/engine/security/security/
+We need to try and restrict all privileges
+Scrub any use input and be careful how it is used
+Restrict the network connections of the pi
+Change the pi root 
+Run the program inside docker itself as an unprivileged user
+
+https://github.com/remoteinterview/compilebox
+https://github.com/christophetd/docker-python-sandbox
+
+We need to wire in resource limits, just so no one does something funky
