@@ -9,14 +9,24 @@ The pendulum is built using easily available hardware. The following are instruc
   + SD card for Pi
 - L298N Motor Driver Board.
 - Ribbon cable
-- Motor with built in encoder?
-- Power Supply?
+- Gearbox Motor with built in encoder. 12V 150 RPM
+- 12V Power Supply
+- Power supply female donkus plug. DC Power Jack Plug adapter
+- Wire
 - Paint Stirrer Rod. Only the best for us!
-- Mount
-- Aluminum Axle Mount plate 
+- 4mm Flange Shaft Coupling
+- 25mm DC Gearbox Motor Bracket
+- 4x m3 12mm nuts and boltd
+- Mounting nuts 
 
 
 Amazon shopping cart link : https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO
+
+Motor Data:
+✔Product type: DC Gear motor with two-channel Hall effect encoder;Rated Voltage: 12V; No-Load Speed: 150RPM; No-Load Current: ≤ 0.15A;Rated Torque: 0.95kg.cm;
+✔Main Body Dimensions:74.8 x 25mm / 2.95in x 0.99in (L*D); Out Shaft Dimensions: 11 x 4mm / 0.433 x 0.1575in (L*D) with 10 x 0.5mm / 0.39 * 0.017inches flat cut off;
+✔Single Output 408 Pulses Per Revolution: Gear Reduction Ratio: 1/34, Each Loop Output Pulses: 12PPR 34*12=408PPR;
+✔Wiring Diagram: Red - Motor power terminal (+);Black - Motor power terminal(-);Green - Quad encoder Ground;Blue - Quad encoder +5V Vcc;Yellow - Quad encoder A signal;White - Quad encoder B signal;
 
 ## Pi Setup
 Use Raspbian lite edition
@@ -33,6 +43,9 @@ Plugging into ethernet as compared to wifi will be easier.
 
 ## Hooking the Pi up to the Pendulum
 
+We remove the black and red wire from the motor plug and swap the blue and green wire Then the plug can fit right on Pi pins. The yellow and white encoder wires are then connectedt to pins 14 and 15. And the Blue wire is connectedt o 5V and the green wire to ground.
+
+
 The Pi needs to be connected to 2 channels of the motor driver for forward and backward.
 The encoder requires 4 wires.
 
@@ -45,6 +58,9 @@ https://www.raspberrypi.org/documentation/usage/gpio/images/gpio-numbers-pi2.png
 "Hardware PWM available on GPIO12, GPIO13, GPIO18, GPIO19"
 So we should probably use one of those.
 
+
+L298N Datasheet
+https://www.sparkfun.com/datasheets/Robotics/L298_H_Bridge.pdf
 
 ## Calibration
 
