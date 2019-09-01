@@ -76,7 +76,10 @@ sudo apt-get install python3-pip git pigpiod
 
 pip3 install -r ./requirements.txt 
 
+sudo pigpiod
+pigpiod can take sampling time as a parameter. Does that help not miss steps?
 
+http://abyz.me.uk/rpi/pigpio/python.html
 
 https://github.com/pootle/pimotors
 

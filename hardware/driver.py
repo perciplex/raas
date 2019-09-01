@@ -73,7 +73,7 @@ class Motor():
         elif torque < 0:
             self.pi.set_PWM_dutycycle(self.forward_pin,  0)
             self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
-    def __del__(self):
+    def __del__(self): # this doesn't work. Appears to be killing pigpio first
         self.pi.write(self.forward_pin,0)
         self.pi.write(self.backward_pin,0)
     def __exit__(self):
