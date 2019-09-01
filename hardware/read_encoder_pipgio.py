@@ -48,14 +48,14 @@ class Encoder():
 
 class Motor():
     def __init__(self):
-        forward_pin = 13
-        backward_pin = 19
+        self.forward_pin = 13
+        self.backward_pin = 19
         # we need 2 pins? 1 for forward the other for reverse
         pi = pigpio.pi()  
-        pi.set_mode(forward_pin, pigpio.OUTPUT)
-        pi.set_mode(backward_pin, pigpio.OUTPUT)
-        pi.set_PWM_range(forward_pin, 1000)
-        pi.set_PWM_range(backward_pin, 1000)
+        pi.set_mode(self.forward_pin, pigpio.OUTPUT)
+        pi.set_mode(self.backward_pin, pigpio.OUTPUT)
+        pi.set_PWM_range(self.forward_pin, 1000)
+        pi.set_PWM_range(self.backward_pin, 1000)
     def stop(self):
         self.set_torque(0)
     def set_torque(self, torque):
@@ -64,11 +64,11 @@ class Motor():
             print("FUCK_YOU_THAT_IS_NOT_A_TORQUE()")
             return 
         if torque >= 0:
-            pi.set_PWM_dutycycle(forward_pin,  int(abs(torque)))
-            pi.set_PWM_dutycycle(backward_pin, 0)
+            pi.set_PWM_dutycycle(self.forward_pin,  int(abs(torque)))
+            pi.set_PWM_dutycycle(self.backward_pin, 0)
         elif torque < 0:
-            pi.set_PWM_dutycycle(forward_pin,  0)
-            pi.set_PWM_dutycycle(backward_pin, int(abs(torque)))
+            pi.set_PWM_dutycycle(self.forward_pin,  0)
+            pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
 
 
 
