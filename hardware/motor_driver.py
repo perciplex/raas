@@ -1,6 +1,4 @@
- 
-#import RPi.GPIO as GPIO
-import pigpio
+ import pigpio
 
 from math import pi
 # https://github.com/gpiozero/gpiozero/issues/392
@@ -72,16 +70,21 @@ class Motor():
         elif torque < 0:
             self.pi.set_PWM_dutycycle(self.forward_pin,  0)
             self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
+    def __del__(self):
+        self.pi.write(self.forward_pin,0)
+        self.pi.write(self.backward_pin,0)
 
 
 
-from time import sleep
-encoder = Encoder()
-motor = Motor()
-while True:
-    motor.set_torque(1000)
-    sleep(0.25)
-    print("Step: ", encoder.step)
-    motor.set_torque(-1000)
-    sleep(0.25)
-    print("Step: ", encoder.step)
+if __name__ == "__main__":
+    from time import sleep
+    encoder = Encoder()
+    motor = Motor()
+
+    while True:
+        motor.set_torque(100)
+        sleep(0.5)
+        print("Step: ", encoder.step)
+        motor.set_torque(-100)
+        sleep(0.5)
+        print("Step: ", encoder.step)
