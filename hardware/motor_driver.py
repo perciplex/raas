@@ -1,6 +1,9 @@
 import pigpio
 
 from math import pi
+# need to run daemon before you can run this
+# `sudo pigpiod`
+
 # https://github.com/gpiozero/gpiozero/issues/392
 # https://github.com/pootle/pimotors
 class Encoder():
@@ -71,6 +74,9 @@ class Motor():
             self.pi.set_PWM_dutycycle(self.forward_pin,  0)
             self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
     def __del__(self):
+        self.pi.write(self.forward_pin,0)
+        self.pi.write(self.backward_pin,0)
+    def __exit__(self):
         self.pi.write(self.forward_pin,0)
         self.pi.write(self.backward_pin,0)
 
