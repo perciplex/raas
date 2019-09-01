@@ -11,25 +11,25 @@ class Encoder():
         self.A = False
         self.B = False
         self.step = 0
-        def pressA():
+        def pressA(gpio, level, tick):
             self.A = True
             if self.B:
                 self.step += 1
             else:
                 self.step -= 1
-        def releaseA():
+        def releaseA(gpio, level, tick):
             self.A = False
             if self.B:
                 self.step -= 1
             else:
                 self.step += 1
-        def pressB():
+        def pressB(gpio, level, tick):
             self.B = True
             if self.A:
                 self.step -= 1
             else:
                 self.step += 1
-        def releaseB():
+        def releaseB(gpio, level, tick):
             self.B = False
             if self.A:
                 self.step += 1
