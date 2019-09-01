@@ -1,4 +1,4 @@
- import pigpio
+import pigpio
 
 from math import pi
 # https://github.com/gpiozero/gpiozero/issues/392
