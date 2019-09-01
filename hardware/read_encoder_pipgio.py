@@ -56,6 +56,9 @@ class Motor():
         self.pi.set_mode(self.backward_pin, pigpio.OUTPUT)
         self.pi.set_PWM_range(self.forward_pin, 1000)
         self.pi.set_PWM_range(self.backward_pin, 1000)
+        self.pi.set_PWM_frequency(self.forward_pin, 1000)
+        self.pi.set_PWM_frequency(self.backward_pin, 1000)
+        
     def stop(self):
         self.set_torque(0)
     def set_torque(self, torque):
