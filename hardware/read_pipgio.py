@@ -1,38 +1,45 @@
+ 
 #import RPi.GPIO as GPIO
-from gpiozero import Button
-from signal import pause
+import pigpio
+
 
 # https://github.com/gpiozero/gpiozero/issues/392
 # https://github.com/pootle/pimotors
 class Encoder():
     def __init__(self):
-        self.A = Button(14)
-        self.B = Button(15)
+        pi = pigpio.pi()  
+        self.A = False
+        self.B = False
         self.step = 0
         def pressA():
-            if self.B.is_pressed:
+            self.A = True
+            if self.B:
                 self.step += 1
             else:
                 self.step -= 1
         def releaseA():
-            if self.B.is_pressed:
+            self.A = False
+            if self.B:
                 self.step -= 1
             else:
                 self.step += 1
         def pressB():
-            if self.A.is_pressed:
+            self.B = True
+            if self.A:
                 self.step -= 1
             else:
                 self.step += 1
         def releaseB():
-            if self.A.is_pressed:
+            self.B = False
+            if self.A:
                 self.step += 1
             else:
                 self.step -= 1
-        self.A.when_pressed = pressA
-        self.A.when_released = releaseA
-        self.B.when_pressed = pressB
-        self.B.when_released = releaseB
+        pi.callback(14, pigpio.RISING_EDGE,pressA)
+        pi.callback(14, pigpio.FALLING_EDGE,releaseA)
+        pi.callback(15, pigpio.RISING_EDGE,pressB)
+        pi.callback(15, pigpio.FALLING_EDGE,releaseB)
+
     
 
 from time import sleep
