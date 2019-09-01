@@ -47,7 +47,7 @@ class Encoder():
 
 
 class Motor():
-    def __init__(self);
+    def __init__(self):
         forward_pin = 13
         backward_pin = 19
         # we need 2 pins? 1 for forward the other for reverse
@@ -64,7 +64,6 @@ class Motor():
             print("FUCK_YOU_THAT_IS_NOT_A_TORQUE()")
             return 
         if torque >= 0:
-            forward_pwm.ChangeDutyCycle(torque)
             pi.set_PWM_dutycycle(forward_pin,  int(abs(torque)))
             pi.set_PWM_dutycycle(backward_pin, 0)
         elif torque < 0:
