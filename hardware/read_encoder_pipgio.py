@@ -79,9 +79,9 @@ from time import sleep
 encoder = Encoder()
 motor = Motor()
 while True:
-    motor.set_torque(300)
+    motor.set_torque(1000)
     sleep(0.25)
     print("Step: ", encoder.step)
-    motor.set_torque(-300)
+    motor.set_torque(-1000)
     sleep(0.25)
     print("Step: ", encoder.step)
