@@ -51,11 +51,11 @@ class Motor():
         self.forward_pin = 13
         self.backward_pin = 19
         # we need 2 pins? 1 for forward the other for reverse
-        pi = pigpio.pi()  
-        pi.set_mode(self.forward_pin, pigpio.OUTPUT)
-        pi.set_mode(self.backward_pin, pigpio.OUTPUT)
-        pi.set_PWM_range(self.forward_pin, 1000)
-        pi.set_PWM_range(self.backward_pin, 1000)
+        self.pi = pigpio.pi()  
+        self.pi.set_mode(self.forward_pin, pigpio.OUTPUT)
+        self.pi.set_mode(self.backward_pin, pigpio.OUTPUT)
+        self.pi.set_PWM_range(self.forward_pin, 1000)
+        self.pi.set_PWM_range(self.backward_pin, 1000)
     def stop(self):
         self.set_torque(0)
     def set_torque(self, torque):
@@ -64,11 +64,11 @@ class Motor():
             print("FUCK_YOU_THAT_IS_NOT_A_TORQUE()")
             return 
         if torque >= 0:
-            pi.set_PWM_dutycycle(self.forward_pin,  int(abs(torque)))
-            pi.set_PWM_dutycycle(self.backward_pin, 0)
+            self.pi.set_PWM_dutycycle(self.forward_pin,  int(abs(torque)))
+            self.pi.set_PWM_dutycycle(self.backward_pin, 0)
         elif torque < 0:
-            pi.set_PWM_dutycycle(self.forward_pin,  0)
-            pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
+            self.pi.set_PWM_dutycycle(self.forward_pin,  0)
+            self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
 
 
 
