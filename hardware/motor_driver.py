@@ -88,9 +88,9 @@ if __name__ == "__main__":
     motor = Motor()
 
     while True:
-        motor.set_torque(100)
+        motor.set_torque(200)
         sleep(0.5)
         print("Step: ", encoder.step)
-        motor.set_torque(-100)
+        motor.set_torque(-200)
         sleep(0.5)
         print("Step: ", encoder.step)
