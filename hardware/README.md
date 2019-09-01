@@ -28,6 +28,9 @@ Motor Data:
 ✔Single Output 408 Pulses Per Revolution: Gear Reduction Ratio: 1/34, Each Loop Output Pulses: 12PPR 34*12=408PPR;
 ✔Wiring Diagram: Red - Motor power terminal (+);Black - Motor power terminal(-);Green - Quad encoder Ground;Blue - Quad encoder +5V Vcc;Yellow - Quad encoder A signal;White - Quad encoder B signal;
 
+
+
+
 ## Pi Setup
 Use Raspbian lite edition
 Follow instructions
@@ -49,18 +52,28 @@ We remove the black and red wire from the motor plug and swap the blue and green
 The Pi needs to be connected to 2 channels of the motor driver for forward and backward.
 The encoder requires 4 wires.
 
+"Hardware PWM available on GPIO12, GPIO13, GPIO18, GPIO19"
+So we should probably use one of those for motor control.
+Connect the control pins for the l298n board to pins 13 and 19.
 
 
 https://www.raspberrypi.org/documentation/usage/gpio/README.md
 
 https://www.raspberrypi.org/documentation/usage/gpio/images/gpio-numbers-pi2.png
 
-"Hardware PWM available on GPIO12, GPIO13, GPIO18, GPIO19"
-So we should probably use one of those.
+
 
 
 L298N Datasheet
 https://www.sparkfun.com/datasheets/Robotics/L298_H_Bridge.pdf
+
+
+## Pi setup
+
+The base image has like barely anything in it
+
+sudo apt-get install python3-pip git
+
 
 ## Calibration
 
