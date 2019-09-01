@@ -72,9 +72,13 @@ https://www.sparkfun.com/datasheets/Robotics/L298_H_Bridge.pdf
 
 The base image has like barely anything in it
 
-sudo apt-get install python3-pip git
+sudo apt-get install python3-pip git pigpiod
+
 pip3 install -r ./requirements.txt 
 
+
+
+https://github.com/pootle/pimotors
 
 ## Calibration
 
