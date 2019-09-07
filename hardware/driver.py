@@ -2,6 +2,7 @@ import pigpio
 
 from math import pi
 import signal
+import sys
 # need to run daemon before you can run this
 # `sudo pigpiod`
 
@@ -64,6 +65,7 @@ class Motor():
         self.pi.set_PWM_frequency(self.backward_pin, 10000)
         def exit_gracefully(signum, frame):
             self.stop()
+            sys.exit(0)
         signal.signal(signal.SIGINT, exit_gracefully)
         signal.signal(signal.SIGTERM, exit_gracefully)
         
