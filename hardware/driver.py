@@ -3,6 +3,7 @@ import pigpio
 from math import pi
 import signal
 import sys
+import atexit
 # need to run daemon before you can run this
 # `sudo pigpiod`
 
@@ -66,7 +67,8 @@ class Motor():
         def exit_gracefully(signum, frame):
             self.stop()
             sys.exit(0)
-        signal.signal(signal.SIGINT, exit_gracefully)
+        atexit.register(self.stop)
+        #signal.signal(signal.SIGINT, exit_gracefully)
         #signal.signal(signal.SIGTERM, exit_gracefully)
         
     def stop(self):
