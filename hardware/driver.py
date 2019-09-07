@@ -8,6 +8,7 @@ from math import pi
 # https://github.com/pootle/pimotors
 class Encoder():
     def __init__(self):
+        self.steps_per_rev = 120*4
         pi = pigpio.pi()  
         self.A = False
         self.B = False
@@ -41,9 +42,9 @@ class Encoder():
         pi.callback(15, pigpio.RISING_EDGE,pressB)
         pi.callback(15, pigpio.FALLING_EDGE,releaseB)
     def getDegree(self):
-        return self.step / 1600 * 360
+        return self.step / self.steps_per_rev * 360
     def getRadian(self):
-        return self.step / 1600 * 2 * pi
+        return self.step / self.steps_per_rev  * 2 * pi
 
 
 
