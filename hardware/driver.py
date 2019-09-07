@@ -1,6 +1,7 @@
 import pigpio
 
 from math import pi
+import signal
 # need to run daemon before you can run this
 # `sudo pigpiod`
 
@@ -54,12 +55,15 @@ class Motor():
         self.backward_pin = 19
         # we need 2 pins? 1 for forward the other for reverse
         self.pi = pigpio.pi()  
+
         self.pi.set_mode(self.forward_pin, pigpio.OUTPUT)
         self.pi.set_mode(self.backward_pin, pigpio.OUTPUT)
         self.pi.set_PWM_range(self.forward_pin, 1000)
         self.pi.set_PWM_range(self.backward_pin, 1000)
-        self.pi.set_PWM_frequency(self.forward_pin, 1000)
-        self.pi.set_PWM_frequency(self.backward_pin, 1000)
+        self.pi.set_PWM_frequency(self.forward_pin, 10000)
+        self.pi.set_PWM_frequency(self.backward_pin, 10000)
+        signal.signal(signal.SIGINT, self.stop)
+        signal.signal(signal.SIGTERM, self.stop)
         
     def stop(self):
         self.set_torque(0)
@@ -75,11 +79,11 @@ class Motor():
             self.pi.set_PWM_dutycycle(self.forward_pin,  0)
             self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
     def __del__(self): # this doesn't work. Appears to be killing pigpio first
-        self.pi.write(self.forward_pin,0)
-        self.pi.write(self.backward_pin,0)
+        self.stop
     def __exit__(self):
-        self.pi.write(self.forward_pin,0)
-        self.pi.write(self.backward_pin,0)
+        self.stop()
+
+
 
 
 
