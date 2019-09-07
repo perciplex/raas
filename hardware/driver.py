@@ -1,8 +1,6 @@
 import pigpio
 
 from math import pi
-import signal
-import sys
 import atexit
 # need to run daemon before you can run this
 # `sudo pigpiod`
@@ -40,10 +38,10 @@ class Encoder():
                 self.step += 1
             else:
                 self.step -= 1
-        pi.callback(14, pigpio.RISING_EDGE,pressA)
-        pi.callback(14, pigpio.FALLING_EDGE,releaseA)
-        pi.callback(15, pigpio.RISING_EDGE,pressB)
-        pi.callback(15, pigpio.FALLING_EDGE,releaseB)
+        pi.callback(15, pigpio.RISING_EDGE,pressA)
+        pi.callback(15, pigpio.FALLING_EDGE,releaseA)
+        pi.callback(14, pigpio.RISING_EDGE,pressB)
+        pi.callback(14, pigpio.FALLING_EDGE,releaseB)
     def getDegree(self):
         return self.step / self.steps_per_rev * 360
     def getRadian(self):
@@ -64,12 +62,7 @@ class Motor():
         self.pi.set_PWM_range(self.backward_pin, 1000)
         self.pi.set_PWM_frequency(self.forward_pin, 10000)
         self.pi.set_PWM_frequency(self.backward_pin, 10000)
-        def exit_gracefully(signum, frame):
-            self.stop()
-            sys.exit(0)
         atexit.register(self.stop)
-        #signal.signal(signal.SIGINT, exit_gracefully)
-        #signal.signal(signal.SIGTERM, exit_gracefully)
         
     def stop(self):
         self.set_torque(0)
@@ -85,7 +78,7 @@ class Motor():
             self.pi.set_PWM_dutycycle(self.forward_pin,  0)
             self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
     def __del__(self): # this doesn't work. Appears to be killing pigpio first
-        self.stop
+        self.stop()
     def __exit__(self):
         self.stop()
 
