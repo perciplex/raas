@@ -62,8 +62,10 @@ class Motor():
         self.pi.set_PWM_range(self.backward_pin, 1000)
         self.pi.set_PWM_frequency(self.forward_pin, 10000)
         self.pi.set_PWM_frequency(self.backward_pin, 10000)
-        signal.signal(signal.SIGINT, self.stop)
-        signal.signal(signal.SIGTERM, self.stop)
+        def exit_gracefully(self,signum, frame):
+            self.stop()
+        signal.signal(signal.SIGINT, exit_gracefully)
+        signal.signal(signal.SIGTERM, exit_gracefully)
         
     def stop(self):
         self.set_torque(0)
