@@ -67,7 +67,7 @@ class Motor():
             self.stop()
             sys.exit(0)
         signal.signal(signal.SIGINT, exit_gracefully)
-        signal.signal(signal.SIGTERM, exit_gracefully)
+        #signal.signal(signal.SIGTERM, exit_gracefully)
         
     def stop(self):
         self.set_torque(0)
