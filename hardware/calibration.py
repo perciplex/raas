@@ -17,6 +17,20 @@ motor = Motor()
 encoder = Encoder()
 angles = []
 torques = []
+
+for sample in range(200):
+    pos = []
+    command =  1000*(2*np.random() - 1)
+    for t in range(20):
+        pos.append(encoder.getRadians())
+        time.sleep(0.0001)
+    a, v, x = fit_quadratic(pos)
+    samples.append(a,command, v, x)
+
+
+
+
+
 for t in range(10000):
     torque = random * 1000
     torques.append(torque)
