@@ -1,23 +1,30 @@
 from driver import Encoder, Motor
-from time import sleep
+from time import sleep, time
+import pickle 
 
 e = Encoder()
 m = Motor()
 
-time = 1.0
+T = 1.0
 dt = 0.01
-steps = time / dt
+steps = int(T / dt)
 
 angles = []
 
+start_time = time()
 m.set_torque(500)
 for i in range(steps):
     sleep(dt)
     angles.append(e.getRadian())
 m.stop()
+total_time = time() - start_time
+print(total_time)
 
-import matplotlib.pyplot as plt
+pickle.dump(angles, open( "simple_run.p", "wb"))
 
-plt.plot(angles)
 
-plt.show()
+
+
+
+
+
