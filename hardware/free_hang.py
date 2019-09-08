@@ -3,7 +3,7 @@ from time import sleep, time
 import pickle 
 enc = Encoder()
 
-T = 1.0
+T = 5.0
 dt = 0.01
 steps = int(T / dt)
 
