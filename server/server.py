@@ -1,8 +1,9 @@
-from flask import Flask, jsonify, request, render_template, redirect, make_response
+from flask import Flask, jsonify, request, render_template, redirect, make_response, send_file
 app = Flask(__name__)
 from collections import namedtuple
 from enum import Enum
 import uuid
+import sys
 
 
 class Status():
@@ -17,19 +18,20 @@ class Job:
         self.status = Status.QUEUED
         self.results = "Results pending."
     def __dict__(self):
-        return {"id": self.id, "results":self.results, "status":self.status}
+        return {"id": self.id, "gitUrl":self.git, "results":self.results, "status":self.status}
     def status_str(self):
         return str(self.status)
 
 
-jobs = {}
+jobs = {0:Job("testUrl")}
 
 
 @app.route('/')
 def base_route():
-    return render_template('jobs.html', jobs=list(jobs.values()))
+    return send_file("static/index.html")
+    #return render_template('jobs.html', jobs=list(jobs.values()))
 
-@app.route('/job', methods=['POST'])
+@app.route('/job', methods=['GET', 'POST'])
 def job_route():
     print(request.form)
     if request.method == 'POST':
@@ -37,7 +39,7 @@ def job_route():
         jobs[new_job.id] = new_job
         return redirect("/")
     if request.method == 'GET':
-        return jsonify(list(jobs.values()))
+        return jsonify([job.__dict__() for job in list(jobs.values())])
 
 
 @app.route('/job/pop', methods=['GET'])
@@ -79,3 +81,6 @@ def job_results_route(id):
             return make_response('', 200)
         else:
             return make_response('', 404)
+
+if __name__ == "__main__":
+    app.run(port=sys.argv[1], debug=True)
