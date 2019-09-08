@@ -5,7 +5,7 @@ enc = Encoder()
 
 T = 1.0
 dt = 0.01
-steps = T / dt
+steps = int(T / dt)
 
 angles = []
 start_time = time()
