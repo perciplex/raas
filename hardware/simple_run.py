@@ -23,7 +23,7 @@ for torque in range(200,1001,200):
     total_time = time() - start_time
     print(total_time)
     anglemap[torque] = angles
-    sleep(1.5)
+    sleep(2)
     
 
 pickle.dump(anglemap, open( "simple_run.p", "wb"))
