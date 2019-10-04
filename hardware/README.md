@@ -92,7 +92,7 @@ The motor has interesting control charactersitics. By fitting measured data to a
 It is also possible to just get a machine learned approach to work on an uncalibrated system.
 
 We turned the pendulum on its side and ran a sequence of commands starting from a stopped position. We fit a quadratic polynomial to these values to get an acceleration per command
-![images/acceleration_v_command](acceleration_from_stop.png)
+![acceleration_v_command](images/acceleration_from_stop.png)
 
 Fitting a line to the gave
 
