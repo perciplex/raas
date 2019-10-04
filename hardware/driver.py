@@ -65,8 +65,8 @@ class Motor():
         atexit.register(self.stop)
         
     def stop(self):
-        self.set_torque(0)
-    def set_torque(self, torque):
+        self.set_command(0)
+    def set_command(self, torque):
         # check if torque is in allowed range?
         if torque > 1000 or torque < -1000:
             print("FUCK_YOU_THAT_IS_NOT_A_TORQUE()")
@@ -77,6 +77,8 @@ class Motor():
         elif torque < 0:
             self.pi.set_PWM_dutycycle(self.forward_pin,  0)
             self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
+    def set_torque(self, torque):
+        self.set_command( torque / 0.01223 )
     def __del__(self): # this doesn't work. Appears to be killing pigpio first
         self.stop()
     def __exit__(self):
