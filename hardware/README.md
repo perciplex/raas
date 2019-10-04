@@ -91,8 +91,25 @@ The motor has interesting control charactersitics. By fitting measured data to a
 
 It is also possible to just get a machine learned approach to work on an uncalibrated system.
 
+We turned the pendulum on its side and ran a sequence of commands starting from a stopped position. We fit a quadratic polynomial to these values to get an acceleration per command
+![acceleration_v_command](images/acceleration_from_stop.png)
+
+Fitting a line to the gave
+
+angular_accel = 0.01223 * command
 
 
+Then we allow the pendulum to freely swing and fit a damped oscillation to this.
 
+omega = 5.28 => f = 1.6806761990504149 Hz => 0.5950008032510844 s period
+0.38 decay constant
+
+For near the bottom of the oscillation, a pendulum swings with omega = sqrt(g/L)
+
+The equations of motion of a pendulum is
+
+alpha = - omega^2 sin(theta) + a_ext
+
+      = - omega^2 sin(theta) + 0.01223 * command
 
 
