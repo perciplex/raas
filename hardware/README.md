@@ -109,6 +109,7 @@ For near the bottom of the oscillation, a pendulum swings with omega = sqrt(g/L)
 The equations of motion of a pendulum is
 
 alpha = - omega^2 sin(theta) + a_ext
-alpha = - omega^2 sin(theta) + 0.01223 * command
+
+      = - omega^2 sin(theta) + 0.01223 * command
 
 

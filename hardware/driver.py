@@ -66,17 +66,17 @@ class Motor():
         
     def stop(self):
         self.set_command(0)
-    def set_command(self, torque):
-        # check if torque is in allowed range?
-        if torque > 1000 or torque < -1000:
+    def set_command(self, command):
+        # check if command is in allowed range?
+        if command > 1000 or command < -1000:
             print("FUCK_YOU_THAT_IS_NOT_A_TORQUE()")
             return 
-        if torque >= 0:
-            self.pi.set_PWM_dutycycle(self.forward_pin,  int(abs(torque)))
+        if command >= 0:
+            self.pi.set_PWM_dutycycle(self.forward_pin,  int(abs(command)))
             self.pi.set_PWM_dutycycle(self.backward_pin, 0)
-        elif torque < 0:
+        elif command < 0:
             self.pi.set_PWM_dutycycle(self.forward_pin,  0)
-            self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(torque)))
+            self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(command)))
     def set_torque(self, torque):
         self.set_command( torque / 0.01223 )
     def __del__(self): # this doesn't work. Appears to be killing pigpio first
@@ -97,6 +97,6 @@ if __name__ == "__main__":
         motor.set_torque(200)
         sleep(0.5)
         print("Step: ", encoder.step)
-        motor.set_torque(-200)
+        motor.set_command(-200)
         sleep(0.5)
         print("Step: ", encoder.step)

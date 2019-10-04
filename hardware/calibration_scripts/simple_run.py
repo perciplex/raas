@@ -12,17 +12,17 @@ steps = int(T / dt)
 
 anglemap = {}
 
-for torque in range(200,1001,200):
+for command in range(200,1001,200):
     angles = []
     start_time = time()
-    m.set_torque(torque)
+    m.set_command(command)
     for i in range(steps):
         sleep(dt)
         angles.append(e.getRadian())
     m.stop()
     total_time = time() - start_time
     print(total_time)
-    anglemap[torque] = angles
+    anglemap[command] = angles
     sleep(2)
     
 
