@@ -1,6 +1,7 @@
 from driver import Encoder, Motor
 from time import sleep, time
-import pickle 
+import pickle
+
 enc = Encoder()
 
 T = 5.0
@@ -14,8 +15,4 @@ for i in range(steps):
     angles.append(enc.getRadian())
 total_time = time() - start_time
 print(total_time)
-pickle.dump(angles, open( "free_run.p", "wb"))
-
-
-
-
+pickle.dump(angles, open("free_run.p", "wb"))

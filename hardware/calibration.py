@@ -1,4 +1,4 @@
-'''
+"""
 It would be nice to pre calibrate the motor to give the user full torque control
 
 Methodology:
@@ -10,9 +10,10 @@ I dunno.
 Or just a polynomial fit of a couple subsequent time points and the command.
 ?
 
-'''
+"""
 from driver import Encoder, Motor
 from time import sleep
+
 motor = Motor()
 encoder = Encoder()
 angles = []
@@ -20,21 +21,18 @@ torques = []
 
 for sample in range(200):
     pos = []
-    command =  1000*(2*np.random() - 1)
+    command = 1000 * (2 * np.random() - 1)
     for t in range(20):
         pos.append(encoder.getRadians())
         time.sleep(0.0001)
     a, v, x = fit_quadratic(pos)
-    samples.append(a,command, v, x)
-
-
-
+    samples.append(a, command, v, x)
 
 
 for t in range(10000):
     torque = random * 1000
     torques.append(torque)
-    motor.set_torque( torque )
+    motor.set_torque(torque)
     angles.append(encoder.getRadians())
     # maybe a consistent fps?
     sleep(0.01)
@@ -51,4 +49,4 @@ ss = s1[1:] * s1[:-1]
 sc = s1[1:] * c1[:-1]
 cc = c1[1:] * c1[:-1]
 
-np.stack( [s1,c1, s2, ss, sc, cc] )
+np.stack([s1, c1, s2, ss, sc, cc])

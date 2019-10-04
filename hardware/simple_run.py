@@ -1,6 +1,6 @@
 from driver import Encoder, Motor
 from time import sleep, time
-import pickle 
+import pickle
 
 e = Encoder()
 m = Motor()
@@ -12,7 +12,7 @@ steps = int(T / dt)
 
 anglemap = {}
 
-for torque in range(200,1001,200):
+for torque in range(200, 1001, 200):
     angles = []
     start_time = time()
     m.set_torque(torque)
@@ -24,13 +24,6 @@ for torque in range(200,1001,200):
     print(total_time)
     anglemap[torque] = angles
     sleep(2)
-    
-
-pickle.dump(anglemap, open( "simple_run.p", "wb"))
 
 
-
-
-
-
-
+pickle.dump(anglemap, open("simple_run.p", "wb"))

@@ -2,7 +2,7 @@ import numpy as np
 from os import path
 from gym import spaces
 
-'''
+"""
 
 Pendulum class. Continuous action space. Meant to recreate Pendulum-v0,
 which is implemented here:
@@ -12,37 +12,39 @@ https://github.com/openai/gym/blob/master/gym/envs/classic_control/pendulum.py
 Most of it is kept the same (reward structure, etc), except the part that has
 to actually interface with the env.
 
-'''
+"""
+
 
 class Pendulum:
-
     def __init__(self, g=10.0):
-        self.max_speed=8
-        self.max_torque=2.
-        self.dt=.05
+        self.max_speed = 8
+        self.max_torque = 2.0
+        self.dt = 0.05
         self.g = g
         self.viewer = None
 
-        high = np.array([1., 1., self.max_speed])
-        self.action_space = spaces.Box(low=-self.max_torque, high=self.max_torque, shape=(1,), dtype=np.float32)
+        high = np.array([1.0, 1.0, self.max_speed])
+        self.action_space = spaces.Box(
+            low=-self.max_torque, high=self.max_torque, shape=(1,), dtype=np.float32
+        )
         self.observation_space = spaces.Box(low=-high, high=high, dtype=np.float32)
 
-        #self.seed()
+        # self.seed()
         # See comment in random() below about random initial conditions.
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def step(self,u):
-        th, thdot = self.state # th := theta
+    def step(self, u):
+        th, thdot = self.state  # th := theta
 
         g = self.g
-        m = 1.
-        l = 1.
+        m = 1.0
+        l = 1.0
         dt = self.dt
 
-        '''
+        """
         u = np.clip(u, -self.max_torque, self.max_torque)[0]
         self.last_u = u # for rendering
         costs = angle_normalize(th)**2 + .1*thdot**2 + .001*(u**2)
@@ -53,17 +55,16 @@ class Pendulum:
 
         self.state = np.array([newth, newthdot])
         return self._get_obs(), -costs, False, {}
-        '''
+        """
 
         ### CALCULATE REWARD
-        costs = angle_normalize(th)**2 + .1*thdot**2 + .001*(u**2)
+        costs = angle_normalize(th) ** 2 + 0.1 * thdot ** 2 + 0.001 * (u ** 2)
 
         ### EXECUTE ACTION IN ROBOT
         ### GET NEXT STATE FROM MEASUREMENT
         ### update state
         ### RETURN:
         ### return self._get_obs(), -costs, False, {}
-
 
     def reset(self):
         # Currently, uses randomness for initial conditions. We could either
@@ -76,14 +77,14 @@ class Pendulum:
         return self._get_obs()
 
     def _get_obs(self):
-        '''
+        """
         This has to be replaced by some lower level raspi_robot.get_measurement()
         function!
-        '''
+        """
         theta, thetadot = self.state
         return np.array([np.cos(theta), np.sin(theta), thetadot])
 
-    def render(self, mode='human'):
+    def render(self, mode="human"):
 
         # Probably not necessary for now. Maybe interface with actual gym
         # display later?
@@ -94,5 +95,6 @@ class Pendulum:
         # lower level robot object?
         pass
 
+
 def angle_normalize(x):
-    return (((x+np.pi) % (2*np.pi)) - np.pi)
+    return ((x + np.pi) % (2 * np.pi)) - np.pi
