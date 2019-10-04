@@ -4,44 +4,43 @@ The pendulum is built using easily available hardware. The following are instruc
 
 ## Bill of Materials
 
-- Raspberry Pi (We use a model 4)
+- Raspberry Pi (We use a Pi Zero W)
   + Power Supply for Pi
   + SD card for Pi
 - L298N Motor Driver Board.
 - Ribbon cable
-- Gearbox Motor with built in encoder. 12V 150 RPM
+- Gearbox Motor with built in encoder. 12V 600 RPM
 - 12V Power Supply
 - Power supply female donkus plug. DC Power Jack Plug adapter
 - Wire
 - Paint Stirrer Rod. Only the best for us!
+- Mounting 2x4
 - 4mm Flange Shaft Coupling
 - 25mm DC Gearbox Motor Bracket
 - 4x m3 12mm nuts and boltd
 - Mounting nuts 
 
-
 Amazon shopping cart link : https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO
-
-Motor Data:
-✔Product type: DC Gear motor with two-channel Hall effect encoder;Rated Voltage: 12V; No-Load Speed: 150RPM; No-Load Current: ≤ 0.15A;Rated Torque: 0.95kg.cm;
-✔Main Body Dimensions:74.8 x 25mm / 2.95in x 0.99in (L*D); Out Shaft Dimensions: 11 x 4mm / 0.433 x 0.1575in (L*D) with 10 x 0.5mm / 0.39 * 0.017inches flat cut off;
-✔Single Output 408 Pulses Per Revolution: Gear Reduction Ratio: 1/34, Each Loop Output Pulses: 12PPR 34*12=408PPR;
-✔Wiring Diagram: Red - Motor power terminal (+);Black - Motor power terminal(-);Green - Quad encoder Ground;Blue - Quad encoder +5V Vcc;Yellow - Quad encoder A signal;White - Quad encoder B signal;
-
 
 
 
 ## Pi Setup
-Use Raspbian lite edition
-Follow instructions
 
-For an easier time, use neqbs or pibakery
+https://www.raspberrypi.org/help/
 
-Using a monitor and keyboard will make it easier
+Tips:
 
-Plugging into ethernet as compared to wifi will be easier.
+- We use Raspbian lite edition
+- Using a monitor and keyboard will make it easier
+- Plugging into ethernet as compared to wifi will be easier.
 
 ## Pendulum Construction
+
+![](images/pend-0.jpg)
+![](images/pend-1.jpg)
+![](images/pend-2.jpg)
+![](images/pend-3.jpg)
+
 
 
 ## Hooking the Pi up to the Pendulum
@@ -113,3 +112,13 @@ alpha = - omega^2 sin(theta) + a_ext
       = - omega^2 sin(theta) + 0.01223 * command
 
 
+### Motor Data
+
+
+✔Product type: DC Gear motor with two-channel Hall effect encoder;Rated Voltage: 12V; No-Load Speed: 150RPM; No-Load Current: ≤ 0.15A;Rated Torque: 0.95kg.cm;
+
+✔Main Body Dimensions:74.8 x 25mm / 2.95in x 0.99in (L*D); Out Shaft Dimensions: 11 x 4mm / 0.433 x 0.1575in (L*D) with 10 x 0.5mm / 0.39 * 0.017inches flat cut off;
+
+✔Single Output 408 Pulses Per Revolution: Gear Reduction Ratio: 1/34, Each Loop Output Pulses: 12PPR 34*12=408PPR;
+
+✔Wiring Diagram: Red - Motor power terminal (+);Black - Motor power terminal(-);Green - Quad encoder Ground;Blue - Quad encoder +5V Vcc;Yellow - Quad encoder A signal;White - Quad encoder B signal;
