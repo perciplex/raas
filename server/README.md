@@ -1,3 +1,6 @@
+Run with:
+python server.py [port]
+
 swagger: '2.0'
 info:
   description: |
