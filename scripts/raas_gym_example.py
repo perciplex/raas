@@ -10,9 +10,9 @@ env_pend = raas_gym.make('Pendulum-v0')
 
 N_steps = 20
 s = None
-for i in range(N_steps):
-    print(f'Step {i}')
-    action = np.array([0.0])
+for t in range(N_steps):
+    print(f'Step {t}')
+    action = np.array([np.sin(0.1*t)])
     print('\tAction: {}'.format(action))
     s_next, r, done, _ = env_pend.step(action)
     print('\tState: {}, reward: {}'.format(s_next, r))
