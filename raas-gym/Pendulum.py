@@ -1,5 +1,7 @@
 import numpy as np
 from os import path
+import time
+
 
 import path_utils
 from driver import Encoder, Motor
@@ -27,7 +29,7 @@ class Pendulum:
 		self.viewer = None
 		self.state = None
 
-		
+
 		'''high = np.array([1.0, 1.0, self.max_speed])
 		self.action_space = spaces.Box(
 			low=-self.max_torque, high=self.max_torque, shape=(1,), dtype=np.float32
