@@ -13,7 +13,7 @@ env_pend = raas_gym.make('Pendulum-v0')
 N_steps = 200
 time_incr = 0.05
 
-w_range = np.linspace(5, 6, 10)
+w_range = np.linspace(4.6, 6, 12)
 max_amps = []
 
 for w in w_range:
@@ -45,7 +45,7 @@ for w in w_range:
     max_amps.append(max_ep_amp)
 
     print('Resetting...')
-    s_next, r, done, _ = env_pend.step(action = np.array([0.0]))
+    s_next, r, done, _ = env_pend.step(np.array([0.0]))
     sleep(1.5)
 
 
