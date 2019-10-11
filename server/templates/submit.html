@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include "header.html" %}
+        <script>
+            var re = RegExp('https:\/\/github.com\/([a-z0-9]*)\/([a-z0-9-_]*).git')
+            $(document).ready(function($) {
+                console.log("starting")
+                $("#inputValid").on('input', function() {
+                    if (re.test($(this).val())) {
+                        $(this).addClass("is-valid")
+                        $(this).removeClass("is-invalid")
+
+                        
+                        groups = $(this).val().match(re)
+                        url = groups[0]
+                        user = groups[1]
+                        name = groups[2]
+                        $("#username").val(user)
+                        $("#name").val(name)
+                        $("#submit").removeAttr("disabled")
+                    }
+                });
+
+                $("#inputValid").change(function() {
+                    if (!re.test($(this).val())) {
+                        $(this).addClass("is-invalid")
+                        $(this).removeClass("is-valid")
+                        $("#username").val("")
+                        $("#name").val("")
+                        $("#submit").attr("disabled","")
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group has-success">
+                        <form action="/job" method="post">
+                                <label class="form-control-label" for="inputSuccess1">Git Repository</label>
+                                <input type="text" placeholder="correct value" class="form-control" id="inputValid" name="git">
+                                
+                                <label class="control-label" for="username">Username</label>
+                                <input class="form-control" id="username" type="text" placeholder="user" readonly="" name="user">
+                                <label class="control-label" for="name">Project Name</label>
+                                <input class="form-control" id="name" type="text" placeholder="name" readonly="" name="name">
+                                
+                                
+                                <div class="valid-feedback float-left">Success! You've done it.</div>
+                                <div class="invalid-feedback float-left">Please enter a valid GitHub repository.</div>
+                                <button type="submit" class="btn btn-primary float-right" id="submit" disabled>Submit</button>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="col-6">  
+                    <div class="card border-primary mb-3">
+                        <div class="card-header">how to submit</div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                Start by forking <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a>. Your repository should have the following structure:
+                                <br>
+                                <pre>
+    /
+        run.py
+        /results
+        /log
+                                </pre>
+                                Enter the address of your Git repository.
+                            </p>
+                        </div>
+                    </div>              
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

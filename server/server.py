@@ -12,8 +12,10 @@ class Status():
     COMPLETE = 'COMPLETE'
 
 class Job:
-    def __init__(self, git):
+    def __init__(self, user, name, git):
         self.id = uuid.uuid1()
+        self.name = name
+        self.user = user
         self.git = git
         self.status = Status.QUEUED
         self.results = "Results pending."
@@ -22,21 +24,24 @@ class Job:
     def status_str(self):
         return str(self.status)
 
+jobs = {}
+new_job = Job("testUser", "testName", f"testUrl")
+jobs[str(new_job.id)] = new_job
 
-jobs = {0:Job("testUrl")}
-
+print(jobs)
 
 @app.route('/')
 def base_route():
-    return send_file("static/index.html")
-    #return render_template('jobs.html', jobs=list(jobs.values()))
+    #return send_file("static/index.html")
+    return render_template('index.html', jobs=list(jobs.values()))
 
 @app.route('/job', methods=['GET', 'POST'])
 def job_route():
     print(request.form)
     if request.method == 'POST':
-        new_job = Job(request.form['gitUrl'])
-        jobs[new_job.id] = new_job
+        print(request.form)
+        new_job = Job(request.form['user'], request.form['name'],request.form['git'])
+        jobs[str(new_job.id)] = new_job
         return redirect("/")
     if request.method == 'GET':
         return jsonify([job.__dict__() for job in list(jobs.values())])
@@ -50,6 +55,15 @@ def job_pop_route(id):
             return jsonify(pop_job)
         else:
             return make_response('', 204)
+
+@app.route('/job/<string:id>', methods=['GET'])
+def job_page_route(id):
+    return render_template('job.html', job=jobs[id])
+
+    
+@app.route('/submit', methods=['GET'])
+def submit_page_route():
+    return render_template('submit.html')
 
 @app.route('/job/<int:id>/start', methods=['PUT'])
 def job_start_route(id):

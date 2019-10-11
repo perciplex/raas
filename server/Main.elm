@@ -59,12 +59,12 @@ main =
 
 type Model
   = Failure String
-  | Loading
-  | Success (List Job)
+  | LoadingJobs
+  | Jobs (List Job)
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( Loading
+  ( LoadingJobs
   , Http.request
     { method = "GET"
     , url = "/job"
@@ -84,7 +84,7 @@ type Msg
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    GotJobs (Ok jobs) -> ((Success jobs), Cmd.none)
+    GotJobs (Ok jobs) -> ((Jobs jobs), Cmd.none)
     GotJobs (Err err) -> ((Failure (Debug.toString err)) , Cmd.none)
 
 
@@ -94,10 +94,10 @@ view model =
     Failure msg ->
       text ("I was unable to load the jobs. " ++ msg)
 
-    Loading ->
-      text "Loading Jobs..."
+    LoadingJobs ->
+      text "LoadingJobs Jobs..."
 
-    Success jobs -> (formatJobs jobs)
+    Jobs jobs -> (formatJobs jobs)
 
 formatJobs : List Job -> Html Msg
 formatJobs jobs = ul [class "list-group"] (List.map formatJob jobs)
