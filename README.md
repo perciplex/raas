@@ -6,7 +6,7 @@ The user submits a git repo to a web based frontend. The queue is queried by rob
 
 ### Folder Summary
 
-- `raas_gym` - Library that replicates opanai gym interface for both simulation testing and for running on physical hardware. This is the client facing code to be imported
+- `raas_gym` - Library that replicates opanai gym interface for both simulation testing and for running on physical hardware. This is the client facing code to be imported in python
 - `server/` - Server aide application for accepting new jobs, amaintaining job queue, and returning data to web frontend.
 - `hardware/` - contains bill of materials and instructions for constructing pendulum. Also contains python motor driver code.
 - `docker_driver/` - Responsible for polling server, getting repo, cloning into docker image and running.
