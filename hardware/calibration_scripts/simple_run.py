@@ -12,11 +12,7 @@ steps = int(T / dt)
 
 anglemap = {}
 
-<<<<<<< HEAD:hardware/simple_run.py
-for torque in range(200, 1001, 200):
-=======
-for command in range(200,1001,200):
->>>>>>> ee553e917cadfc8d2b1fb8a09e71a3726ad2380e:hardware/calibration_scripts/simple_run.py
+for command in range(200, 1001, 200):
     angles = []
     start_time = time()
     m.set_command(command)

@@ -9,9 +9,7 @@ git_url = "https://gist.github.com/a7ae5925ac4ace2292fa6fe192a56723.git"
 
 # build the final image using the local raas-base, eventually need to pass in git url
 response = client.images.build(
-    path=dockerfile,
-    tag=docker_tag,
-    buildargs={"GIT_REPO_URL": git_url},
+    path=dockerfile, tag=docker_tag, buildargs={"GIT_REPO_URL": git_url}
 )
 
 # iniitializing docker container with dummy program. Is this how we should do it?
