@@ -80,7 +80,7 @@ class Pendulum:
 		th, thdot = self.state
 		costs = angle_normalize(th) ** 2 + 0.1 * thdot ** 2 + 0.001 * (u ** 2)
 
-
+		self.motor.set_pendulum_torque(u)
 		### EXECUTE ACTION IN ROBOT
 		### GET NEXT STATE FROM MEASUREMENT
 		### update state
