@@ -1,6 +1,6 @@
 import numpy as np
 from os import path
-from gym import spaces
+#from gym import spaces
 import path_utils
 
 
