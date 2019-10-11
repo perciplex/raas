@@ -18,7 +18,7 @@ max_amps = []
 
 for w in w_range:
 
-    print(f'\nRunning with w = {:.2f}')
+    print(f'\nRunning with w = {w:.2f}')
     s = None
 
     max_ep_amp = None
