@@ -100,7 +100,7 @@ class Pendulum:
 
 		theta = self.encoder.getRadian()
 		thetadot = 0
-		self.state = np.array([newth, newthdot])
+		self.state = np.array([theta, thetadot])
 
 		self.last_u = None
 		return self._get_obs()
