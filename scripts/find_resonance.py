@@ -37,7 +37,7 @@ for w in w_range:
 
         x, y, _ = s_next
 
-        if (-x > max_ep_amp) or (max_ep_amp is None):
+        if (max_ep_amp is None) or (-x > max_ep_amp):
             max_ep_amp = -x
 
         s = s_next
