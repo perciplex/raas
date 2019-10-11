@@ -25,7 +25,9 @@ class Pendulum:
 		self.dt = 0.05
 		self.g = g
 		self.viewer = None
+		self.state = None
 
+		
 		'''high = np.array([1.0, 1.0, self.max_speed])
 		self.action_space = spaces.Box(
 			low=-self.max_torque, high=self.max_torque, shape=(1,), dtype=np.float32
@@ -39,6 +41,9 @@ class Pendulum:
 		# Create Motor and Encoder object
 		self.encoder = Encoder()
 		self.motor = Motor()
+
+		# Do in init to get a self.state var
+		self.reset()
 
 
 
