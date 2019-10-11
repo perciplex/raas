@@ -64,6 +64,8 @@ class Pendulum:
         ### RETURN:
         ### return self._get_obs(), -costs, False, {}
 
+        return self._get_obs(), 0, False, {}
+
 
     def reset(self):
         # Currently, uses randomness for initial conditions. We could either
