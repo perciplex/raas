@@ -14,7 +14,7 @@ env_pend = raas_gym.make('Pendulum-v0')
 
 N_steps = 300
 time_incr = 0.05
-w = 5.2
+w = 5.4
 s = None
 for t in range(N_steps):
 
