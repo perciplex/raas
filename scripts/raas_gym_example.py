@@ -1,8 +1,8 @@
 import path_utils
-import Raas_gym
+import raas_gym
 
 # Creates and returns Pendulum env object
-env_pend = Raas_gym.make('Pendulum-v0')
+env_pend = raas_gym.make('Pendulum-v0')
 
 
 for i in range(N_steps):
