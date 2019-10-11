@@ -74,6 +74,14 @@ class Motor:
     def stop(self):
         self.set_command(0)
 
+
+    def set_pendulum_torque(self, pend_torque):
+
+        # This one is just a wrapper for set_command() that makes it so
+        # you pass it a torque in the range [-2, 2].
+        self.set_command(pend_torque*200.0)
+
+
     def set_command(self, command):
         # check if command is in allowed range?
         if command > 1000 or command < -1000:

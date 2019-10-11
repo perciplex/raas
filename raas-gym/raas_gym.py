@@ -1,4 +1,4 @@
-import pendulum
+import Pendulum
 
 """
 
@@ -22,9 +22,7 @@ def make(env_name):
 
     """
 
-    assert (
-        env_name in valid_envs
-    ), f"Env {env_name} not valid env! Must be in: {valid_envs}"
+    assert (env_name in valid_envs), f'Env {env_name} not valid env! Must be in: {valid_envs}'
 
     env = envs_dict[env_name]()
     return env
