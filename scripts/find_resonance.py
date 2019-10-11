@@ -13,7 +13,7 @@ env_pend = raas_gym.make('Pendulum-v0')
 N_steps = 300
 time_incr = 0.05
 
-w_range = np.linspace(4.2, 6, 20)
+w_range = np.linspace(4.2, 5.6, 12)
 max_amps = []
 
 for w in w_range:
