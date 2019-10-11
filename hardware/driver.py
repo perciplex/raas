@@ -87,7 +87,7 @@ class Motor:
             self.pi.set_PWM_dutycycle(self.backward_pin, int(abs(command)))
 
     def set_torque(self, torque):
-        self.set_command(torque / 0.01223)
+        self.set_command((torque/500.0) / 0.01223)
 
     def __del__(self):  # this doesn't work. Appears to be killing pigpio first
         self.stop()

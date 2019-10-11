@@ -1,6 +1,9 @@
 import numpy as np
 from os import path
 from gym import spaces
+import path_utils
+
+
 
 """
 
@@ -32,6 +35,13 @@ class Pendulum:
         # self.seed()
         # See comment in random() below about random initial conditions.
 
+
+        # Create Motor and Encoder object
+        self.encoder = Encoder()
+        self.motor = Motor()
+
+
+
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
@@ -57,8 +67,12 @@ class Pendulum:
         return self._get_obs(), -costs, False, {}
         """
 
+        u = np.clip(u, -self.max_torque, self.max_torque)[0]
+        self.last_u = u # for rendering
         ### CALCULATE REWARD
+        th, thdot = self.state
         costs = angle_normalize(th) ** 2 + 0.1 * thdot ** 2 + 0.001 * (u ** 2)
+
 
         ### EXECUTE ACTION IN ROBOT
         ### GET NEXT STATE FROM MEASUREMENT
@@ -66,7 +80,7 @@ class Pendulum:
         ### RETURN:
         ### return self._get_obs(), -costs, False, {}
 
-        return self._get_obs(), 0, False, {}
+        return self._get_obs(), costs, False, {}
 
 
     def reset(self):
@@ -74,8 +88,13 @@ class Pendulum:
         # remove this aspect, or do something like create initial randomness by
         # doing a quick sequence of actions before starting the episode, that
         # would effectively start it in a random state.
-        high = np.array([np.pi, 1])
-        self.state = self.np_random.uniform(low=-high, high=high)
+        self.motor.stop()
+        time.sleep(0.05)
+
+        theta = self.encoder.getRadian()
+        thetadot = 0
+        self.state = np.array([newth, newthdot])
+
         self.last_u = None
         return self._get_obs()
 
@@ -84,7 +103,10 @@ class Pendulum:
         This has to be replaced by some lower level raspi_robot.get_measurement()
         function!
         """
-        theta, thetadot = self.state
+        #theta, thetadot = self.state
+        #return np.array([np.cos(theta), np.sin(theta), thetadot])
+        theta = self.encoder.getRadian()
+        thetadot = 0
         return np.array([np.cos(theta), np.sin(theta), thetadot])
 
     def render(self, mode="human"):
