@@ -79,7 +79,7 @@ class Motor:
 
         # This one is just a wrapper for set_command() that makes it so
         # you pass it a torque in the range [-2, 2].
-        self.set_command(pend_torque*200.0)
+        self.set_command(pend_torque*250.0)
 
 
     def set_command(self, command):
