@@ -19,6 +19,7 @@ class Job:
         self.git = git
         self.status = Status.QUEUED
         self.results = "Results pending."
+
     def __dict__(self):
         return {"id": self.id, "gitUrl":self.git, "results":self.results, "status":self.status}
     def status_str(self):
