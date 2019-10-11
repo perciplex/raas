@@ -97,5 +97,8 @@ def job_results_route(id):
         else:
             return make_response('', 404)
 
-if __name__ == "__main__":
-    app.run(port=sys.argv[1], debug=True)
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'prod':
+        app.run(port=80, host='0.0.0.0')
+    else:
+        app.run(debug=True)
