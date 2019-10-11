@@ -9,6 +9,7 @@ GYM_DIR = os.path.join(ROOT_DIR, 'raas-gym')
 HARDWARE_DIR = os.path.join(ROOT_DIR, 'hardware')
 
 sys.path.append(GYM_DIR)
+sys.path.append(HARDWARE_DIR)
 
 
 def get_raas_gym_dir():
