@@ -5,6 +5,9 @@
     </head>
     <body>
         <div class="container">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ '10%' if job.status=='QUEUED' }} {{ '100%' if job.status=='COMPLETE' }} {{ '50%' if job.status=='RUNNING' }}"></div>
+            </div>
             <div class="row">
                 <div class="col-12">
                     id: {{job.id}}

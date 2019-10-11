@@ -23,15 +23,13 @@
                             <tr>
                                 <th scope="col">user</th>
                                 <th scope="col">name</th>
-                                <th scope="col">status</th>
                             </tr>
                         </thead>
                         <tbody>
                         {% for job in jobs %}
                             <tr class="table-row link" data-href='job/{{job.id}}'>
                                 <td>{{job.user}}</td>
-                                <td>{{job.name}}</td>
-                                <td>{{job.status}}</td>
+                                <td>{{job.name}} <span class="badge {{ 'badge-warning' if job.status=='QUEUED' }} {{ 'badge-success' if job.status=='COMPLETE' }} {{ 'badge-info' if job.status=='RUNNING' }} float-right">{{job.status}}</span></td>
                             </tr>
                         {% endfor %}
                         </tbody>

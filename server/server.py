@@ -28,6 +28,7 @@ class Job:
 jobs = {}
 new_job = Job("testUser", "testName", f"testUrl")
 jobs[str(new_job.id)] = new_job
+new_job.status = Status.COMPLETE
 
 print(jobs)
 
