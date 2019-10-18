@@ -1,4 +1,5 @@
-import Pendulum
+import raasgym.Pendulum as Pendulum
+name = "raasgym"
 
 """
 
@@ -26,6 +27,3 @@ def make(env_name):
 
     env = envs_dict[env_name]()
     return env
-
-
-#
