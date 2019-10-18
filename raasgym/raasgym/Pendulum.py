@@ -3,7 +3,10 @@ from os import path
 import time
 
 
-
+import gym
+from gym import spaces
+from gym.utils import seeding
+from os import path
 
 '''
 
@@ -17,38 +20,43 @@ to actually interface with the env.
 
 '''
 
-
-class Pendulum:
+class Pendulum(gym.Env):
+	metadata = {
+		'render.modes' : ['human', 'rgb_array'],
+		'video.frames_per_second' : 30
+	}
 	# We should perhaps set hardware via an environment variable?
 	def __init__(self, g=10.0, hardware=False):
+		import os
+		if 'RAASPI' in os.environ: #Check if RAASPI environment variable is set
+			hardware = True
+		if not self.hardware:
+			self.max_speed = 8
+			self.max_torque = 2.0
+			self.dt = 0.05
+			self.g = g
+			self.viewer = None
+			self.state = None
+			self.hardware = hardware
 
-		self.max_speed = 8
-		self.max_torque = 2.0
-		self.dt = 0.05
-		self.g = g
-		self.viewer = None
-		self.state = None
-		self.hardware = hardware
 
+			high = np.array([1., 1., self.max_speed])
+			self.action_space = spaces.Box(low=-self.max_torque, high=self.max_torque, shape=(1,), dtype=np.float32)
+			self.observation_space = spaces.Box(low=-high, high=high, dtype=np.float32)
 
-		'''high = np.array([1.0, 1.0, self.max_speed])
-		self.action_space = spaces.Box(
-			low=-self.max_torque, high=self.max_torque, shape=(1,), dtype=np.float32
-		)
-		self.observation_space = spaces.Box(low=-high, high=high, dtype=np.float32)'''
-
-		# self.seed()
-		# See comment in random() below about random initial conditions.
+			self.seed()
+			self.reset()
+			# See comment in random() below about random initial conditions.
 
 
 		# Create Motor and Encoder object
-		if hardware:
+		elif self.hardware:
 			from raasgym.driver import Encoder, Motor
 			self.encoder = Encoder()
 			self.motor = Motor()
 
-		# Do in init to get a self.state var
-		self.reset()
+			# Do in init to get a self.state var
+			self.reset()
 
 
 
@@ -99,19 +107,20 @@ class Pendulum:
 		# remove this aspect, or do something like create initial randomness by
 		# doing a quick sequence of actions before starting the episode, that
 		# would effectively start it in a random state.
-		if self.hardware:
+		if not self.hardware:
+			high = np.array([np.pi, 1])
+			self.state = self.np_random.uniform(low=-high, high=high)
+			self.last_u = None
+			return self._get_obs()
+		elif self.hardware:
 			self.motor.stop()
 			time.sleep(0.05)
 			theta = self.encoder.getRadian()
 			thetadot = 0
+			return self._get_obs()
 
-		elif not self.hardware:
-			theta = 0
-			thetadot = 0
-		self.state = np.array([theta, thetadot])
 
-		self.last_u = None
-		return self._get_obs()
+			
 
 	def _get_obs(self):
 		"""
@@ -127,14 +136,39 @@ class Pendulum:
 			return np.array([np.cos(theta), np.sin(theta), thetadot])
 
 	def render(self, mode="human"):
+		# We need to figure out this path asset
+		if not self.hardware:
+			if self.viewer is None:
+				from gym.envs.classic_control import rendering
+				self.viewer = rendering.Viewer(500,500)
+				self.viewer.set_bounds(-2.2,2.2,-2.2,2.2)
+				rod = rendering.make_capsule(1, .2)
+				rod.set_color(.8, .3, .3)
+				self.pole_transform = rendering.Transform()
+				rod.add_attr(self.pole_transform)
+				self.viewer.add_geom(rod)
+				axle = rendering.make_circle(.05)
+				axle.set_color(0,0,0)
+				self.viewer.add_geom(axle)
+				fname = path.join(path.dirname(__file__), "assets/clockwise.png")
+				self.img = rendering.Image(fname, 1., 1.)
+				self.imgtrans = rendering.Transform()
+				self.img.add_attr(self.imgtrans)
 
-		# Probably not necessary for now. Maybe interface with actual gym
-		# display later?
-		pass
+			self.viewer.add_onetime(self.img)
+			self.pole_transform.set_rotation(self.state[0] + np.pi/2)
+			if self.last_u:
+				self.imgtrans.scale = (-self.last_u/2, np.abs(self.last_u)/2)
+
+			return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
 	def close(self):
 		# We'd probably want something to destroy the connection/etc to the
 		# lower level robot object?
+		if not self.hardware:
+			if self.viewer:
+				self.viewer.close()
+				self.viewer = None
 		pass
 
 

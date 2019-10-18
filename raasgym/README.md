@@ -1,5 +1,25 @@
 # RaaS Gym
 
+To install
+```python
+python3 setup.py sdist bdist_wheel
+```
+
+install pigpiod if intended to run on real hardware
+Set RAASPI variable in python enviroment
+
+Notes:
+Build library
+
+
+OPtions:
+We could keep a hardware flag in the init here
+read an environemtn variables?
+Sepeerate SymPendulum and PhysPendulum files
+Completely seperate packages.
+Where do we keep the driver code? Also needing pigpiod
+
+
 This is a python library designed to mimic the interface of the OpenAI Pendulum-v0 environment.
 
 A short use example

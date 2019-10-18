@@ -1,4 +1,4 @@
-from driver import Encoder, Motor
+from raasgym.driver import Encoder, Motor
 from time import sleep, time
 import pickle
 
