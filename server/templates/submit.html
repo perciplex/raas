@@ -6,29 +6,60 @@
             var re = RegExp('https:\/\/github.com\/([a-z0-9]*)\/([a-z0-9-_]*).git')
             $(document).ready(function($) {
                 console.log("starting")
-                $("#inputValid").on('input', function() {
+                $("#submit-spinner").hide();
+                $(".feedback").hide();
+                $("#github-input").on('input', function() {
+                    $(".feedback").hide();
                     if (re.test($(this).val())) {
-                        $(this).addClass("is-valid")
-                        $(this).removeClass("is-invalid")
-
-                        
                         groups = $(this).val().match(re)
                         url = groups[0]
                         user = groups[1]
                         name = groups[2]
                         $("#username").val(user)
                         $("#name").val(name)
-                        $("#submit").removeAttr("disabled")
-                    }
-                });
 
-                $("#inputValid").change(function() {
-                    if (!re.test($(this).val())) {
-                        $(this).addClass("is-invalid")
-                        $(this).removeClass("is-valid")
+                        $("#submit-word").hide();
+                        $("#submit-spinner").show();
+                        $.get( `https://api.github.com/repos/${user}/${name}/contents`, function( data ) {
+                            console.log(data);
+                            var found = false;
+                            data.forEach(element => {
+                                if (element.path == "run.py") {
+                                    found = true;
+                                }
+                            });
+                            if (found) {
+                                $("#submit").removeAttr("disabled");
+                                $("#valid").show();
+                                $("#github-input").removeClass("is-invalid")
+                                $("#github-input").addClass("is-valid")
+                            } else {
+                                $("#submit").attr("disabled","")
+                                $("#invalid-git").show();
+                                $("#github-input").addClass("is-invalid")
+                                $("#github-input").removeClass("is-valid")
+                            }
+                        }).fail(function (data) {
+                            $("#submit").attr("disabled","")
+                            $("#invalid-not-found").show();
+                            $("#github-input").addClass("is-invalid")
+                            $("#github-input").removeClass("is-valid")
+                        });
+                        $("#submit-word").show();
+                        $("#submit-spinner").hide();
+
+                    } else {
+                        $("#invalid-url").show();
                         $("#username").val("")
                         $("#name").val("")
                         $("#submit").attr("disabled","")
+                        $("#github-input").addClass("is-invalid")
+                        $("#github-input").removeClass("is-valid")
+                    }
+                });
+                
+                $("#github-input").change(function() {
+                    if (!re.test($(this).val())) {
                     }
                 });
             });
@@ -40,18 +71,45 @@
                 <div class="col-6">
                     <div class="form-group has-success">
                         <form action="/job" method="post">
-                                <label class="form-control-label" for="inputSuccess1">Git Repository</label>
-                                <input type="text" placeholder="correct value" class="form-control" id="inputValid" name="git">
+                            
+                            <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label class="form-control-label" for="inputSuccess1">Git Repository</label>
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text"><i class="fa fa-lg fa-github"></i></div>
+                                            </div>
+                                            <input type="text" placeholder="GitHub url" class="form-control" id="github-input" name="git">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="form-row">
                                 
-                                <label class="control-label" for="username">Username</label>
-                                <input class="form-control" id="username" type="text" placeholder="user" readonly="" name="user">
-                                <label class="control-label" for="name">Project Name</label>
-                                <input class="form-control" id="name" type="text" placeholder="name" readonly="" name="name">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="username">Username</label>
+                                    <input class="form-control" id="username" type="text" placeholder="GitHub username" readonly="" name="user">
+                                </div>
+                                
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="name">Project Name</label>
+                                    <input class="form-control" id="name" type="text" placeholder="GitHub repo name" readonly="" name="name">
+                                </div>
+                            </div>
+
                                 
                                 
-                                <div class="valid-feedback float-left">Success! You've done it.</div>
-                                <div class="invalid-feedback float-left">Please enter a valid GitHub repository.</div>
-                                <button type="submit" class="btn btn-primary float-right" id="submit" disabled>Submit</button>
+                            <div id="valid" class="feedback float-left text-success">Looks ready to go! </div>
+                            <div id="invalid-url" class="feedback float-left text-danger">Please enter a valid repository url.</div>
+                            <div id="invalid-not-found" class="feedback float-left text-danger">GitHub repository not found.</div>
+                            <div id="invalid-git" class="feedback float-left text-danger">Please check repository structure.</div>
+
+                            <button type="submit" class="btn btn-primary float-right" id="submit" disabled>
+                                <span id="submit-word">Submit</span>
+                                <div class="spinner-grow" id="submit-spinner" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </button>
 
                         </form>
                     </div>
