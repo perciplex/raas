@@ -10,7 +10,7 @@ print('Creating gym object...')
 env_pend = gym.make('pendulum-v0')
 
 print('Setting to constant torque')
-action = np.array([0.5])
+action = np.array([2.0])
 
 s_next, r, done, _ = env_pend.step(action)
 
