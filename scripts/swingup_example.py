@@ -54,7 +54,7 @@ for t in range(N_steps):
     action = get_action(s)
     print('\tAction: {}'.format(action))
     s_next, r, done, _ = env_pend.step(action)
-    print('\tState: {}, reward: {}'.format(s_next, r))
+    print('\tState: {}, reward: {}, state: {}'.format(s_next, r, env_pend.state))
 
     s = s_next
 
