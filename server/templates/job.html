@@ -30,14 +30,26 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ '10%' if job.status=='QUEUED' }} {{ '100%' if job.status=='COMPLETE' }} {{ '50%' if job.status=='RUNNING' }}"></div>
+                    <div class="alert {{ 'alert-warning' if job.status=='QUEUED' }} {{ 'alert-success' if job.status=='COMPLETE' }} {{ 'alert-primary' if job.status=='RUNNING' }}">
+                        <h4>
+                            {{job.status}}
+                            {%if job.status=='RUNNING'%}
+                                <span class="float-right">{{job.hardware}}</span>
+                            {%endif%}
+                        </h4>
                     </div>
+                    <!--<div class="progress">
+                        <div class="progress-bar {{ 'progress-bar-striped progress-bar-animated' if job.status=='QUEUED' }} {{ 'progress-bar-striped progress-bar-animated' if job.status=='RUNNING' }}" 
+                            role="progressbar" 
+                            style="width: {{ '10%' if job.status=='QUEUED' }} {{ '100%' if job.status=='COMPLETE' }} {{ '50%' if job.status=='RUNNING' }}">
+                            <h5>test</h5>
+                        </div>
+                    </div>-->
                 </div>
             </div>
             <p></p>
             <div class="row">
-                <div class="col-6">
+                <div class="col-sm-6">
                     <div class="card border-primary mb-3">
                         <div class="card-header">
                             {{job.name}}
@@ -53,7 +65,7 @@
                     </div>            
                 </div>
                 
-                <div class="col-6">
+                <div class="col-sm-6">
                     <div id="plot" style="width:100%;height:500px;"></div>
                 </div>  
             </div>
