@@ -1,7 +1,7 @@
 .vscode/*
-__pycache__/*
+*__pycache__/*
+*__pycache__*
 raasgym/build/
 raasgym/dist/
 raasgym/raasgym.egg-info/
 raasgym/raasgym/__pycache__/
-

@@ -5,6 +5,27 @@ import numpy as np
 from time import sleep
 
 
+def get_action(state):
+
+    x, y, theta_dot = state
+
+    stay_up_thresh = -0.8
+    prop_torque = 0.1
+    max_torque = 2.0
+
+    if x < stay_up_thresh:
+        if y<0:
+            return -prop_torque*max_torque
+        else:
+            return prop_torque*max_torque
+    else:
+        if y<0:
+            return -max_torque
+        else:
+            return max_torque
+
+
+
 # natural freq: omega = 5.2 ==> f = 5.2/5.3 = 0.82
 
 print('Creating gym object...')
@@ -14,17 +35,17 @@ env_pend = gym.make('pendulum-v0')
 N_steps = 300
 time_incr = 0.05
 w = 5.4
-s = None
+s = env_pend.reset()
 for t in range(N_steps):
 
     sleep(time_incr)
 
     print(f'Step {t}')
-    action = np.array([2.0*np.sin(w*t*time_incr)])
+    #action = np.array([2.0*np.sin(w*t*time_incr)])
+    action = get_action(s)
     print('\tAction: {}'.format(action))
     s_next, r, done, _ = env_pend.step(action)
     print('\tState: {}, reward: {}'.format(s_next, r))
-
 
     s = s_next
 
