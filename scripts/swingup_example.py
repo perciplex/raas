@@ -13,16 +13,22 @@ def get_action(state):
     prop_torque = 0.1
     max_torque = 2.0
 
-    if x < stay_up_thresh:
-        if y<0:
+    if x <= stay_up_thresh:
+        if y<=0:
             torque = -prop_torque*max_torque
         else:
             torque = prop_torque*max_torque
     else:
-        if y<0:
-            torque = -max_torque
+        if y<=0:
+            if theta_dot >= 0:
+                torque = -max_torque
+            else:
+                torque = max_torque
         else:
-            torque = max_torque
+            if theta_dot >= 0:
+                torque = max_torque
+            else:
+                torque = -max_torque
 
     return np.array([torque])
 
