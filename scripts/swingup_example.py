@@ -12,6 +12,7 @@ def get_action(state):
     stay_up_thresh = -0.8
     prop_torque = 0.1
     max_torque = 2.0
+    turnaround_speed_thresh = 0.2
 
     if x <= stay_up_thresh:
         if y<=0:
