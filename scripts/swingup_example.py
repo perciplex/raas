@@ -15,14 +15,16 @@ def get_action(state):
 
     if x < stay_up_thresh:
         if y<0:
-            return -prop_torque*max_torque
+            torque = -prop_torque*max_torque
         else:
-            return prop_torque*max_torque
+            torque = prop_torque*max_torque
     else:
         if y<0:
-            return -max_torque
+            torque = -max_torque
         else:
-            return max_torque
+            torque = max_torque
+
+    return np.array([torque])
 
 
 
