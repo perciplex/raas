@@ -2,24 +2,72 @@
 <html lang="en">
     <head>
         {% include "header.html" %}
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script>
+            $(document).ready(function($) {
+                var data = `{{job.results}}`;
+                //console.log(data);
+                var layout = {
+                margin: {
+                    l: 50,
+                    r: 50,
+                    b: 100,
+                    t: 10,
+                    pad: 0
+                }
+                };
+                var plot = {
+                    x: [1, 2, 3, 4],
+                    y: [10, 15, 13, 17],
+                    type: 'scatter'
+                    };
+
+                Plotly.newPlot("plot", [plot], layout);
+            });
+        </script>
     </head>
     <body>
         <div class="container">
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ '10%' if job.status=='QUEUED' }} {{ '100%' if job.status=='COMPLETE' }} {{ '50%' if job.status=='RUNNING' }}"></div>
-            </div>
             <div class="row">
                 <div class="col-12">
-                    id: {{job.id}}
-                    <br>
-                    git: {{job.git}}
-                    <br>
-                    user: {{job.user}}
-                    <br>
-                    name: {{job.name}} 
-                    <br>
-                    results: {{job.results}}             
+                    <div class="alert {{ 'alert-warning' if job.status=='QUEUED' }} {{ 'alert-success' if job.status=='COMPLETE' }} {{ 'alert-primary' if job.status=='RUNNING' }}">
+                        <h4>
+                            {{job.status}}
+                            {%if job.status=='RUNNING'%}
+                                <span class="float-right">{{job.hardware}}</span>
+                            {%endif%}
+                        </h4>
+                    </div>
+                    <!--<div class="progress">
+                        <div class="progress-bar {{ 'progress-bar-striped progress-bar-animated' if job.status=='QUEUED' }} {{ 'progress-bar-striped progress-bar-animated' if job.status=='RUNNING' }}" 
+                            role="progressbar" 
+                            style="width: {{ '10%' if job.status=='QUEUED' }} {{ '100%' if job.status=='COMPLETE' }} {{ '50%' if job.status=='RUNNING' }}">
+                            <h5>test</h5>
+                        </div>
+                    </div>-->
                 </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card border-primary mb-3">
+                        <div class="card-header">
+                            {{job.name}}
+                            <span class="float-right">
+                                {{job.user}}
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <pre class="card-text">
+{{job.results}} 
+                            </pre>
+                        </div>
+                    </div>            
+                </div>
+                
+                <div class="col-sm-6">
+                    <div id="plot" style="width:100%;height:500px;"></div>
+                </div>  
             </div>
         </div>
     </body>

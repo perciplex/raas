@@ -10,45 +10,77 @@
                 });
             });
         </script>
+        <style>
+            @media (min-width: 768px) {
+                #content {
+                    position: relative;
+                    top:-100px;
+                }
+            }
+            #info {
+                background-color: transparent;
+                padding: 0px;
+            }
+        </style>
     </head>
     <body>
         <div class="container">
-            <div class="row">
-                <div class="col-6">
+            <div id="content">
+                <div class="jumbotron" id="info">
+                    <h3 class="display-4" style="width:70%">Reality as a Service</h3>
+                    <p style="width:90%">
+                        We built real-life versions of the OpenAI Gym enviornments, and you can use them! To start, fork <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a> and edit <code>run.py</code>. Our robots use the same Gym interface you're used to. Just import our custom enviornment and you're ready to go.
+                    </p>
                     
-                <button type="button" class="btn btn-primary btn-lg btn-block link" data-href='submit'>claim your own reality</button>
-                <br>
-                    <table class="table table-hover table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">user</th>
-                                <th scope="col">name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for job in jobs %}
-                            <tr class="table-row link" data-href='job/{{job.id}}'>
-                                <td>{{job.user}}</td>
-                                <td>{{job.name}} <span class="badge {{ 'badge-warning' if job.status=='QUEUED' }} {{ 'badge-success' if job.status=='COMPLETE' }} {{ 'badge-info' if job.status=='RUNNING' }} float-right">{{job.status}}</span></td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table> 
                 </div>
-                <div class="col-6">
-                    <div style="position:relative;padding-top:56.25%;">
-                        <iframe
-                        src="https://player.twitch.tv/?channel=RiotGames&muted=true"
-                        width="100%"
-                        height="100%"
-                        style="position:absolute;top:0;left:0;"
-                        frameborder="0"
-                        scrolling="no"
-                        allowfullscreen="true">
-                        </iframe>
-                    </div>                    
+                <div class="row">
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-primary btn-lg btn-block link" data-href='submit'>try it out for yourself</button>
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">user</th>
+                                    <th scope="col">project name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for job in queued %}
+                                <tr class="table-row link" data-href='job/{{job.id}}'>
+                                    <td>{{job.user}}</td>
+                                    <td>{{job.name}} <span class="badge badge-warning float-right">{{job.status}}</span></td>
+                                </tr>
+                            {% endfor %}
+                            {% for job in running %}
+                                <tr class="table-row link" data-href='job/{{job.id}}'>
+                                    <td>{{job.user}}</td>
+                                    <td>{{job.name}} <span class="badge badge-primary float-right">{{job.status}}@{{job.hardware}}</span></td>
+                                </tr>
+                            {% endfor %}
+                            {% for job in completed %}
+                                <tr class="table-row link" data-href='job/{{job.id}}'>
+                                    <td>{{job.user}}</td>
+                                    <td>{{job.name}} <span class="badge badge-success float-right">{{job.status}}</span></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table> 
+                    </div>
+                    <div class="col-sm-6">
+                        <div style="position:relative;padding-top:56.25%;">
+                            <iframe
+                            src="https://player.twitch.tv/?channel=perciplex&muted=true"
+                            width="100%"
+                            height="100%"
+                            style="position:absolute;top:0;left:0;"
+                            frameborder="0"
+                            scrolling="no"
+                            allowfullscreen="true">
+                            </iframe>
+                        </div>                    
+                    </div>
                 </div>
             </div>
+            
         </div>
     </body>
 </html>

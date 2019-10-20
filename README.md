@@ -4,7 +4,11 @@
 
 Reality as a Service (RaaS) is an open source platform for hosting physical OpenAI Gym enviroments. This lowers the barrier to transitioning to real robots in both effort and cost, allows the outsourcing of mantainance of robots to specialists, amoritiized cost of robots over more researchers and RL practitioners, and less useless down-time for expensive robots.
 
-The user submits a git repo to a web based frontend. The queue is queried by robot instances, which then givest he user an allotted amount of time. The results of this run are then returned to the user.
+The user submits a git repo to a web based frontend. The queue is queried by robot instances, which then gives the user an allotted amount of time. The results of this run are then returned to the user.
+
+The robot is controlled via a gym enviroment top be found [here](https://github.com/perciplex/raas-envs).
+
+The system is not currently operational, but you can find the site at [raas.perciplex.com](http://raas.perciplex.com).
 
 ### Folder Summary
 
