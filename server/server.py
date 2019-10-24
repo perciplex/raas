@@ -1,4 +1,13 @@
-from flask import Flask, jsonify, request, render_template, redirect, make_response, send_file
+from flask import (
+    Flask,
+    jsonify,
+    request,
+    render_template,
+    redirect,
+    make_response,
+    send_file,
+)
+
 app = Flask(__name__)
 from enum import Enum
 import uuid
@@ -21,8 +30,8 @@ class Status:
 
 class Job:
     def __init__(self, user, name, git):
-        #self.id = str(uuid.uuid4())
-        
+        # self.id = str(uuid.uuid4())
+
         self.id = str(uuid.UUID(int=rd.getrandbits(128)))
         print(self.id)
         self.name = name
@@ -57,14 +66,14 @@ queued.put(new_job)
 new_job = Job("kimbers2007", "rl_controller", f"testUrl2")
 jobs[new_job.id] = new_job
 new_job.status = Status.RUNNING
-new_job.hardware="Pendulum-1"
+new_job.hardware = "Pendulum-1"
 running[new_job.id] = new_job
 
 new_job = Job("lizzyB", "liz-controller", f"testUrl3")
 jobs[new_job.id] = new_job
 new_job.status = Status.COMPLETE
-new_job.hardware="Pendulum-1"
-new_job.results = '''
+new_job.hardware = "Pendulum-1"
+new_job.results = """
 [-0.02180978  0.03024429  0.00471958 -0.01161285]
 [-0.0212049  -0.16494503  0.00448732  0.28255542]
 [-0.0245038  -0.3601307   0.01013843  0.57665024]
@@ -77,7 +86,7 @@ new_job.results = '''
 [-0.08681033 -0.94981699  0.11255706  1.55743223]
 [-0.10580667 -1.1460926   0.1437057   1.88300458]
 [-0.12872853 -1.34245716  0.18136579  2.21661946]
-'''
+"""
 completed.put(new_job)
 
 
@@ -86,54 +95,13 @@ print(completed.queue)
 
 @app.route("/")
 def base_route():
-<<<<<<< HEAD
     # return send_file("static/index.html")
-    return render_template("index.html", jobs=list(jobs.values()))
-
-
-@app.route("/job", methods=["GET", "POST"])
-=======
-    #return send_file("static/index.html")
-    return render_template('index.html', queued=list(queued.queue), running=list(running.values()), completed=list(completed.queue))
-
-@app.route('/job/<string:id>', methods=['GET'])
-def job_page_route(id):
-    return render_template('job.html', job=jobs[id])
-
-@app.route('/submit', methods=['GET'])
-def submit_page_route():
-    return render_template('submit.html')
-
-@app.route('/job', methods=['POST'])
->>>>>>> 46a3648e56a1d19e29a9bc08b8d41e392e8b2953
-def job_route():
-    print(request.form)
-    if request.method == "POST":
-        print(request.form)
-<<<<<<< HEAD
-        new_job = Job(request.form["user"], request.form["name"], request.form["git"])
-        jobs[str(new_job.id)] = new_job
-        return redirect("/")
-    if request.method == "GET":
-        return jsonify([job.__dict__() for job in list(jobs.values())])
-=======
-        new_job = Job(request.form['user'], request.form['name'],request.form['git'])
->>>>>>> 46a3648e56a1d19e29a9bc08b8d41e392e8b2953
-
-        jobs[new_job.id] = new_job # add to database
-        queued.put(new_job) # add to queue
-
-        return redirect("/")
-
-@app.route("/job/pop", methods=["GET"])
-def job_pop_route(id):
-<<<<<<< HEAD
-    if request.method == "GET":
-        pop_job = next(filter(lambda job: job.status == "QUEUED", jobs), None)
-        if pop_job is not None:
-            return jsonify(pop_job)
-        else:
-            return make_response("", 204)
+    return render_template(
+        "index.html",
+        queued=list(queued.queue),
+        running=list(running.values()),
+        completed=list(completed.queue),
+    )
 
 
 @app.route("/job/<string:id>", methods=["GET"])
@@ -146,50 +114,44 @@ def submit_page_route():
     return render_template("submit.html")
 
 
-@app.route("/job/<int:id>/start", methods=["PUT"])
-def job_start_route(id):
-    if request.method == "PUT":
-        if id in jobs:
-            jobs[id].status = Status.RUNNING
-            return make_response("", 200)
-        else:
-            return make_response("", 404)
+@app.route("/job", methods=["POST"])
+def job_route():
+    print(request.form)
+    if request.method == "POST":
+        print(request.form)
+        new_job = Job(request.form["user"], request.form["name"], request.form["git"])
+
+        jobs[new_job.id] = new_job  # add to database
+        queued.put(new_job)  # add to queue
+
+        return redirect("/")
 
 
-@app.route("/job/<int:id>/results", methods=["GET", "PUT"])
-def job_results_route(id):
+@app.route("/job/pop", methods=["GET"])
+def job_pop_route(id):
     if request.method == "GET":
-        if id in jobs:
-            job = jobs[id]
-            if job.status == Status.COMPLETE:
-                return jsonify({"results": job.result})
-            else:
-                return make_response("", 204)
-        else:
-            return make_response("", 404)
-    if request.method == "PUT":
-=======
-    if request.method == 'GET':
         if not queued.empty():
 
-            pop_job = queued.get() # get job from queue
-            pop_job.hardware = "Pendulum-1" # set hardware of job TODO: actually set this to a meaningful value
+            pop_job = queued.get()  # get job from queue
+            pop_job.hardware = (
+                "Pendulum-1"
+            )  # set hardware of job TODO: actually set this to a meaningful value
 
-            running[pop_job.id] = pop_job # add to running dict
+            running[pop_job.id] = pop_job  # add to running dict
 
             return jsonify(pop_job)
         else:
-            return make_response('', 204)
+            return make_response("", 204)
 
-@app.route('/job/<int:id>/results', methods=['PUT'])
+
+@app.route("/job/<int:id>/results", methods=["PUT"])
 def job_results_route(id):
-    if request.method == 'PUT':
->>>>>>> 46a3648e56a1d19e29a9bc08b8d41e392e8b2953
+    if request.method == "PUT":
         if id in jobs:
-            job = jobs[id] # look up job
-            del running[id] # remove from running dict
+            job = jobs[id]  # look up job
+            del running[id]  # remove from running dict
 
-            completed.put(id) # add to completed buffer
+            completed.put(id)  # add to completed buffer
 
             req_data = request.get_json()
 

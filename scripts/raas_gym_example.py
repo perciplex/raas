@@ -7,9 +7,9 @@ from time import sleep
 
 # natural freq: omega = 5.2 ==> f = 5.2/5.3 = 0.82
 
-print('Creating gym object...')
+print("Creating gym object...")
 # Creates and returns Pendulum env object
-env_pend = gym.make('pendulum-v0')
+env_pend = gym.make("pendulum-v0")
 
 N_steps = 300
 time_incr = 0.05
