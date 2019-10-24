@@ -26,7 +26,7 @@ print("Logs folder: ", output_data)
 print("Docker Logs: ", container.logs())
 
 """ok. When this program stops it kills the container.
-Ideally I'd like to create the ccontsiner and transfer 
+Ideally I'd like to create the ccontsiner and transfer
 files into it, then start it. But I can't figure out how?
 We could also build a custom dockerfile that is made from our base image.
 build and run that.

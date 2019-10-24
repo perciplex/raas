@@ -1,5 +1,4 @@
 import pigpio
-
 from math import pi
 import atexit
 
@@ -8,6 +7,8 @@ import atexit
 
 # https://github.com/gpiozero/gpiozero/issues/392
 # https://github.com/pootle/pimotors
+
+
 class Encoder:
     def __init__(self):
         self.steps_per_rev = 120 * 4
@@ -74,13 +75,11 @@ class Motor:
     def stop(self):
         self.set_command(0)
 
-
     def set_pendulum_torque(self, pend_torque):
 
         # This one is just a wrapper for set_command() that makes it so
         # you pass it a torque in the range [-2, 2].
-        self.set_command(pend_torque*250.0)
-
+        self.set_command(pend_torque * 250.0)
 
     def set_command(self, command):
         # check if command is in allowed range?
