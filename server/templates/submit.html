@@ -3,7 +3,7 @@
     <head>
         {% include "header.html" %}
         <script>
-            var re = RegExp('https:\/\/github.com\/([a-z0-9]*)\/([a-z0-9-_]*).git')
+            var re = RegExp('^(?:https:\/\/|http:\/\/|)(?:www.|)github.com\/([a-z0-9]*)\/([a-z0-9-_]*)(?:\/|)(?:.git|)$')
             $(document).ready(function($) {
                 console.log("starting")
                 $("#submit-spinner").hide();
@@ -68,70 +68,74 @@
     <body>
         <div class="container">
             <div class="row">
-                <div class="col-6">
-                    <div class="form-group has-success">
-                        <form action="/job" method="post">
-                            
-                            <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label class="form-control-label" for="inputSuccess1">Git Repository</label>
-                                        <div class="input-group mb-2">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text"><i class="fa fa-lg fa-github"></i></div>
-                                            </div>
-                                            <input type="text" placeholder="GitHub url" class="form-control" id="github-input" name="git">
-
-                                        </div>
-                                    </div>
-                                </div>
-                            <div class="form-row">
-                                
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="username">Username</label>
-                                    <input class="form-control" id="username" type="text" placeholder="GitHub username" readonly="" name="user">
-                                </div>
-                                
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="name">Project Name</label>
-                                    <input class="form-control" id="name" type="text" placeholder="GitHub repo name" readonly="" name="name">
-                                </div>
-                            </div>
-
-                                
-                                
-                            <div id="valid" class="feedback float-left text-success">Looks ready to go! </div>
-                            <div id="invalid-url" class="feedback float-left text-danger">Please enter a valid repository url.</div>
-                            <div id="invalid-not-found" class="feedback float-left text-danger">GitHub repository not found.</div>
-                            <div id="invalid-git" class="feedback float-left text-danger">Please check repository structure.</div>
-
-                            <button type="submit" class="btn btn-primary float-right" id="submit" disabled>
-                                <span id="submit-word">Submit</span>
-                                <div class="spinner-grow" id="submit-spinner" role="status">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
-                            </button>
-
-                        </form>
-                    </div>
-                </div>
-                <div class="col-6">  
+                
+                <div class="col-sm-6">  
                     <div class="card border-primary mb-3">
-                        <div class="card-header">how to submit</div>
+                        <div class="card-header">what do I do?</div>
                         <div class="card-body">
-                            <p class="card-text">
-                                Start by forking <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a>. Your repository should have the following structure:
-                                <br>
+                            <div class="card-text">
+                                Start by forking <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a>, or build your own repository. Either way, you must include <code>run.py</code> at the root directory. We use the same interface as OpenAI Gym with a special enviorment. 
+                                <p></p>
                                 <pre>
-    /
-        run.py
-        /results
-        /log
-                                </pre>
-                                Enter the address of your Git repository.
-                            </p>
+    import gym
+    <strong>import raas_envs</strong>
+    env = gym.make('<strong>Pendulum-RaaS</strong>')
+    env.reset()
+    for _ in range(1000):
+        env.render()
+        env.step(env.action_space.sample()) # take a random action
+    env.close()</pre>
+                                
+                                When run locally, the above code performs a Gym simulation with phyical parameters set to match our hardware. When run at RaaS, the code controls an actual robot!
+                                </div>
                         </div>
                     </div>              
                 </div>
+                <div class="col-sm-6">
+                        <div class="form-group has-success">
+                            <form action="/job" method="post">
+                                <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            <label class="form-control-label" for="inputSuccess1">git repository</label>
+                                            <div class="input-group mb-2">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text"><i class="fa fa-lg fa-github"></i></div>
+                                                </div>
+                                                <input type="text" placeholder="GitHub url" class="form-control" id="github-input" name="git">
+    
+                                            </div>
+                                        </div>
+                                    </div>
+                                <div class="form-row">
+                                    
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="username">username</label>
+                                        <input class="form-control" id="username" type="text" placeholder="GitHub username" readonly="" name="user">
+                                    </div>
+                                    
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="name">project name</label>
+                                        <input class="form-control" id="name" type="text" placeholder="GitHub repo name" readonly="" name="name">
+                                    </div>
+                                </div>
+    
+                                    
+                                    
+                                <div id="valid" class="feedback float-left text-success">looks ready to go! </div>
+                                <div id="invalid-url" class="feedback float-left text-danger">please enter a valid repository url</div>
+                                <div id="invalid-not-found" class="feedback float-left text-danger">GitHub repository not found</div>
+                                <div id="invalid-git" class="feedback float-left text-danger">please check repository structure</div>
+    
+                                <button type="submit" class="btn btn-primary float-right" id="submit" disabled>
+                                    <span id="submit-word">Submit</span>
+                                    <div class="spinner-grow" id="submit-spinner" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </button>
+    
+                            </form>
+                        </div>
+                    </div>
             </div>
         </div>
     </body>
