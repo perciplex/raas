@@ -12,6 +12,8 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     docker_tag = "raas-dev-test:latest"
 
     print(dockerfile)
+    print(docker_tag)
+    print(gitUrl)
     # build the final image using the local raas-base, eventually need to pass in git url
     response = client.images.build(
         path=dockerfile, tag=docker_tag, buildargs={"GIT_REPO_URL": gitUrl}
@@ -27,9 +29,9 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
         output_data = None
 
     print("StdOut: ", container)
-    print("Logs folder: ", output_data)
-    print("Docker Logs: ", container.logs())
-    return str(container.logs())
+    # print("Logs folder: ", output_data)
+    # print("Docker Logs: ", container.logs())
+    return str(container)
 
     """ok. When this program stops it kills the container.
     Ideally I'd like to create the ccontsiner and transfer
@@ -60,7 +62,7 @@ while True:
         git_url = job_json["git_url"]
         results = launch_docker(git_url)
         job_json["results"] = results
-        requests.put(server_ip + "/job/%d/results" % job_id, json=job_json)  # json or data?
+        requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)  # json or data?
     else:
         # Wait and try again
         time.sleep(1)
