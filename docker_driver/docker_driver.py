@@ -38,7 +38,7 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     build and run that."""
 
 
-parser = argparse.ArgumentParser(description="Process some integers.")
+parser = argparse.ArgumentParser(description="Parse incoming arguments.")
 parser.add_argument(
     "-s", "--server", dest="server", default="localhost", help="Server IP address"
 )
@@ -47,7 +47,7 @@ args = parser.parse_args()
 server_ip = args.server
 
 while True:
-
+    server_ip = "http://raas.perciplex.com"
     response = requests.get(server_ip + "/job/pop")
     print(response)
 
