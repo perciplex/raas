@@ -3,9 +3,9 @@ import docker
 client = docker.from_env()
 
 # dockerfile path and tags
-dockerfile = "docker/final_image/."
+dockerfile = "docker/."
 docker_tag = "raas-dev-test:latest"
-git_url = "https://gist.github.com/a7ae5925ac4ace2292fa6fe192a56723.git"
+git_url = "https://github.com/perciplex/raas-starter.git"
 
 # build the final image using the local raas-base, eventually need to pass in git url
 response = client.images.build(
