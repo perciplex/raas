@@ -15,7 +15,7 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     )
 
     # iniitializing docker container with dummy program. Is this how we should do it?
-    container = client.containers.run(docker_tag, detach=True)
+    container = client.containers.run(docker_tag, detach=False)
 
     try:
         output_data = container.get_archive("/usr/src/app/logs/")
@@ -46,6 +46,7 @@ server_ip = args.server
 while True:
 
     response = requests.get(server_ip + "/job/pop")
+    print(server_ip + "/job/pop")
 
     # If work is found, launch the work
     if response.status_code == 200:

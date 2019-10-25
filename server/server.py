@@ -128,7 +128,7 @@ def job_route():
 
 
 @app.route("/job/pop", methods=["GET"])
-def job_pop_route(id):
+def job_pop_route():
     if request.method == "GET":
         if not queued.empty():
 
