@@ -15,12 +15,12 @@ def get_action(state):
     turnaround_speed_thresh = 0.2
 
     if x <= stay_up_thresh:
-        if y<=0:
-            torque = -prop_torque*max_torque
+        if y <= 0:
+            torque = -prop_torque * max_torque
         else:
-            torque = prop_torque*max_torque
+            torque = prop_torque * max_torque
     else:
-        if y<=0:
+        if y <= 0:
             if theta_dot >= 0:
                 torque = -max_torque
             else:
@@ -34,12 +34,11 @@ def get_action(state):
     return np.array([torque])
 
 
-
 # natural freq: omega = 5.2 ==> f = 5.2/5.3 = 0.82
 
-print('Creating gym object...')
+print("Creating gym object...")
 # Creates and returns Pendulum env object
-env_pend = gym.make('pendulum-v0')
+env_pend = gym.make("pendulum-v0")
 
 N_steps = 300
 time_incr = 0.05
@@ -49,18 +48,17 @@ for t in range(N_steps):
 
     sleep(time_incr)
 
-    print(f'Step {t}')
-    #action = np.array([2.0*np.sin(w*t*time_incr)])
+    print(f"Step {t}")
+    # action = np.array([2.0*np.sin(w*t*time_incr)])
     action = get_action(s)
-    print('\tAction: {}'.format(action))
+    print("\tAction: {}".format(action))
     s_next, r, done, _ = env_pend.step(action)
-    print('\tState: {}, reward: {}, state: {}'.format(s_next, r, env_pend.state))
+    print("\tState: {}, reward: {}, state: {}".format(s_next, r, env_pend.state))
 
     s = s_next
 
 
-
-print('\nDone!')
+print("\nDone!")
 
 
 #

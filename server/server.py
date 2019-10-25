@@ -1,4 +1,13 @@
-from flask import Flask, jsonify, request, render_template, redirect, make_response, send_file
+from flask import (
+    Flask,
+    jsonify,
+    request,
+    render_template,
+    redirect,
+    make_response,
+    send_file,
+)
+
 app = Flask(__name__)
 from enum import Enum
 import uuid
@@ -10,16 +19,19 @@ import sys
 import queue
 
 
+app = Flask(__name__)
 
-class Status():
-    QUEUED = 'QUEUED'
-    RUNNING = 'RUNNING'
-    COMPLETE = 'COMPLETE'
+
+class Status:
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    COMPLETE = "COMPLETE"
+
 
 class Job:
     def __init__(self, user, name, git):
-        #self.id = str(uuid.uuid4())
-        
+        # self.id = str(uuid.uuid4())
+
         self.id = str(uuid.UUID(int=rd.getrandbits(128)))
         print(self.id)
         self.name = name
@@ -30,9 +42,16 @@ class Job:
         self.results = "Results pending."
 
     def __dict__(self):
-        return {"id": self.id, "gitUrl":self.git, "results":self.results, "status":self.status}
+        return {
+            "id": self.id,
+            "gitUrl": self.git,
+            "results": self.results,
+            "status": self.status,
+        }
+
     def status_str(self):
         return str(self.status)
+
 
 jobs = {}
 
@@ -47,14 +66,14 @@ queued.put(new_job)
 new_job = Job("kimbers2007", "rl_controller", f"testUrl2")
 jobs[new_job.id] = new_job
 new_job.status = Status.RUNNING
-new_job.hardware="Pendulum-1"
+new_job.hardware = "Pendulum-1"
 running[new_job.id] = new_job
 
 new_job = Job("lizzyB", "liz-controller", f"testUrl3")
 jobs[new_job.id] = new_job
 new_job.status = Status.COMPLETE
-new_job.hardware="Pendulum-1"
-new_job.results = '''
+new_job.hardware = "Pendulum-1"
+new_job.results = """
 [-0.02180978  0.03024429  0.00471958 -0.01161285]
 [-0.0212049  -0.16494503  0.00448732  0.28255542]
 [-0.0245038  -0.3601307   0.01013843  0.57665024]
@@ -67,70 +86,84 @@ new_job.results = '''
 [-0.08681033 -0.94981699  0.11255706  1.55743223]
 [-0.10580667 -1.1460926   0.1437057   1.88300458]
 [-0.12872853 -1.34245716  0.18136579  2.21661946]
-'''
+"""
 completed.put(new_job)
 
 
 print(completed.queue)
 
-@app.route('/')
+
+@app.route("/")
 def base_route():
-    #return send_file("static/index.html")
-    return render_template('index.html', queued=list(queued.queue), running=list(running.values()), completed=list(completed.queue))
+    # return send_file("static/index.html")
+    return render_template(
+        "index.html",
+        queued=list(queued.queue),
+        running=list(running.values()),
+        completed=list(completed.queue),
+    )
 
-@app.route('/job/<string:id>', methods=['GET'])
+
+@app.route("/job/<string:id>", methods=["GET"])
 def job_page_route(id):
-    return render_template('job.html', job=jobs[id])
+    return render_template("job.html", job=jobs[id])
 
-@app.route('/submit', methods=['GET'])
+
+@app.route("/submit", methods=["GET"])
 def submit_page_route():
-    return render_template('submit.html')
+    return render_template("submit.html")
 
-@app.route('/job', methods=['POST'])
+
+@app.route("/job", methods=["POST"])
 def job_route():
     print(request.form)
-    if request.method == 'POST':
+    if request.method == "POST":
         print(request.form)
-        new_job = Job(request.form['user'], request.form['name'],request.form['git'])
+        new_job = Job(request.form["user"], request.form["name"], request.form["git"])
 
-        jobs[new_job.id] = new_job # add to database
-        queued.put(new_job) # add to queue
+        jobs[new_job.id] = new_job  # add to database
+        queued.put(new_job)  # add to queue
 
         return redirect("/")
 
-@app.route('/job/pop', methods=['GET'])
+
+@app.route("/job/pop", methods=["GET"])
 def job_pop_route(id):
-    if request.method == 'GET':
+    if request.method == "GET":
         if not queued.empty():
 
-            pop_job = queued.get() # get job from queue
-            pop_job.hardware = "Pendulum-1" # set hardware of job TODO: actually set this to a meaningful value
+            pop_job = queued.get()  # get job from queue
+            pop_job.hardware = (
+                "Pendulum-1"
+            )  # set hardware of job TODO: actually set this to a meaningful value
 
-            running[pop_job.id] = pop_job # add to running dict
+            running[pop_job.id] = pop_job  # add to running dict
 
             return jsonify(pop_job)
         else:
-            return make_response('', 204)
+            return make_response("", 204)
 
-@app.route('/job/<int:id>/results', methods=['PUT'])
+
+@app.route("/job/<int:id>/results", methods=["PUT"])
 def job_results_route(id):
-    if request.method == 'PUT':
+    if request.method == "PUT":
         if id in jobs:
-            job = jobs[id] # look up job
-            del running[id] # remove from running dict
+            job = jobs[id]  # look up job
+            del running[id]  # remove from running dict
 
-            completed.put(id) # add to completed buffer
+            completed.put(id)  # add to completed buffer
 
             req_data = request.get_json()
 
             job.status = Status.COMPLETE
-            job.results = req_data['results']
-            return make_response('', 200)
+            job.results = req_data["results"]
+            return make_response("", 200)
         else:
-            return make_response('', 404)
+            return make_response("", 404)
 
-if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'prod':
-        app.run(port=80, host='0.0.0.0')
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "prod":
+        app.run(port=80, host="0.0.0.0")
     else:
         app.run(debug=True)
