@@ -8,7 +8,7 @@ from pathlib import *
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     client = docker.from_env()
     
-    dockerfile = str(Path.cwd() / 'docker')
+    dockerfile = str(Path.cwd() / 'docker/final_image')
     docker_tag = "raas-dev-test:latest"
 
     print(dockerfile)
@@ -57,11 +57,10 @@ while True:
         job_json = response.json()
         print(job_json)
         job_id = job_json["id"]
-        gitUrl = job_json["git_url"]
-        #results = launch_docker(gitUrl)
-        results = launch_docker()
+        git_url = job_json["git_url"]
+        results = launch_docker(git_url)
         job_json["results"] = results
-        requests.put("/job/%d/results" % job_id, json=job_json)  # json or data?
+        requests.put(server_ip + "/job/%d/results" % job_id, json=job_json)  # json or data?
     else:
         # Wait and try again
         time.sleep(1)
