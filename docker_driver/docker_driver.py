@@ -2,6 +2,8 @@ import docker
 import requests
 import argparse
 import time
+
+
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     client = docker.from_env()
     dockerfile = "docker/."
@@ -33,10 +35,10 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     build and run that."""
 
 
-parser = argparse.ArgumentParser(description='Process some integers.')
+parser = argparse.ArgumentParser(description="Process some integers.")
 parser.add_argument(
-        "-s", "--server", dest="server", default="localhost", help="Server IP address"
-    )
+    "-s", "--server", dest="server", default="localhost", help="Server IP address"
+)
 
 args = parser.parse_args()
 server_ip = args.server
@@ -44,14 +46,16 @@ server_ip = args.server
 while True:
 
     response = requests.get(server_ip + "/job/pop")
-    if response.status_code == 204:
-        time.sleep(1)
-    else:
+
+    # If work is found, launch the work
+    if response.status_code == 200:
+        # Get response json
         job_json = response.json()
-        id = job_json["id"]
+        job_id = job_json["id"]
         gitUrl = job_json["gitUrl"]
-        #{"id": self.id, "gitUrl":self.git, "results":self.results, "status":self.status}
         results = launch_docker(gitUrl)
         job_json["results"] = results
-        requests.put('/job/%d/results' % id, json=job_json) #json or data?
-
+        requests.put("/job/%d/results" % job_id, json=job_json)  # json or data?
+    else:
+        # Wait and try again
+        time.sleep(1)
