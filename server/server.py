@@ -80,9 +80,10 @@ queued = queue.Queue() # a queue for the queued jobs
 running = {} # a set of running jobs
 completed = queue.Queue(maxsize=20) # a queue of recently completed jobs
 
-new_job = Job("pplex-fan-7", "controller-linear", f"testUrl")
-jobs[new_job.id] = new_job
-queued.put(new_job)
+for i in range(1000):
+    new_job = Job("Perciplex", "hello world", f"https://github.com/perciplex/raas-starter.git")
+    jobs[new_job.id] = new_job
+    queued.put(new_job)
 
 new_job = Job("kimbers2007", "rl_controller", f"testUrl2")
 jobs[new_job.id] = new_job
@@ -154,20 +155,23 @@ def job_pop_route():
             )  # set hardware of job TODO: actually set this to a meaningful value
 
             running[pop_job.id] = pop_job  # add to running dict
-
-            return jsonify(pop_job)
+            pop_job.status = Status.RUNNING
+            return jsonify({
+                "git_url": pop_job.git,
+                "id": pop_job.id
+                })
         else:
             return make_response("", 204)
 
 
-@app.route("/job/<int:id>/results", methods=["PUT"])
+@app.route("/job/<string:id>/results", methods=["PUT"])
 def job_results_route(id):
     if request.method == "PUT":
         if id in jobs:
             job = jobs[id]  # look up job
             del running[id]  # remove from running dict
 
-            completed.put(id)  # add to completed buffer
+            completed.put(job)  # add to completed buffer
 
             req_data = request.get_json()
 
