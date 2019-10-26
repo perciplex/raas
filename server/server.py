@@ -17,47 +17,68 @@ rd = random.Random()
 rd.seed(0)
 import sys
 import queue
+import json
+from json import JSONEncoder
 
 
 app = Flask(__name__)
 
-
+# a status enum
 class Status:
     QUEUED = "QUEUED"
     RUNNING = "RUNNING"
     COMPLETE = "COMPLETE"
 
-
+# a class for queued, running, or completed jobs
 class Job:
-    def __init__(self, user, name, git):
-        # self.id = str(uuid.uuid4())
-
-        self.id = str(uuid.UUID(int=rd.getrandbits(128)))
-        print(self.id)
-        self.name = name
-        self.user = user
-        self.git = git
-        self.status = Status.QUEUED
-        self.hardware = None
-        self.results = "Results pending."
-
-    def __dict__(self):
+    def __init__(self, user, name, git_url):
+        self.id = str(uuid.UUID(int=rd.getrandbits(128))) # a random id
+        self.name = name # github project name
+        self.user = user # github user id
+        self.git_url = git_url # github hrl
+        self.status = Status.QUEUED # job status
+        self.hardware = None # the hardware the job is/was run on, none if queued
+        self.results = "Results pending." # job results
+    def __hash__(self): # define the hash function so that Job objects can be used in a set
+        return hash(self.id)
+    def __eq__(self, other): # also so Job objects can be used in sets
+        if isinstance(other, Job):
+            return (self.id == other.id)
+        else:
+            return False
+    def __dict__(self): # a function for making the job serializable
         return {
             "id": self.id,
-            "gitUrl": self.git,
+            "name": self.name,
+            "user": self.user,
+            "git_url": self.git_url,
             "results": self.results,
             "status": self.status,
+            "hardware": self.hardware
         }
 
-    def status_str(self):
-        return str(self.status)
+# a custom json encoder which replaces the default and allows Job objects to be jsonified
+class JSONEncoderJob(JSONEncoder):
+    def default(self, job):
+        try:
+            if isinstance(job, Job): # if the object to be encoded is a job, use the dict() function
+                return job.__dict__()
+        except TypeError:
+            pass
+        else:
+            return list(iterable)
+        return JSONEncoder.default(self, obj)
 
+# replace the default encoder
+app.json_encoder = JSONEncoderJob
 
+# a dictionary of all jobs
+# TODO: replace with a database
 jobs = {}
 
-queued = queue.Queue()
-running = {}
-completed = queue.Queue()
+queued = queue.Queue() # a queue for the queued jobs
+running = {} # a set of running jobs
+completed = queue.Queue(maxsize=20) # a queue of recently completed jobs
 
 new_job = Job("pplex-fan-7", "controller-linear", f"testUrl")
 jobs[new_job.id] = new_job
@@ -89,18 +110,11 @@ new_job.results = """
 """
 completed.put(new_job)
 
-
-print(completed.queue)
-
-
 @app.route("/")
 def base_route():
     # return send_file("static/index.html")
     return render_template(
-        "index.html",
-        queued=list(queued.queue),
-        running=list(running.values()),
-        completed=list(completed.queue),
+        "index.html"
     )
 
 
@@ -114,17 +128,19 @@ def submit_page_route():
     return render_template("submit.html")
 
 
-@app.route("/job", methods=["POST"])
+@app.route("/job", methods=["POST", "GET"])
 def job_route():
-    print(request.form)
     if request.method == "POST":
-        print(request.form)
         new_job = Job(request.form["user"], request.form["name"], request.form["git"])
-
         jobs[new_job.id] = new_job  # add to database
         queued.put(new_job)  # add to queue
-
         return redirect("/")
+    if request.method == "GET":
+        return jsonify({
+            "queued": list(queued.queue),
+            "running": list(running.values()),
+            "completed": list(completed.queue)
+        })
 
 
 @app.route("/job/pop", methods=["GET"])
