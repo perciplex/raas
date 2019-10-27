@@ -27,6 +27,7 @@
 #info {
     background-color: transparent;
     padding: 0px;
+    font-family: 'VT323', monospace;
 }
 
 #twitch-player {
