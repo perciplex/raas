@@ -7,6 +7,10 @@
 
                 job_list = $('#jobs');
                 
+		$(".link").click(function() {
+			window.document.location = $(this).data("href");
+		});
+
                 function build_job(id, user, name, status, hardware){
                     var tr = $('<tr/>')
                         .addClass("table-row")
