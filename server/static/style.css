@@ -1,0 +1,42 @@
+
+.content {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+  }
+  
+.column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+  
+.scroll {
+    overflow-y:scroll;
+}
+
+
+@media (min-width: 768px) {
+    #content-container {
+        position: relative;
+        top:-100px;
+    }
+}
+
+#info {
+    background-color: transparent;
+    padding: 0px;
+}
+
+#twitch-player {
+    top: 10px;
+    position:relative;
+    padding-top:56.25%;
+}
+
+#plot {
+    top: 10px;
+    width:100%;
+    height:500px;
+}
