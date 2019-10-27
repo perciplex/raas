@@ -38,13 +38,6 @@
                             {%endif%}
                         </h4>
                     </div>
-                    <!--<div class="progress">
-                        <div class="progress-bar {{ 'progress-bar-striped progress-bar-animated' if job.status=='QUEUED' }} {{ 'progress-bar-striped progress-bar-animated' if job.status=='RUNNING' }}" 
-                            role="progressbar" 
-                            style="width: {{ '10%' if job.status=='QUEUED' }} {{ '100%' if job.status=='COMPLETE' }} {{ '50%' if job.status=='RUNNING' }}">
-                            <h5>test</h5>
-                        </div>
-                    </div>-->
                 </div>
             </div>
             <p></p>
@@ -66,7 +59,7 @@
                 </div>
                 
                 <div class="col-sm-6">
-                    <div id="plot" style="width:100%;height:500px;"></div>
+                    <div id="plot" style="width:100%;height:500px;" class="position-sticky" id="plot"></div>
                 </div>  
             </div>
         </div>

@@ -70,32 +70,10 @@
             });
         </script>
         <style>
-            @media (min-width: 768px) {
-                #content {
-                    position: relative;
-                    top:-100px;
-                }
-            }
-            #info {
-                background-color: transparent;
-                padding: 0px;
-            }
-
-            .table-body-scroll tbody {
-                display: block;
-                height: 100%;
-                overflow-y: scroll;
-            }
-
-            .table-body-scroll thead, tbody tr {
-                display: table;
-                width: 100%;
-                table-layout: fixed;
-            }
         </style>
     </head>
     <body>
-        <div class="container" id="content">
+        <div class="container" id="content-container">
             <div class="jumbotron" id="info">
                 <h3 class="display-4" style="width:70%">Reality as a Service</h3>
                 <p style="width:90%">
@@ -118,7 +96,7 @@
                     </table> 
                 </div>
                 <div class="col-sm-6">
-                    <div style="position:relative;padding-top:56.25%;">
+                    <div style="" id="twitch-player" class="position-sticky">
                         <iframe
                         src="https://player.twitch.tv/?channel=perciplex&muted=true"
                         width="100%"
