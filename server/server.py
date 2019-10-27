@@ -80,7 +80,7 @@ queued = queue.Queue() # a queue for the queued jobs
 running = {} # a set of running jobs
 completed = queue.Queue(maxsize=20) # a queue of recently completed jobs
 
-for i in range(1000):
+for i in range(10):
     new_job = Job("Perciplex", "hello world", f"https://github.com/perciplex/raas-starter.git")
     jobs[new_job.id] = new_job
     queued.put(new_job)
