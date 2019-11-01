@@ -80,7 +80,7 @@ queued = queue.Queue() # a queue for the queued jobs
 running = {} # a set of running jobs
 completed = queue.Queue(maxsize=20) # a queue of recently completed jobs
 
-for i in range(100):
+for i in range(15):
     new_job = Job("Perciplex", "hello world", f"https://github.com/perciplex/raas-starter.git")
     jobs[new_job.id] = new_job
     queued.put(new_job)
@@ -157,7 +157,7 @@ def job_pop_route():
             running[pop_job.id] = pop_job  # add to running dict
             pop_job.status = Status.RUNNING
             return jsonify({
-                "git_url": pop_job.git,
+                "git_url": pop_job.git_url,
                 "id": pop_job.id
                 })
         else:
