@@ -2,18 +2,19 @@ import docker
 import requests
 import argparse
 import time
-from pathlib import *
+from pathlib import Path
 
 
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     client = docker.from_env()
-    
+
     dockerfile = str(Path.cwd() / 'docker/final_image')
     docker_tag = "raas-dev-test:latest"
 
     print(dockerfile)
     print(docker_tag)
     print(gitUrl)
+
     # build the final image using the local raas-base, eventually need to pass in git url
     response = client.images.build(
         path=dockerfile, tag=docker_tag, buildargs={"GIT_REPO_URL": gitUrl}
@@ -62,7 +63,7 @@ while True:
         git_url = job_json["git_url"]
         results = launch_docker(git_url)
         job_json["results"] = results
-        requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)  # json or data?
+        requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)
     else:
         # Wait and try again
         time.sleep(1)

@@ -1,6 +1,6 @@
-#FROM multiarch/qemu-user-static:x86_64-arm as qemu
+FROM multiarch/qemu-user-static:x86_64-arm as qemu
 FROM arm32v7/ubuntu
-#COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
+COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
 
 RUN apt-get update -y
 
