@@ -7,3 +7,5 @@ COPY . /app
 WORKDIR /app
 
 RUN pip install -r requirements.txt
+
+RUN git clone https://github.com/perciplex/gym-raas.git && cd gym_raas && pip install -e . && cd ..
