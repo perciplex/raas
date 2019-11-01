@@ -5,63 +5,71 @@
         <script>
             var re = RegExp('^(?:https:\/\/|http:\/\/|)(?:www.|)github.com\/([a-z0-9]*)\/([a-z0-9-_]*)(?:\/|)(?:.git|)$')
             $(document).ready(function($) {
-                console.log("starting")
-                $("#submit-spinner").hide();
-                $(".feedback").hide();
-                $("#github-input").on('input', function() {
-                    $(".feedback").hide();
-                    if (re.test($(this).val())) {
-                        groups = $(this).val().match(re)
+
+                function valid() {
+                    console.log( $("#grecaptcha"))
+                    $("#submit").removeAttr("disabled");
+                    $("#github-input").removeClass("is-invalid")
+                    $("#github-input").addClass("is-valid")
+                }
+
+                function invalid() {
+                    $("#submit").attr("disabled","")
+                    $("#github-input").addClass("is-invalid")
+                    $("#github-input").removeClass("is-valid")
+                    $("#username").val("")
+                    $("#name").val("")
+                }
+
+                function validate_input() {
+                    if (re.test($("#github-input").val())) {
+                        groups = $("#github-input").val().match(re)
                         url = groups[0]
                         user = groups[1]
                         name = groups[2]
                         $("#username").val(user)
                         $("#name").val(name)
 
-                        $("#submit-word").hide();
-                        $("#submit-spinner").show();
-                        $.get( `https://api.github.com/repos/${user}/${name}/contents`, function( data ) {
-                            console.log(data);
+
+                        $.get( `https://api.github.com/repos/${user}/${name}/contents`, {async: false})
+                        .done(function( data ) {
                             var found = false;
-                            data.forEach(element => {
-                                if (element.path == "run.py") {
+                            for (var i = 0, len = data.length; i < len; i++) {
+                                if (data[i].path == "run.py") {
                                     found = true;
                                 }
-                            });
-                            if (found) {
-                                $("#submit").removeAttr("disabled");
-                                $("#valid").show();
-                                $("#github-input").removeClass("is-invalid")
-                                $("#github-input").addClass("is-valid")
-                            } else {
-                                $("#submit").attr("disabled","")
-                                $("#invalid-git").show();
-                                $("#github-input").addClass("is-invalid")
-                                $("#github-input").removeClass("is-valid")
                             }
+                            if (found) {
+                                $("#valid").show();
+                                valid()
+                            } else {
+                                $("#invalid-git").show();
+                                invalid()
+                            }
+                            
                         }).fail(function (data) {
-                            $("#submit").attr("disabled","")
                             $("#invalid-not-found").show();
-                            $("#github-input").addClass("is-invalid")
-                            $("#github-input").removeClass("is-valid")
+                            invalid()
                         });
-                        $("#submit-word").show();
-                        $("#submit-spinner").hide();
-
                     } else {
                         $("#invalid-url").show();
-                        $("#username").val("")
-                        $("#name").val("")
-                        $("#submit").attr("disabled","")
-                        $("#github-input").addClass("is-invalid")
-                        $("#github-input").removeClass("is-valid")
+                        invalid()
                     }
+                }
+
+                console.log("starting")
+                $("#submit-spinner").hide();
+                $(".feedback").hide();
+                $("#github-input").on('input', function() {
+                    $(".feedback").hide();                        
+                    $("#submit-word").hide();
+                    $("#submit-spinner").show();
+                    validate_input()
+                    $("#submit-word").show();
+                    $("#submit-spinner").hide();
+
                 });
                 
-                $("#github-input").change(function() {
-                    if (!re.test($(this).val())) {
-                    }
-                });
             });
         </script>
     </head>
@@ -121,10 +129,6 @@
     
                                     
                                     
-                                <div id="valid" class="feedback float-left text-success">looks ready to go! </div>
-                                <div id="invalid-url" class="feedback float-left text-danger">please enter a valid repository url</div>
-                                <div id="invalid-not-found" class="feedback float-left text-danger">GitHub repository not found</div>
-                                <div id="invalid-git" class="feedback float-left text-danger">please check repository structure</div>
     
                                 <button type="submit" class="btn btn-primary float-right" id="submit" disabled>
                                     <span id="submit-word">Submit</span>
@@ -132,7 +136,13 @@
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </button>
-    
+                                {{ recaptcha }}
+                                <!--<div class="g-recaptcha" data-sitekey="6LfxhLUUAAAAAB9gcKxdKVxgA_RWY8Z6Yo1GyQr2"></div>-->
+                                
+                                <div id="valid" class="feedback float-left text-success">looks ready to go! </div>
+                                <div id="invalid-url" class="feedback float-left text-danger">please enter a valid repository url</div>
+                                <div id="invalid-not-found" class="feedback float-left text-danger">GitHub repository not found</div>
+                                <div id="invalid-git" class="feedback float-left text-danger">please check repository structure</div>
                             </form>
                         </div>
                     </div>

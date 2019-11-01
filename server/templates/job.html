@@ -51,6 +51,14 @@
                             </span>
                         </div>
                         <div class="card-body">
+                            <span class="badge badge-pill badge-primary">{{job.queued_time|datetime}}</span>
+                            
+                            {%if job.status=='RUNNING'%}
+                                <span class="badge badge-pill badge-primary">{{job.running_time|datetime}}</span>
+                            {%endif%}
+                            {%if job.status=='RUNNING'%}
+                                <span class="badge badge-pill badge-primary">{{job.completed_time|datetime}}</span>
+                            {%endif%}
                             <pre class="card-text">
 {{job.results}} 
                             </pre>
