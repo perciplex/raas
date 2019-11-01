@@ -1,12 +1,15 @@
-FROM perciplex/raas-base:latest	
+FROM perciplex/raas-base:0.0.4	
 
 EXPOSE 8080
 
-RUN adduser -D -u 1000 raas
-USER raas
+RUN groupadd -r raas && useradd -r -g raas raas
 
 WORKDIR /home/raas
 
+RUN mkdir -p codeLocation && chown raas codeLocation
+
+USER raas
+
 ARG GIT_REPO_URL	
 RUN git clone $GIT_REPO_URL codeLocation	
-CMD ["python", "codeLocation/run.py"]
+CMD ["python3", "codeLocation/run.py"]
