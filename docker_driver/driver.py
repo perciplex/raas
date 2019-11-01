@@ -8,6 +8,8 @@ import atexit
 
 # https://github.com/gpiozero/gpiozero/issues/392
 # https://github.com/pootle/pimotors
+
+
 class Encoder:
     def __init__(self):
         self.steps_per_rev = 120 * 4
@@ -16,7 +18,7 @@ class Encoder:
         self.B = False
         self.step = 0
         self.prevTick = pi.get_current_tick()
-        self.vel = 0 # velocity is is ticks per microsecond
+        self.vel = 0  # velocity is is ticks per microsecond
 
         def pressA(gpio, level, tick):
             self.A = True
@@ -68,7 +70,8 @@ class Encoder:
 
     def getRadian(self):
         return self.step / self.steps_per_rev * 2 * pi
-    def getRadPerSec(self): # convert microsceonds to seconds and ticks to rads.
+
+    def getRadPerSec(self):  # convert microsceonds to seconds and ticks to rads.
         return self.vel * 1e6 * 2 * pi / self.steps_per_rev
 
 
@@ -90,13 +93,11 @@ class Motor:
     def stop(self):
         self.set_command(0)
 
-
     def set_pendulum_torque(self, pend_torque):
 
         # This one is just a wrapper for set_command() that makes it so
         # you pass it a torque in the range [-2, 2].
         self.set_command(pend_torque*250.0)
-
 
     def set_command(self, command):
         # check if command is in allowed range?
@@ -121,7 +122,6 @@ class Motor:
 
 
 if __name__ == "__main__":
-    from time import sleep
     import zmq
     context = zmq.Context()
     socket = context.socket(zmq.REP)
@@ -137,6 +137,6 @@ if __name__ == "__main__":
             if message_type == "Command":
                 motor.set_command(int(content))
             elif message_type == "Poll":
-                socket.send_pyobj(( encoder.getRadian()  , encoder.getRadPerSec() ))
+                socket.send_pyobj((encoder.getRadian(), encoder.getRadPerSec()))
         except:
             pass

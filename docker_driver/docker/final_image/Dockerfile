@@ -7,6 +7,8 @@ WORKDIR /app
 RUN useradd -ms /bin/bash raas
 USER raas
 
+EXPOSE 8080
+
 ARG GIT_REPO_URL	
 RUN git clone $GIT_REPO_URL codeLocation	
 CMD ["python", "codeLocation/run.py"]
