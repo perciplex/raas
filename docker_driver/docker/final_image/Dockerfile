@@ -1,13 +1,11 @@
 FROM perciplex/raas-base:latest	
 
-COPY . /app	
+EXPOSE 8080
 
-WORKDIR /app	
-
-RUN useradd -ms /bin/bash raas
+RUN adduser -D -u 1000 raas
 USER raas
 
-EXPOSE 8080
+WORKDIR /home/raas
 
 ARG GIT_REPO_URL	
 RUN git clone $GIT_REPO_URL codeLocation	
