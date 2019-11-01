@@ -1,15 +1,16 @@
 FROM perciplex/raas-base:0.0.4	
 
+# Expose port for pyzmq
 EXPOSE 8080
 
-RUN groupadd -r raas && useradd -r -g raas raas
+# Get fresh clone of gym-raas
+RUN git clone https://github.com/perciplex/gym-raas.git && cd gym-raas && pip3 install -e . && cd ..
 
+# Set user and working directory
+USER raas
 WORKDIR /home/raas
 
-RUN mkdir -p codeLocation && chown raas codeLocation
-
-USER raas
-
+# Clone repo to user_git_repo
 ARG GIT_REPO_URL	
-RUN git clone $GIT_REPO_URL codeLocation	
-CMD ["python3", "codeLocation/run.py"]
+RUN git clone $GIT_REPO_URL user_git_repo	
+CMD ["python3", "user_git_repo/run.py"]
