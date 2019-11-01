@@ -7,7 +7,7 @@
 
                 job_list = $('#jobs');
                 
-                function build_job(id, user, name, status, hardware){
+                function build_job(id, user, name, status, hardware, time){
                     var tr = $('<tr/>')
                         .addClass("table-row")
                         .addClass("link")
@@ -17,13 +17,18 @@
                             window.document.location = `job/${id}`;
                         });
                     
+                    var time = $('<td/>')
+                        .text(new Date(time).toLocaleTimeString('en-En', {timeStyle: "short", hour12:false}))
+                        .appendTo(tr)
+
                     var user = $('<td/>')
                         .text(user)
                         .appendTo(tr)
 
                     var name = $('<td/>')
                         .text(name)
-                        .appendTo(tr)
+                        .appendTo(tr)                   
+                        
 
                     badge_type = "";
                     text = status;
@@ -56,8 +61,8 @@
                         
                         statuses = ['queued', 'running', 'completed'];
                         statuses.forEach(status => {
-                            jobs[status].forEach(job => {
-                                build_job(job.id, job.user, job.name, job.status, job.hardware);
+                            jobs[status].sort(job => {job[`${status}_time`]}).forEach(job => {
+                                build_job(job.id, job.user, job.name, job.status, job.hardware, job[`${status}_time`]);
                             });
                         });
                     });
@@ -87,6 +92,7 @@
                     <table class="table table-hover table-striped table-body-scroll">
                         <thead>
                             <tr>
+                                <th scope="col">time</th>
                                 <th scope="col">user</th>
                                 <th scope="col">project name</th>
                             </tr>

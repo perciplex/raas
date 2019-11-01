@@ -19,6 +19,8 @@ import sys
 import queue
 import json
 from json import JSONEncoder
+import datetime
+import time
 
 
 app = Flask(__name__)
@@ -39,6 +41,10 @@ class Job:
         self.status = Status.QUEUED # job status
         self.hardware = None # the hardware the job is/was run on, none if queued
         self.results = "Results pending." # job results
+        self.queued_time = time.time()
+        self.running_time = None
+        self.completed_time = None
+
     def __hash__(self): # define the hash function so that Job objects can be used in a set
         return hash(self.id)
     def __eq__(self, other): # also so Job objects can be used in sets
@@ -54,7 +60,10 @@ class Job:
             "git_url": self.git_url,
             "results": self.results,
             "status": self.status,
-            "hardware": self.hardware
+            "hardware": self.hardware,
+            "queued_time": self.queued_time,
+            "running_time": self.running_time,
+            "completed_time": self.completed_time
         }
 
 # a custom json encoder which replaces the default and allows Job objects to be jsonified
@@ -65,12 +74,15 @@ class JSONEncoderJob(JSONEncoder):
                 return job.__dict__()
         except TypeError:
             pass
-        else:
-            return list(iterable)
-        return JSONEncoder.default(self, obj)
+        return JSONEncoder.default(self, job)
 
 # replace the default encoder
 app.json_encoder = JSONEncoderJob
+
+def format_datetime(value):
+    return datetime.datetime.fromtimestamp(value).strftime("%b %d %Y %H:%M:%S")
+
+app.jinja_env.filters['datetime'] = format_datetime
 
 # a dictionary of all jobs
 # TODO: replace with a database
@@ -79,7 +91,7 @@ jobs = {}
 queued = queue.Queue() # a queue for the queued jobs
 running = {} # a set of running jobs
 completed = queue.Queue(maxsize=20) # a queue of recently completed jobs
-
+'''
 for i in range(100):
     new_job = Job("Perciplex", "hello world", f"https://github.com/perciplex/raas-starter.git")
     jobs[new_job.id] = new_job
@@ -110,7 +122,7 @@ new_job.results = """
 [-0.12872853 -1.34245716  0.18136579  2.21661946]
 """
 completed.put(new_job)
-
+'''
 @app.route("/")
 def base_route():
     # return send_file("static/index.html")
@@ -156,6 +168,7 @@ def job_pop_route():
 
             running[pop_job.id] = pop_job  # add to running dict
             pop_job.status = Status.RUNNING
+            pop_job.running_time = time.time()
             return jsonify({
                 "git_url": pop_job.git,
                 "id": pop_job.id
@@ -177,6 +190,7 @@ def job_results_route(id):
 
             job.status = Status.COMPLETE
             job.results = req_data["results"]
+            job.completed_time = time.time()
             return make_response("", 200)
         else:
             return make_response("", 404)
