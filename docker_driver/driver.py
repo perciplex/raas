@@ -132,6 +132,11 @@ if __name__ == "__main__":
 
     while True:
         #  Wait for next request from client
-        message = socket.recv()
-        motor.set_command(int(message))
-        socket.send(( encoder.getRadian()  , encoder.getRadPerSec() ))
+        try:
+            (message_type, content) = socket.recv_pyobj()
+            if message_type == "Command":
+                motor.set_command(int(content))
+            elif message_type == "Poll":
+                socket.send_pyobj(( encoder.getRadian()  , encoder.getRadPerSec() ))
+        except:
+            pass
