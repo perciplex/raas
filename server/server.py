@@ -21,9 +21,12 @@ import json
 from json import JSONEncoder
 import datetime
 import time
+from flask_recaptcha import ReCaptcha
 
 
 app = Flask(__name__)
+app.config.from_pyfile('../../settings.cfg')
+recaptcha = ReCaptcha(app=app)
 
 # a status enum
 class Status:

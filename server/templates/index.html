@@ -7,15 +7,12 @@
 
                 job_list = $('#jobs');
                 
-<<<<<<< HEAD
-                function build_job(id, user, name, status, hardware, time){
-=======
-		$(".link").click(function() {
-			window.document.location = $(this).data("href");
-		});
+                
+            $(".link").click(function() {
+                window.document.location = $(this).data("href");
+            });
 
-                function build_job(id, user, name, status, hardware){
->>>>>>> 3ba5b9157b7efacdced43c215c5768fa853279a2
+            function build_job(id, user, name, status, hardware, time){
                     var tr = $('<tr/>')
                         .addClass("table-row")
                         .addClass("link")
@@ -26,7 +23,7 @@
                         });
                     
                     var time = $('<td/>')
-                        .text(new Date(time).toLocaleTimeString('en-En', {timeStyle: "short", hour12:false}))
+                        .text(new Date(time*1000).toLocaleTimeString('en-En', {timeStyle: "short", hour12:false}))
                         .appendTo(tr)
 
                     var user = $('<td/>')
@@ -70,6 +67,7 @@
                         statuses = ['queued', 'running', 'completed'];
                         statuses.forEach(status => {
                             jobs[status].sort(job => {job[`${status}_time`]}).forEach(job => {
+                                console.log(job[`${status}_time`])
                                 build_job(job.id, job.user, job.name, job.status, job.hardware, job[`${status}_time`]);
                             });
                         });

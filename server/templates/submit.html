@@ -121,10 +121,6 @@
     
                                     
                                     
-                                <div id="valid" class="feedback float-left text-success">looks ready to go! </div>
-                                <div id="invalid-url" class="feedback float-left text-danger">please enter a valid repository url</div>
-                                <div id="invalid-not-found" class="feedback float-left text-danger">GitHub repository not found</div>
-                                <div id="invalid-git" class="feedback float-left text-danger">please check repository structure</div>
     
                                 <button type="submit" class="btn btn-primary float-right" id="submit" disabled>
                                     <span id="submit-word">Submit</span>
@@ -132,7 +128,13 @@
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </button>
-    
+                                {{ recaptcha }}
+                                <!--<div class="g-recaptcha" data-sitekey="6LfxhLUUAAAAAB9gcKxdKVxgA_RWY8Z6Yo1GyQr2"></div>-->
+                                
+                                <div id="valid" class="feedback float-left text-success">looks ready to go! </div>
+                                <div id="invalid-url" class="feedback float-left text-danger">please enter a valid repository url</div>
+                                <div id="invalid-not-found" class="feedback float-left text-danger">GitHub repository not found</div>
+                                <div id="invalid-git" class="feedback float-left text-danger">please check repository structure</div>
                             </form>
                         </div>
                     </div>
