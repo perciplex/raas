@@ -1,7 +1,7 @@
 FROM perciplex/raas-base:0.0.4	
 
 # Expose port for pyzmq
-EXPOSE 8080
+EXPOSE 5555
 
 # Get fresh clone of gym-raas
 RUN git clone https://github.com/perciplex/gym-raas.git && cd gym-raas && pip3 install -e . && cd ..
