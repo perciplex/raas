@@ -61,10 +61,10 @@ class Encoder:
                 self.vel = -1.0 / pigpio.tickDiff(self.prevTick, tick)
             self.prevTick = tick
 
-        pi.callback(15, pigpio.RISING_EDGE, pressA)
-        pi.callback(15, pigpio.FALLING_EDGE, releaseA)
-        pi.callback(14, pigpio.RISING_EDGE, pressB)
-        pi.callback(14, pigpio.FALLING_EDGE, releaseB)
+        self.pi.callback(15, pigpio.RISING_EDGE, pressA)
+        self.pi.callback(15, pigpio.FALLING_EDGE, releaseA)
+        self.pi.callback(14, pigpio.RISING_EDGE, pressB)
+        self.pi.callback(14, pigpio.FALLING_EDGE, releaseB)
 
     def getDegree(self):
         return self.step / self.steps_per_rev * 360
