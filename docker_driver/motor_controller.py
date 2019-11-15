@@ -2,6 +2,7 @@ import pigpio
 
 from math import pi
 import atexit
+import time
 
 # need to run daemon before you can run this
 # `sudo pigpiod`
@@ -141,9 +142,13 @@ if __name__ == "__main__":
 
     while True:
         #  Wait for next request from client
-        (message_type, content) = socket.recv_pyobj()
-        if message_type == "Command":
-            motor.set_pendulum_torque(int(content))
-            socket.send_pyobj("Ack")
-        elif message_type == "Poll":
-            socket.send_pyobj((encoder.getRadian(), encoder.getRadPerSec()))
+        if socket.poll(500, zmq.POLLIN):
+            (message_type, content) = socket.recv_pyobj(zmq.NOBLOCK)
+            if message_type == "Command":
+                motor.set_pendulum_torque(int(content))
+                socket.send_pyobj("Ack")
+            elif message_type == "Poll":
+                socket.send_pyobj((encoder.getRadian(), encoder.getRadPerSec()))
+        else:
+            print("No Message For 500ms")
+            motor.stop()
