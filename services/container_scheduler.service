@@ -21,7 +21,7 @@ Restart=on-failure
 Type=notify
 
 # Use a dedicated user to run our service
-User=RAAS_USER
+User=pi
 
 [Install]
 
