@@ -8,7 +8,7 @@ from pathlib import Path
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     client = docker.from_env()
 
-    dockerfile = str(Path.cwd() / 'docker/final_image')
+    dockerfile = str(Path.cwd() / "docker/final_image")
     docker_tag = "raas-dev-test:latest"
 
     print(dockerfile)

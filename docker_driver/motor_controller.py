@@ -97,7 +97,7 @@ class Motor:
 
         # This one is just a wrapper for set_command() that makes it so
         # you pass it a torque in the range [-2, 2].
-        self.set_command(pend_torque*250.0)
+        self.set_command(pend_torque * 250.0)
 
     def set_command(self, command):
         # check if command is in allowed range?
@@ -123,6 +123,7 @@ class Motor:
 
 if __name__ == "__main__":
     import zmq
+
     context = zmq.Context()
     socket = context.socket(zmq.REP)
     socket.bind("tcp://*:5555")
