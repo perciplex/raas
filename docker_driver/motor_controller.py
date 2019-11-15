@@ -72,11 +72,11 @@ class Encoder:
     def getRadian(self):
         return self.step / self.steps_per_rev * 2 * pi
 
-    def getRadPerSec(self):  
+    def getRadPerSec(self):
         # convert microseconds to seconds and ticks to rads.
 
         # if 0.01s since last velocity update, just return 0
-        # Corresponds to velocity cutoff of 
+        # Corresponds to velocity cutoff of
         #  2pi / 0.2 / 480 = 0.13 rad/sec = 4 deg per sec
         if 0.2 * 1e6 <= pigpio.tickDiff(self.prevTick, self.pi.get_current_tick()):
             return 0
