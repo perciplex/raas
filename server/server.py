@@ -25,7 +25,7 @@ from flask_recaptcha import ReCaptcha
 
 
 app = Flask(__name__)
-app.config.from_pyfile('../../settings.cfg')
+app.config.from_pyfile("../../settings.cfg")
 recaptcha = ReCaptcha(app=app)
 
 # a status enum
@@ -34,28 +34,33 @@ class Status:
     RUNNING = "RUNNING"
     COMPLETE = "COMPLETE"
 
+
 # a class for queued, running, or completed jobs
 class Job:
     def __init__(self, user, name, git_url):
-        self.id = str(uuid.UUID(int=rd.getrandbits(128))) # a random id
-        self.name = name # github project name
-        self.user = user # github user id
-        self.git_url = git_url # github hrl
-        self.status = Status.QUEUED # job status
-        self.hardware = None # the hardware the job is/was run on, none if queued
-        self.results = "Results pending." # job results
+        self.id = str(uuid.UUID(int=rd.getrandbits(128)))  # a random id
+        self.name = name  # github project name
+        self.user = user  # github user id
+        self.git_url = git_url  # github hrl
+        self.status = Status.QUEUED  # job status
+        self.hardware = None  # the hardware the job is/was run on, none if queued
+        self.results = "Results pending."  # job results
         self.queued_time = time.time()
         self.running_time = None
         self.completed_time = None
 
-    def __hash__(self): # define the hash function so that Job objects can be used in a set
+    def __hash__(
+        self
+    ):  # define the hash function so that Job objects can be used in a set
         return hash(self.id)
-    def __eq__(self, other): # also so Job objects can be used in sets
+
+    def __eq__(self, other):  # also so Job objects can be used in sets
         if isinstance(other, Job):
-            return (self.id == other.id)
+            return self.id == other.id
         else:
             return False
-    def __dict__(self): # a function for making the job serializable
+
+    def __dict__(self):  # a function for making the job serializable
         return {
             "id": self.id,
             "name": self.name,
@@ -66,34 +71,40 @@ class Job:
             "hardware": self.hardware,
             "queued_time": self.queued_time,
             "running_time": self.running_time,
-            "completed_time": self.completed_time
+            "completed_time": self.completed_time,
         }
+
 
 # a custom json encoder which replaces the default and allows Job objects to be jsonified
 class JSONEncoderJob(JSONEncoder):
     def default(self, job):
         try:
-            if isinstance(job, Job): # if the object to be encoded is a job, use the dict() function
+            if isinstance(
+                job, Job
+            ):  # if the object to be encoded is a job, use the dict() function
                 return job.__dict__()
         except TypeError:
             pass
         return JSONEncoder.default(self, job)
 
+
 # replace the default encoder
 app.json_encoder = JSONEncoderJob
+
 
 def format_datetime(value):
     return datetime.datetime.fromtimestamp(value).strftime("%b %d %Y %H:%M:%S")
 
-app.jinja_env.filters['datetime'] = format_datetime
+
+app.jinja_env.filters["datetime"] = format_datetime
 
 # a dictionary of all jobs
 # TODO: replace with a database
 jobs = {}
 
-queued = queue.Queue() # a queue for the queued jobs
-running = {} # a set of running jobs
-completed = queue.Queue(maxsize=20) # a queue of recently completed jobs
+queued = queue.Queue()  # a queue for the queued jobs
+running = {}  # a set of running jobs
+completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
 
 '''
 for i in range(15):
@@ -127,12 +138,12 @@ new_job.results = """
 """
 completed.put(new_job)
 '''
+
+
 @app.route("/")
 def base_route():
     # return send_file("static/index.html")
-    return render_template(
-        "index.html"
-    )
+    return render_template("index.html")
 
 
 @app.route("/job/<string:id>", methods=["GET"])
@@ -153,11 +164,13 @@ def job_route():
         queued.put(new_job)  # add to queue
         return redirect("/")
     if request.method == "GET":
-        return jsonify({
-            "queued": list(queued.queue),
-            "running": list(running.values()),
-            "completed": list(completed.queue)
-        })
+        return jsonify(
+            {
+                "queued": list(queued.queue),
+                "running": list(running.values()),
+                "completed": list(completed.queue),
+            }
+        )
 
 
 @app.route("/job/pop", methods=["GET"])
@@ -173,10 +186,7 @@ def job_pop_route():
             running[pop_job.id] = pop_job  # add to running dict
             pop_job.status = Status.RUNNING
             pop_job.running_time = time.time()
-            return jsonify({
-                "git_url": pop_job.git_url,
-                "id": pop_job.id
-                })
+            return jsonify({"git_url": pop_job.git_url, "id": pop_job.id})
         else:
             return make_response("", 204)
 
