@@ -1,12 +1,29 @@
+# systemd file for motor_controller.py service
+
+
 [Unit]
-Description=Dummy Service
-After=multi-user.target
-Conflicts=getty@tty1.service
+
+Description=RaaS Motor Controller Service
 
 [Service]
-Type=simple
+
+# Command to execute when the service is started
 ExecStart=/usr/bin/python3 /home/pi/raas/docker_driver/motor_controller.py
-StandardInput=tty-force
+
+# Disable Python's buffering of STDOUT and STDERR, so that output from the
+# service shows up immediately in systemd's logs
+Environment=PYTHONUNBUFFERED=1
+
+# Automatically restart the service if it crashes
+Restart=on-failure
+
+# Our service will notify systemd once it is up and running
+Type=notify
+
+# Use a dedicated user to run our service
+User=RAAS_USER
 
 [Install]
-WantedBy=multi-user.target
+
+# Tell systemd to automatically start this service when the system boots
+WantedBy=default.target
