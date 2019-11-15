@@ -13,11 +13,11 @@ import atexit
 class Encoder:
     def __init__(self):
         self.steps_per_rev = 120 * 4
-        pi = pigpio.pi()
+        self.pi = pigpio.pi()
         self.A = False
         self.B = False
         self.step = 0
-        self.prevTick = pi.get_current_tick()
+        self.prevTick = self.pi.get_current_tick()
         self.vel = 0  # velocity is is ticks per microsecond
 
         def pressA(gpio, level, tick):
@@ -71,8 +71,16 @@ class Encoder:
     def getRadian(self):
         return self.step / self.steps_per_rev * 2 * pi
 
-    def getRadPerSec(self):  # convert microsceonds to seconds and ticks to rads.
-        return self.vel * 1e6 * 2 * pi / self.steps_per_rev
+    def getRadPerSec(self):  
+        # convert microseconds to seconds and ticks to rads.
+
+        # if 0.01s since last velocity update, just return 0
+        # Corresponds to velocity cutoff of 
+        #  2pi / 0.2 / 480 = 0.13 rad/sec = 4 deg per sec
+        if 0.2 * 1e6 <= pigpio.tickDiff(self.prevTick, self.pi.get_current_tick()):
+            return 0
+        else:
+            return self.vel * 1e6 * 2 * pi / self.steps_per_rev
 
 
 class Motor:
