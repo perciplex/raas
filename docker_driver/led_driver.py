@@ -12,7 +12,7 @@ class LedMessage():
                 self.msg = msg
                 self.serial = spi(port=0, device=0, gpio=noop())
                 self.device = max7219(self.serial, cascaded=4, block_orientation=90,rotate=2, blocks_arranged_in_reverse_order=True)
-                self.device.contrast(2 * 16)
+                self.device.contrast(6)
                 self.thread = None
 
         def start(self):
