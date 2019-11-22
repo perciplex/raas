@@ -1,6 +1,7 @@
-FROM multiarch/qemu-user-static:x86_64-arm as qemu
-FROM arm32v7/ubuntu
-COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
+#FROM multiarch/qemu-user-static:x86_64-arm as qemu
+#FROM arm32v7/ubuntu
+FROM ubuntu
+#COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
 
 # Apt update and install dependencies
 RUN apt-get update -y

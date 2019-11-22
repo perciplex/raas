@@ -22,8 +22,6 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
 
     # iniitializing docker container with dummy program. Is this how we should do it?
     container = client.containers.run(docker_tag, detach=True)
-    container.wait(timeout=120)
-    container.stop()
 
     try:
         output_data = container.get_archive("/usr/src/app/logs/")
