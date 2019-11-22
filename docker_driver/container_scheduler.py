@@ -25,7 +25,7 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     dockerfile = str(Path(__file__).resolve().parent / "docker_images/final_image")
     docker_tag = "raas-dev-test:latest"
 
-    write_led(gitUrl)
+    #write_led(gitUrl)
 
     print(dockerfile)
     print(docker_tag)
