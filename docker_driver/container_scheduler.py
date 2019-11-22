@@ -43,19 +43,23 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
 
 parser = argparse.ArgumentParser(description="Parse incoming arguments.")
 parser.add_argument(
-    "-s", "--server", dest="server", default="localhost", help="Server IP address"
+    "-s", "--server", dest="server", default="http://raas.perciplexs.com", help="Server IP address"
 )
 
 args = parser.parse_args()
 server_ip = args.server
 
 while True:
-    server_ip = "http://raas.perciplex.com"
-    response = requests.get(server_ip + "/job/pop")
-    print(response)
+    try:
+        response = requests.get(server_ip + "/job/pop")
+        response_status = response.status_code
+        print(response)
+    except requests.exceptions.ConnectionError as e:
+        response_status = None
+        print("Server not reached {}".format(e))
 
     # If work is found, launch the work
-    if response.status_code == 200:
+    if response_status == 200:
         # Get response json
         job_json = response.json()
         print(job_json)
