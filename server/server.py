@@ -49,9 +49,7 @@ class Job:
         self.running_time = None
         self.completed_time = None
 
-    def __hash__(
-        self
-    ):  # define the hash function so that Job objects can be used in a set
+    def __hash__(self):  # define the hash function so that Job objects can be used in a set
         return hash(self.id)
 
     def __eq__(self, other):  # also so Job objects can be used in sets
@@ -200,7 +198,8 @@ def job_pop_route():
             running[pop_job.id] = pop_job  # add to running dict
             pop_job.status = Status.RUNNING
             pop_job.running_time = time.time()
-            return jsonify({"git_url": pop_job.git_url, "id": pop_job.id})
+            #return jsonify({"git_url": pop_job.git_url, "id": pop_job.id})
+            return jsonify(job)
         else:
             return make_response("", 204)
 
