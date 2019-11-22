@@ -4,12 +4,28 @@ import argparse
 import time
 from pathlib import Path
 
+import re
+import time
+
+from luma.led_matrix.device import max7219
+from luma.core.interface.serial import spi, noop
+from luma.core.legacy import text, show_message
+from luma.core.legacy.font import proportional, CP437_FONT, TINY_FONT, SINCLAIR_FONT, LCD_FONT
+
+def write_led(msg):
+    serial = spi(port=0, device=0, gpio=noop())
+    device = max7219(serial, cascaded=4, block_orientation=90,rotate=2, blocks_arranged_in_reverse_order=True)
+    show_message(device, msg, fill="white", font=proportional(LCD_FONT), scroll_delay=0.1)
+    #device.contrast(intensity * 16)
+
 
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     client = docker.from_env()
 
-    dockerfile = str(Path.cwd() / "docker_images/final_image")
+    dockerfile = str(Path(__file__).resolve().parent / "docker_images/final_image")
     docker_tag = "raas-dev-test:latest"
+
+    write_led(gitUrl)
 
     print(dockerfile)
     print(docker_tag)

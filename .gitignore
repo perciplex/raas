@@ -5,3 +5,4 @@ raasgym/build/
 raasgym/dist/
 raasgym/raasgym.egg-info/
 raasgym/raasgym/__pycache__/
+*.cfg
