@@ -100,11 +100,21 @@ app.jinja_env.filters["datetime"] = format_datetime
 
 # a dictionary of all jobs
 # TODO: replace with a database
-jobs = {}
 
+
+jobs = {}                                                                                                                                                                                                                                   
 queued = queue.Queue()  # a queue for the queued jobs
 running = {}  # a set of running jobs
 completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
+
+def reset_jobs():
+    jobs = {}
+    
+    queued = queue.Queue()  # a queue for the queued jobs
+    running = {}  # a set of running jobs
+    completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
+
+
 
 '''
 for i in range(15):
@@ -138,7 +148,10 @@ new_job.results = """
 """
 completed.put(new_job)
 '''
-
+@app.route("/reset")
+def reset_route():
+    reset_jobs()
+    return redirect("/")
 
 @app.route("/")
 def base_route():
