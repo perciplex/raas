@@ -43,7 +43,7 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
 
 parser = argparse.ArgumentParser(description="Parse incoming arguments.")
 parser.add_argument(
-    "-s", "--server", dest="server", default="http://raas.perciplexs.com", help="Server IP address"
+    "-s", "--server", dest="server", default="http://raas.perciplex.com", help="Server IP address"
 )
 
 args = parser.parse_args()
