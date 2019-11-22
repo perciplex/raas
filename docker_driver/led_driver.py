@@ -7,26 +7,34 @@ from luma.core.legacy import text, show_message
 from luma.core.legacy.font import proportional, CP437_FONT, TINY_FONT, SINCLAIR_FONT, LCD_FONT
 import multiprocessing
 
+# a class for displaying a single message on the LED matrix display
+
 class LedMessage():
         def __init__(self, msg):
-                self.msg = msg
-                self.serial = spi(port=0, device=0, gpio=noop())
-                self.device = max7219(self.serial, cascaded=4, block_orientation=90,rotate=2, blocks_arranged_in_reverse_order=True)
-                self.device.contrast(2 * 16)
-                self.thread = None
+                self.msg = msg # store the message content
+                self.serial = spi(port=0, device=0, gpio=noop()) # open a serial port
+                self.device = max7219(self.serial, cascaded=4, block_orientation=90,rotate=2, blocks_arranged_in_reverse_order=True) # initialize a matrix display object
+                self.device.contrast(6) # decrease the contrast so that it looks okay on video
+                self.process = None # initialize a variable that will store the process 
+
+        def __del__(self):
+                self.stop() # stop any message and clear
+                self.serial.cleanup() # clean up the serial port
+
 
         def start(self):
-                self.thread = multiprocessing.Process(target=self._write_led, args=(), kwargs={})
-                self.thread.start()    
+                self.process = multiprocessing.Process(target=self._show_msg, args=(), kwargs={}) # initialize a process to repeatedly write the message
+                self.process.start() # start the process
 
         def stop(self):
-                if self.thread:
-                        self.thread.terminate()
-                self._clear_led() 
+                if self.process: # check if a process is actually running
+                        self.process.terminate() # if it has, stop it
+                        self.process = None # reset the process to none
+                self._clear() # clear the display
 
-        def _write_led(self):  
-                while True:
-                        show_message(self.device, self.msg, fill="white", font=proportional(LCD_FONT), scroll_delay=0.1)
+        def _show_msg(self):  
+                while True: # forever
+                        show_message(self.device, self.msg, fill="white", font=proportional(LCD_FONT), scroll_delay=0.05) # display the scrolling message
 
-        def _clear_led(self):
-                show_message(self.device, "", fill="white", font=proportional(LCD_FONT), scroll_delay=0)
+        def _clear(self):
+                show_message(self.device, "", fill="white", font=proportional(LCD_FONT), scroll_delay=0) # write a blank message to clear the screen
