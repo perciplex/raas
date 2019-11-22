@@ -108,6 +108,7 @@ running = {}  # a set of running jobs
 completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
 
 def reset_jobs():
+    global jobs, queued, running, completed
     jobs = {}
     
     queued = queue.Queue()  # a queue for the queued jobs
