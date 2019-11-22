@@ -16,4 +16,4 @@ WORKDIR /home/raas
 # Clone repo to user_git_repo
 ARG GIT_REPO_URL	
 RUN git clone $GIT_REPO_URL user_git_repo	
-CMD ["python3", "user_git_repo/run.py"]
+CMD ["python3", "-u", "user_git_repo/run.py"]
