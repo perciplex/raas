@@ -142,10 +142,11 @@ if __name__ == "__main__":
 
     while True:
         #  Wait for next request from client
-        if socket.poll(500, zmq.POLLIN):
+        if socket.poll(2000, zmq.POLLIN):
             (message_type, content) = socket.recv_pyobj(zmq.NOBLOCK)
             if message_type == "Command":
-                motor.set_pendulum_torque(int(content))
+                #motor.set_pendulum_torque(int(content))
+                motor.set_pendulum_torque(content)
                 socket.send_pyobj("Ack")
             elif message_type == "Poll":
                 socket.send_pyobj((encoder.getRadian(), encoder.getRadPerSec()))
