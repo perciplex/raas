@@ -2,10 +2,10 @@ FROM perciplex/raas-base:0.0.4
 
 # Expose port for pyzmq
 EXPOSE 5555
-RUN git
+
 # Get fresh clone of gym-raas
-RUN git clone https://github.com/perciplex/gym-raas.git
-RUN cd gym-raas && pip install -e . && cd  ..
+RUN git clone https://github.com/perciplex/gym-raas.git && cd gym-raas && pip install -e . && cd  ..
+
 # set hardware env variable
 ENV RAASPI 1
 
