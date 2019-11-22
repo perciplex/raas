@@ -91,7 +91,7 @@ app.json_encoder = JSONEncoderJob
 
 
 def format_datetime(value):
-    return datetime.datetime.fromtimestamp(value).strftime("%b %d %Y %H:%M:%S")
+    return datetime.datetime.fromtimestamp(value).strftime("%m/%d/%y %H:%M:%S")
 
 
 app.jinja_env.filters["datetime"] = format_datetime
@@ -160,8 +160,10 @@ def base_route():
 
 @app.route("/job/<string:id>", methods=["GET"])
 def job_page_route(id):
-    return render_template("job.html", job=jobs[id])
-
+    if id in jobs:
+        return render_template("job.html", job=jobs[id])
+    else:
+        return redirect("/")
 
 @app.route("/submit", methods=["GET"])
 def submit_page_route():
@@ -216,7 +218,7 @@ def job_results_route(id):
             req_data = request.get_json()
 
             job.status = Status.COMPLETE
-            job.results = req_data["results"]
+            job.results = req_data["results"][2:-1]
             job.completed_time = time.time()
             return make_response("", 200)
         else:

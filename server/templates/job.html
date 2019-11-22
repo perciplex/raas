@@ -51,17 +51,19 @@
                             </span>
                         </div>
                         <div class="card-body">
-                            <span class="badge badge-pill badge-warning">submitted {{job.queued_time|datetime}}</span>
-                            {% if ((job.status=='RUNNING') or (job.status=='COMPLETE')) %}
-                                <br>
-                                <span class="badge badge-pill badge-primary">started {{job.running_time|datetime}}</span>
-                            {%endif%}
-                            {% if job.status=='COMPLETE' %}
-                                <br>
-                                <span class="badge badge-pill badge-success">finished {{job.completed_time|datetime}}</span>
-                            {%endif%}
-                            <pre class="card-text">
-{{job.results.replace("\n", "<br />")}} 
+				<div>
+					<span class="badge badge-pill badge-warning"><i class="fa fa-list-ul"></i> {{job.queued_time|datetime}}</span>
+                            		{% if ((job.status=='RUNNING') or (job.status=='COMPLETE')) %}
+					<span class="badge badge-pill badge-primary"><i class="fa fa-play"></i> {{job.running_time|datetime}}</span>
+                            		{%endif%}
+                            		{% if job.status=='COMPLETE' %}
+					<span class="badge badge-pill badge-success"><i class="fa fa-flag-checkered"></i> {{job.completed_time|datetime}}</span>
+                            		{%endif%}
+				</div>
+                            <pre class="card-text" style="white-space: nowrap;overflow-x:scroll;">
+				{% autoescape false %}
+{{job.results|replace("\\n","<br/>")|replace("\\t", "	")}} 
+				{% endautoescape %}
                             </pre>
                         </div>
                     </div>            
