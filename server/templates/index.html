@@ -2,6 +2,8 @@
 <html lang="en">
     <head>
         {% include "header.html" %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.js" crossorigin="anonymous"></script>
+
         <script>
             $(document).ready(function($) {
 
@@ -23,7 +25,8 @@
                         });
                     
                     var time = $('<td/>')
-                        .text(new Date(time*1000).toLocaleTimeString('en-En', {timeStyle: "short", hour12:false}))
+                        //.text(new Date(time*1000).toLocaleTimeString('en-En', {timeStyle: "medium", hour12:false}))
+                        .text(jQuery.timeago(new Date(time*1000)))
                         .appendTo(tr)
 
                     var user = $('<td/>')
@@ -76,7 +79,7 @@
                 
                 load_jobs();
 
-                setInterval(load_jobs, 10000)
+                setInterval(load_jobs, 3000)
 
             });
         </script>

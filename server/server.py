@@ -178,9 +178,9 @@ def job_route():
     if request.method == "GET":
         return jsonify(
             {
-                "queued": list(queued.queue),
-                "running": list(running.values()),
-                "completed": list(completed.queue),
+                "queued": sorted(list(queued.queue), key=lambda job: -job.queued_time),
+                "running": sorted(list(running.values()), key=lambda job: -job.running_time),
+                "completed": sorted(list(completed.queue), key=lambda job: -job.completed_time),
             }
         )
 
