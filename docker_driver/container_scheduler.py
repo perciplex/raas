@@ -13,8 +13,6 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     dockerfile = str(Path(__file__).resolve().parent / "docker_images/final_image")
     docker_tag = "raas-dev-test:latest"
 
-    led = LedMessage(gitUrl)
-    led.start()
 
     print(dockerfile)
     print(docker_tag)
@@ -28,7 +26,6 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     # iniitializing docker container with dummy program. Is this how we should do it?
     container = client.containers.run(docker_tag)
 
-    led.stop()
 
     try:
         output_data = container.get_archive("/usr/src/app/logs/")
@@ -72,7 +69,16 @@ while True:
         print(job_json)
         job_id = job_json["id"]
         git_url = job_json["git_url"]
+        user = job_json["user"]
+        name = job_json["name"]
+
+        led = LedMessage(f'{user}:{name}')
+        led.start()
+
         results = launch_docker(git_url)
+        
+        led.stop()
+
         job_json["results"] = results
         requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)
     else:
