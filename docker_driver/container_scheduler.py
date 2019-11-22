@@ -4,27 +4,8 @@ import argparse
 import time
 from pathlib import Path
 
-import re
-import time
+from led_driver import LedMessage
 
-from luma.led_matrix.device import max7219
-from luma.core.interface.serial import spi, noop
-from luma.core.legacy import text, show_message
-from luma.core.legacy.font import proportional, CP437_FONT, TINY_FONT, SINCLAIR_FONT, LCD_FONT
-import multiprocessing
-
-def write_led(msg):
-    serial = spi(port=0, device=0, gpio=noop())
-    device = max7219(serial, cascaded=4, block_orientation=90,rotate=2, blocks_arranged_in_reverse_order=True)
-    device.contrast(2 * 16)
-    while True:
-        show_message(device, msg, fill="white", font=proportional(LCD_FONT), scroll_delay=0.1)
-
-def clear_led():
-    msg=""
-    serial = spi(port=0, device=0, gpio=noop())
-    device = max7219(serial, cascaded=4, block_orientation=90,rotate=2, blocks_arranged_in_reverse_order=True)
-    show_message(device, msg, fill="white", font=proportional(LCD_FONT), scroll_delay=0.1)
 
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     client = docker.from_env()
@@ -32,7 +13,8 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     dockerfile = str(Path(__file__).resolve().parent / "docker_images/final_image")
     docker_tag = "raas-dev-test:latest"
 
-    #write_led(gitUrl)
+    led = LedMessage(gitUrl)
+    led.start()
 
     print(dockerfile)
     print(docker_tag)
@@ -45,6 +27,8 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
 
     # iniitializing docker container with dummy program. Is this how we should do it?
     container = client.containers.run(docker_tag)
+
+    led.stop()
 
     try:
         output_data = container.get_archive("/usr/src/app/logs/")
