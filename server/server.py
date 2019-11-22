@@ -199,7 +199,7 @@ def job_pop_route():
             pop_job.status = Status.RUNNING
             pop_job.running_time = time.time()
             #return jsonify({"git_url": pop_job.git_url, "id": pop_job.id})
-            return jsonify(job)
+            return jsonify(pop_job)
         else:
             return make_response("", 204)
 
