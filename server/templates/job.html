@@ -5,8 +5,8 @@
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <script>
             $(document).ready(function($) {
-                var data = `{{job.results}}`;
-                //console.log(data);
+                var data = JSON.parse("{{job.data}}".replace(/&#39;/g,"\""));
+                console.log(data);
                 var layout = {
                 margin: {
                     l: 50,
@@ -16,13 +16,42 @@
                     pad: 0
                 }
                 };
-                var plot = {
-                    x: [1, 2, 3, 4],
-                    y: [10, 15, 13, 17],
-                    type: 'scatter'
-                    };
+		var t0 = data.times[0];
+		var times = data.times.map(t => t-t0);
+		var obs = data.obs;
+		var obs_T = obs[0].map((col, i) => obs.map(row => row[i]));
+		var x_plot = {
+                	x: times,
+                	y: obs_T[0],
+			name: 'y',
+                	type: 'scatter'
+                };
+		var y_plot = {
+			x: times,
+			y: obs_T[1],
+			name: 'x',
+			type: 'scatter'
+		}
+		var tdot_plot = {
+			x: times,
+			y: obs_T[2],
+			name: 'theta dot',
+			type: 'scatter'
+		}
+		var action_plot = {
+			x: times,
+			y: data.actions,
+			name: 'action',
+			type: 'scatter'
+		}
+		var cost_plot = {
+			x: times,
+			y: data.costs,
+			name: 'cost',
+			type: 'action'
+		}
 
-                Plotly.newPlot("plot", [plot], layout);
+                Plotly.newPlot("plot", [x_plot, y_plot, tdot_plot,  action_plot], layout);
             });
         </script>
     </head>
