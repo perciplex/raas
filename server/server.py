@@ -45,6 +45,7 @@ class Job:
         self.status = Status.QUEUED  # job status
         self.hardware = None  # the hardware the job is/was run on, none if queued
         self.results = "Results pending."  # job results
+        self.data = None # observations, actions, reqards, and times for the job data points
         self.queued_time = time.time()
         self.running_time = None
         self.completed_time = None
@@ -65,6 +66,7 @@ class Job:
             "user": self.user,
             "git_url": self.git_url,
             "results": self.results,
+            "data": self.data,
             "status": self.status,
             "hardware": self.hardware,
             "queued_time": self.queued_time,
@@ -219,6 +221,7 @@ def job_results_route(id):
 
             job.status = Status.COMPLETE
             job.results = req_data["results"][2:-1]
+            job.data = req_data["data"]
             print(job.data)
             job.completed_time = time.time()
             return make_response("", 200)
