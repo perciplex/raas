@@ -219,6 +219,7 @@ def job_results_route(id):
 
             job.status = Status.COMPLETE
             job.results = req_data["results"][2:-1]
+            print(job.data)
             job.completed_time = time.time()
             return make_response("", 200)
         else:

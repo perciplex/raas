@@ -3,6 +3,7 @@ import requests
 import argparse
 import time
 from pathlib import Path
+import pickle
 
 from led_driver import LedMessage
 
@@ -79,7 +80,12 @@ while True:
         
         led.stop()
 
+        stdout, data = results.split("## STARTING DATA SECTION ##")
+        data = data.split("## ENDING DATA SECTION ##")[0]
+        data = pickle.loads(data)
+
         job_json["results"] = results
+        job_json["data"] = data
         requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)
     else:
         # Wait and try again
