@@ -21,7 +21,7 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
 
     # build the final image using the local raas-base, eventually need to pass in git url
     response = client.images.build(
-        path=dockerfile, tag=docker_tag, buildargs={"GIT_REPO_URL": gitUrl}, nocache= True
+        path=dockerfile, tag=docker_tag, buildargs={"GIT_REPO_URL": gitUrl}#, nocache= True
     )
 
     # iniitializing docker container with dummy program. Is this how we should do it?
