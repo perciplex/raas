@@ -151,6 +151,9 @@ completed.put(new_job)
 '''
 @app.route("/reset")
 def reset_route():
+    if request.remote_addr != app.config["PI_IP"]:
+        print("reset request from non-pi ip")
+        return make_response("", 403)
     reset_jobs()
     return redirect("/")
 
@@ -192,6 +195,9 @@ def job_route():
 @app.route("/job/pop", methods=["GET"])
 def job_pop_route():
     if request.method == "GET":
+        if request.remote_addr != app.config["PI_IP"]:
+            print("pop request from non-pi ip")
+            return make_response("", 403)
         if not queued.empty():
 
             pop_job = queued.get()  # get job from queue
@@ -211,6 +217,9 @@ def job_pop_route():
 @app.route("/job/<string:id>/results", methods=["PUT"])
 def job_results_route(id):
     if request.method == "PUT":
+        if request.remote_addr != app.config["PI_IP"]:
+            print("results request from non-pi ip")
+            return make_response("", 403)
         if id in jobs:
             job = jobs[id]  # look up job
             del running[id]  # remove from running dict
