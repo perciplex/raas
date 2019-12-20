@@ -10,7 +10,7 @@ RUN git clone https://github.com/perciplex/gym-raas.git && cd gym-raas && pip3 i
 ENV RAASPI 1
 
 # Set user and working directory
-USER raas
+#USER raas
 WORKDIR /home/raas
 
 # Clone repo to user_git_repo

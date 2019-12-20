@@ -21,27 +21,38 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
 
     # build the final image using the local raas-base, eventually need to pass in git url
     response = client.images.build(
-        path=dockerfile, tag=docker_tag, buildargs={"GIT_REPO_URL": gitUrl}, nocache= True
+        path=dockerfile, tag=docker_tag, buildargs={"GIT_REPO_URL": gitUrl}#, nocache= True
     )
 
-    # iniitializing docker container with dummy program. Is this how we should do it?
-    container = client.containers.run(docker_tag)
+    
+    # initialize a volume
+    volume = client.volumes.create(name='log')
 
+    vol_path = Path(volume.attrs['Mountpoint'])
+        
+
+    # iniitializing docker container with dummy program. Is this how we should do it?
+    #stdout = client.containers.run(docker_tag, volumes={'log': {'bind': '/mnt/log', 'mode':'rw'}})
+
+    stdout = client.containers.run(docker_tag, mounts=[{
+        'Type': 'bind', 
+        'Source': '/tmp/logs/',
+        'Target':'/tmp/',
+        'RW': True
+        }])
 
     try:
-        output_data = container.get_archive("/usr/src/app/logs/")
+        with open('/tmp/logs/log.json') as f:
+            log = json.load(f)
     except Exception as e:
         print("Error {}".format(e))
-        output_data = None
+        log = None
 
-    print("StdOut: ", container)
-    # print("Logs folder: ", output_data)
-    # print("Docker Logs: ", container.logs())
-    return str(container)
+    return str(stdout), log
 
     """ok. When this program stops it kills the container.
     Ideally I'd like to create the ccontsiner and transfer
-    files into it, then start it. But I can't figure out how?
+    file into it, then start it. But I can't figure out how?
     We could also build a custom dockerfile that is made from our base image.
     build and run that."""
 
@@ -76,17 +87,17 @@ while True:
         led = LedMessage(f'{user}:{name}')
         led.start()
 
-        results = launch_docker(git_url)
+        stdout, log = launch_docker(git_url)
         
         led.stop()
 
-        stdout, data = results.split("## STARTING DATA SECTION ##")
-        data = data.split("## ENDING DATA SECTION ##")[0]
-        print(data)
-        data = json.loads(data)
+        #stdout, data = results.split("## STARTING DATA SECTION ##")
+        #data = data.split("## ENDING DATA SECTION ##")[0]
+        #print(data)
+        #data = json.loads(data)
 
-        job_json["results"] = results
-        job_json["data"] = data
+        job_json["results"] = stdout
+        job_json["data"] = log#data
         requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)
     else:
         # Wait and try again
