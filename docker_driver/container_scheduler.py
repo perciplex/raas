@@ -4,6 +4,7 @@ import argparse
 import time
 from pathlib import Path
 import json
+import socket
 
 from led_driver import LedMessage
 
@@ -36,7 +37,7 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     stdout = client.containers.run(
         docker_tag,
         mounts=[
-            {"Type": "bind", "Source": "/tmp/logs/", "Target": "/tmp/", "RW": True}
+            {"Type": "bind", "Source": "/tmp/", "Target": "/tmp/", "RW": True}
         ],
     )
 
@@ -101,6 +102,7 @@ while True:
 
         job_json["results"] = stdout
         job_json["data"] = log  # data
+        job_json["hardware"] = socket.gethostname() 
         requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)
     else:
         # Wait and try again
