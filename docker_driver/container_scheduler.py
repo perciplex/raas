@@ -71,7 +71,9 @@ server_ip = args.server
 
 while True:
     try:
-        response = requests.get(server_ip + "/job/pop")
+        response = requests.get(server_ip + "/job/pop", params={
+            "hardware": socket.gethostname() 
+        })
         response_status = response.status_code
         print(response)
     except requests.exceptions.ConnectionError as e:
@@ -102,7 +104,6 @@ while True:
 
         job_json["results"] = stdout
         job_json["data"] = log  # data
-        job_json["hardware"] = socket.gethostname() 
         requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)
     else:
         # Wait and try again
