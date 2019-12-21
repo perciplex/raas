@@ -42,7 +42,7 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     )
 
     try:
-        with open("/tmp/logs/log.json") as f:
+        with open("/tmp/log.json") as f:
             log = json.load(f)
     except Exception as e:
         print("Error {}".format(e))
