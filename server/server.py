@@ -45,12 +45,16 @@ class Job:
         self.status = Status.QUEUED  # job status
         self.hardware = None  # the hardware the job is/was run on, none if queued
         self.results = "Results pending."  # job results
-        self.data = None # observations, actions, reqards, and times for the job data points
+        self.data = (
+            None
+        )  # observations, actions, reqards, and times for the job data points
         self.queued_time = time.time()
         self.running_time = None
         self.completed_time = None
 
-    def __hash__(self):  # define the hash function so that Job objects can be used in a set
+    def __hash__(
+        self
+    ):  # define the hash function so that Job objects can be used in a set
         return hash(self.id)
 
     def __eq__(self, other):  # also so Job objects can be used in sets
@@ -102,19 +106,19 @@ app.jinja_env.filters["datetime"] = format_datetime
 # TODO: replace with a database
 
 
-jobs = {}                                                                                                                                                                                                                                   
+jobs = {}
 queued = queue.Queue()  # a queue for the queued jobs
 running = {}  # a set of running jobs
 completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
 
+
 def reset_jobs():
     global jobs, queued, running, completed
     jobs = {}
-    
+
     queued = queue.Queue()  # a queue for the queued jobs
     running = {}  # a set of running jobs
     completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
-
 
 
 '''
@@ -149,6 +153,8 @@ new_job.results = """
 """
 completed.put(new_job)
 '''
+
+
 @app.route("/reset")
 def reset_route():
     if request.remote_addr != app.config["PI_IP"]:
@@ -156,6 +162,7 @@ def reset_route():
         return make_response("", 403)
     reset_jobs()
     return redirect("/")
+
 
 @app.route("/")
 def base_route():
@@ -169,6 +176,7 @@ def job_page_route(id):
         return render_template("job.html", job=jobs[id])
     else:
         return redirect("/")
+
 
 @app.route("/submit", methods=["GET"])
 def submit_page_route():
@@ -186,8 +194,12 @@ def job_route():
         return jsonify(
             {
                 "queued": sorted(list(queued.queue), key=lambda job: -job.queued_time),
-                "running": sorted(list(running.values()), key=lambda job: -job.running_time),
-                "completed": sorted(list(completed.queue), key=lambda job: -job.completed_time),
+                "running": sorted(
+                    list(running.values()), key=lambda job: -job.running_time
+                ),
+                "completed": sorted(
+                    list(completed.queue), key=lambda job: -job.completed_time
+                ),
             }
         )
 
@@ -209,7 +221,7 @@ def job_pop_route():
             running[pop_job.id] = pop_job  # add to running dict
             pop_job.status = Status.RUNNING
             pop_job.running_time = time.time()
-            #return jsonify({"git_url": pop_job.git_url, "id": pop_job.id})
+            # return jsonify({"git_url": pop_job.git_url, "id": pop_job.id})
             return jsonify(pop_job)
         else:
             return make_response("", 204)

@@ -145,7 +145,7 @@ if __name__ == "__main__":
         if socket.poll(2000, zmq.POLLIN):
             (message_type, content) = socket.recv_pyobj(zmq.NOBLOCK)
             if message_type == "Command":
-                #motor.set_pendulum_torque(int(content))
+                # motor.set_pendulum_torque(int(content))
                 motor.set_pendulum_torque(content)
                 socket.send_pyobj("Ack")
             elif message_type == "Poll":
