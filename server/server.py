@@ -201,9 +201,10 @@ def job_pop_route():
         if not queued.empty():
 
             pop_job = queued.get()  # get job from queue
-            pop_job.hardware = (
-                "Pendulum-1"
-            )  # set hardware of job TODO: actually set this to a meaningful value
+            #pop_job.hardware = (
+            #    "Pendulum-1"
+            #)  # set hardware of job TODO: actually set this to a meaningful value
+            pop_job.hardware = request.args.get('hardware')
 
             running[pop_job.id] = pop_job  # add to running dict
             pop_job.status = Status.RUNNING
