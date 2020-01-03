@@ -8,6 +8,8 @@ from flask import (
     send_file,
 )
 
+from hardware import Hardware
+
 app = Flask(__name__)
 from enum import Enum
 import uuid
@@ -111,6 +113,13 @@ queued = queue.Queue()  # a queue for the queued jobs
 running = {}  # a set of running jobs
 completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
 
+hardware_dict = {
+    'Nmar': Hardware('Omar'),
+    'Goose': Hardware('Goose'),
+    'Nicki': Hardware('Nicki'),
+    'Beth': Hardware('Beth')
+}
+
 
 def reset_jobs():
     global jobs, queued, running, completed
@@ -120,44 +129,13 @@ def reset_jobs():
     running = {}  # a set of running jobs
     completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
 
-
-'''
-for i in range(15):
-    new_job = Job("Perciplex", "hello world", f"https://github.com/perciplex/raas-starter.git")
-    jobs[new_job.id] = new_job
-    queued.put(new_job)
-
-new_job = Job("kimbers2007", "rl_controller", f"testUrl2")
-jobs[new_job.id] = new_job
-new_job.status = Status.RUNNING
-new_job.hardware = "Pendulum-1"
-running[new_job.id] = new_job
-
-new_job = Job("lizzyB", "liz-controller", f"testUrl3")
-jobs[new_job.id] = new_job
-new_job.status = Status.COMPLETE
-new_job.hardware = "Pendulum-1"
-new_job.results = """
-[-0.02180978  0.03024429  0.00471958 -0.01161285]
-[-0.0212049  -0.16494503  0.00448732  0.28255542]
-[-0.0245038  -0.3601307   0.01013843  0.57665024]
-[-0.03170641 -0.55539328  0.02167144  0.87250971]
-[-0.04281428 -0.36057263  0.03912163  0.58671826]
-[-0.05002573 -0.16601981  0.050856    0.30661115]
-[-0.05334613 -0.36182817  0.05698822  0.61488917]
-[-0.06058269 -0.55769814  0.069286    0.92496264]
-[-0.07173665 -0.75368406  0.08778526  1.23858996]
-[-0.08681033 -0.94981699  0.11255706  1.55743223]
-[-0.10580667 -1.1460926   0.1437057   1.88300458]
-[-0.12872853 -1.34245716  0.18136579  2.21661946]
-"""
-completed.put(new_job)
-'''
+def check_ip(ip):
+    return (ip in app.config["PI_IP"])
 
 
 @app.route("/reset")
 def reset_route():
-    if request.remote_addr != app.config["PI_IP"]:
+    if not check_ip(request.remote_addr):
         print("reset request from non-pi ip")
         return make_response("", 403)
     reset_jobs()
@@ -168,6 +146,19 @@ def reset_route():
 def base_route():
     # return send_file("static/index.html")
     return render_template("index.html")
+
+@app.route("/status")
+def status_route():
+    return render_template("hardware.html")
+
+@app.route("/hardware")
+def hardware_route():
+    return jsonify(
+        sorted(
+            [{'name':hardware.name, 'status':"ONLINE" if hardware.is_alive() else "OFFLINE"} for hardware in hardware_dict.values()],
+            key=lambda hw: hw['name']
+        )
+    )
 
 
 @app.route("/job/<string:id>", methods=["GET"])
@@ -207,15 +198,22 @@ def job_route():
 @app.route("/job/pop", methods=["GET"])
 def job_pop_route():
     if request.method == "GET":
-        if request.remote_addr != app.config["PI_IP"]:
+        if not check_ip(request.remote_addr):
             print("pop request from non-pi ip")
             return make_response("", 403)
+
+        req_hardware = request.args.get('hardware')
+        print(req_hardware)
+        if req_hardware in hardware_dict:
+            hardware_dict[req_hardware].heartbeat()
+
         if not queued.empty():
 
             pop_job = queued.get()  # get job from queue
-            pop_job.hardware = (
-                "Pendulum-1"
-            )  # set hardware of job TODO: actually set this to a meaningful value
+            #pop_job.hardware = (
+            #    "Pendulum-1"
+            #)  # set hardware of job TODO: actually set this to a meaningful value
+            pop_job.hardware = req_hardware
 
             running[pop_job.id] = pop_job  # add to running dict
             pop_job.status = Status.RUNNING
@@ -229,7 +227,7 @@ def job_pop_route():
 @app.route("/job/<string:id>/results", methods=["PUT"])
 def job_results_route(id):
     if request.method == "PUT":
-        if request.remote_addr != app.config["PI_IP"]:
+        if not check_ip(request.remote_addr):
             print("results request from non-pi ip")
             return make_response("", 403)
         if id in jobs:
