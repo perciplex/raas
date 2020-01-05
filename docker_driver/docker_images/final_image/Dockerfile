@@ -10,10 +10,10 @@ RUN git clone https://github.com/perciplex/gym-raas.git && cd gym-raas && pip3 i
 ENV RAASPI 1
 
 # Set user and working directory
-#USER raas
+USER raas
 WORKDIR /home/raas
 
 # Clone repo to user_git_repo
 ARG GIT_REPO_URL	
 RUN git clone $GIT_REPO_URL user_git_repo	
-CMD ["python3", "-u", "user_git_repo/run.py"]
+CMD ["timeout", "--kill-after", "10s", "120s", "python3", "-u", "user_git_repo/run.py"]

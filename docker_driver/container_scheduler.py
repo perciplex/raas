@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 import json
 import socket
+import os
 
 from led_driver import LedMessage
 
@@ -19,36 +20,62 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     print(docker_tag)
     print(gitUrl)
 
+    with open("/tmp/log.json", "w") as f:
+        pass
+
+    os.chmod("/tmp/log.json", 0o777)
+
     # build the final image using the local raas-base, eventually need to pass in git url
     response = client.images.build(
         path=dockerfile,
         tag=docker_tag,
-        buildargs={"GIT_REPO_URL": gitUrl},  # , nocache= True
+        buildargs={"GIT_REPO_URL": gitUrl},   
+        nocache= True
     )
 
-    # initialize a volume
-    volume = client.volumes.create(name="log")
+    # try to make the internal network which disables external network traffic, fails gracefully
+    try:
+        client.networks.create("docker_internal",
+            driver= "bridge",
+            internal= True,
+            check_duplicate= True
+        )
+    except docker.errors.APIError:
+        pass
 
-    vol_path = Path(volume.attrs["Mountpoint"])
-
-    # iniitializing docker container with dummy program. Is this how we should do it?
-    # stdout = client.containers.run(docker_tag, volumes={'log': {'bind': '/mnt/log', 'mode':'rw'}})
-
-    stdout = client.containers.run(
-        docker_tag,
-        mounts=[
-            {"Type": "bind", "Source": "/tmp/", "Target": "/tmp/", "RW": True}
-        ],
-    )
+    failed = False
+    data = None
 
     try:
-        with open("/tmp/log.json") as f:
-            log = json.load(f)
-    except Exception as e:
-        print("Error {}".format(e))
-        log = None
+        stdout = client.containers.run(
+            docker_tag,
+            mounts=[
+                {"Type": "bind", "Source": "/tmp/", "Target": "/tmp/", "RW": True}
+            ],
+            network="docker_internal",
+            #auto_remove=True,
+            mem_limit="3g"
+        )
 
-    return str(stdout), log
+    except docker.errors.ContainerError as e:
+        print(dir(e.container))
+        stdout = e.container.logs()
+        failed = True
+        print(stdout)
+    except Exception as e:
+        stdout = e
+        failed = True
+        print(stdout)
+
+    
+    try:
+        with open("/tmp/log.json") as f:
+            data = json.load(f)
+        
+    except Exception as e:
+        print(f"Error {e}")
+
+    return str(stdout), data, failed
 
     """ok. When this program stops it kills the container.
     Ideally I'd like to create the ccontsiner and transfer
@@ -93,7 +120,7 @@ while True:
         led = LedMessage(f"{user}:{name}")
         led.start()
 
-        stdout, log = launch_docker(git_url)
+        stdout, data, failed = launch_docker(git_url)
 
         led.stop()
 
@@ -102,8 +129,9 @@ while True:
         # print(data)
         # data = json.loads(data)
 
-        job_json["results"] = stdout
-        job_json["data"] = log  # data
+        job_json["stdout"] = stdout
+        job_json["data"] = data  # data
+        job_json["failed"] = failed 
         requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)
     else:
         # Wait and try again
