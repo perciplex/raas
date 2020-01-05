@@ -35,6 +35,7 @@ class Status:
     QUEUED = "QUEUED"
     RUNNING = "RUNNING"
     COMPLETE = "COMPLETE"
+    FAILED = "FAILED"
 
 
 # a class for queued, running, or completed jobs
@@ -46,7 +47,7 @@ class Job:
         self.git_url = git_url  # github hrl
         self.status = Status.QUEUED  # job status
         self.hardware = None  # the hardware the job is/was run on, none if queued
-        self.results = "Results pending."  # job results
+        self.stdout = "Results pending."  # job results
         self.data = (
             None
         )  # observations, actions, reqards, and times for the job data points
@@ -71,13 +72,13 @@ class Job:
             "name": self.name,
             "user": self.user,
             "git_url": self.git_url,
-            "results": self.results,
+            "stdout": self.stdout,
             "data": self.data,
             "status": self.status,
             "hardware": self.hardware,
             "queued_time": self.queued_time,
             "running_time": self.running_time,
-            "completed_time": self.completed_time,
+            "completed_time": self.completed_time
         }
 
 
@@ -111,14 +112,10 @@ app.jinja_env.filters["datetime"] = format_datetime
 jobs = {}
 queued = queue.Queue()  # a queue for the queued jobs
 running = {}  # a set of running jobs
-completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
+completed = queue.LifoQueue(maxsize=20)  # a queue of recently completed jobs
 
-hardware_dict = {
-    'Nmar': Hardware('Omar'),
-    'Goose': Hardware('Goose'),
-    'Nicki': Hardware('Nicki'),
-    'Beth': Hardware('Beth')
-}
+hardware_list = ['Omar', 'Goose', 'Nicki', 'Beth']
+hardware_dict = {name: Hardware(name) for name in hardware_list}
 
 
 def reset_jobs():
@@ -177,7 +174,11 @@ def submit_page_route():
 @app.route("/job", methods=["POST", "GET"])
 def job_route():
     if request.method == "POST":
-        new_job = Job(request.form["user"], request.form["name"], request.form["git"])
+        user, name, git = request.form["user"], request.form["name"], request.form["git"]
+        for job in queued.queue:
+            if (user, name) == (job.user, job.name):
+                return redirect("/")
+        new_job = Job(user, name, git)
         jobs[new_job.id] = new_job  # add to database
         queued.put(new_job)  # add to queue
         return redirect("/")
@@ -219,6 +220,11 @@ def job_pop_route():
             pop_job.status = Status.RUNNING
             pop_job.running_time = time.time()
             # return jsonify({"git_url": pop_job.git_url, "id": pop_job.id})
+
+            
+            if req_hardware in hardware_dict:
+                hardware_dict[req_hardware].starting_job()
+
             return jsonify(pop_job)
         else:
             return make_response("", 204)
@@ -238,9 +244,14 @@ def job_results_route(id):
 
             req_data = request.get_json()
 
-            job.status = Status.COMPLETE
-            job.results = req_data["results"][2:-1]
-            job.data = req_data["data"]
+            job.stdout = req_data["stdout"]
+            job.data = str(req_data["data"])
+
+            if req_data["failed"]:
+                job.status = Status.FAILED
+            else:
+                job.status = Status.COMPLETE
+                
             print(job.data)
             job.completed_time = time.time()
             return make_response("", 200)

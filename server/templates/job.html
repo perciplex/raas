@@ -8,48 +8,48 @@
                 var data = JSON.parse("{{job.data}}".replace(/&#39;/g,"\""));
                 console.log(data);
                 var layout = {
-                margin: {
-                    l: 50,
-                    r: 50,
-                    b: 100,
-                    t: 10,
-                    pad: 0
+                    margin: {
+                        l: 50,
+                        r: 50,
+                        b: 100,
+                        t: 10,
+                        pad: 0
+                    }
+                };
+                var t0 = data.times[0];
+                var times = data.times.map(t => t-t0);
+                var obs = data.obs;
+                var obs_T = obs[0].map((col, i) => obs.map(row => row[i]));
+                var x_plot = {
+                    x: times,
+                    y: obs_T[0],
+                    name: 'y',
+                    type: 'scatter'
+                };
+                var y_plot = {
+                    x: times,
+                    y: obs_T[1],
+                    name: 'x',
+                    type: 'scatter'
                 }
-                };
-		var t0 = data.times[0];
-		var times = data.times.map(t => t-t0);
-		var obs = data.obs;
-		var obs_T = obs[0].map((col, i) => obs.map(row => row[i]));
-		var x_plot = {
-                	x: times,
-                	y: obs_T[0],
-			name: 'y',
-                	type: 'scatter'
-                };
-		var y_plot = {
-			x: times,
-			y: obs_T[1],
-			name: 'x',
-			type: 'scatter'
-		}
-		var tdot_plot = {
-			x: times,
-			y: obs_T[2],
-			name: 'theta dot',
-			type: 'scatter'
-		}
-		var action_plot = {
-			x: times,
-			y: data.actions,
-			name: 'action',
-			type: 'scatter'
-		}
-		var cost_plot = {
-			x: times,
-			y: data.costs,
-			name: 'cost',
-			type: 'action'
-		}
+                var tdot_plot = {
+                    x: times,
+                    y: obs_T[2],
+                    name: 'theta dot',
+                    type: 'scatter'
+                }
+                var action_plot = {
+                    x: times,
+                    y: data.actions,
+                    name: 'action',
+                    type: 'scatter'
+                }
+                var cost_plot = {
+                    x: times,
+                    y: data.costs,
+                    name: 'cost',
+                    type: 'action'
+                }
 
                 Plotly.newPlot("plot", [x_plot, y_plot, tdot_plot,  action_plot], layout);
             });
@@ -59,10 +59,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <div class="alert {{ 'alert-warning' if job.status=='QUEUED' }} {{ 'alert-success' if job.status=='COMPLETE' }} {{ 'alert-primary' if job.status=='RUNNING' }}">
+                    <div class="alert {{ 'alert-warning' if job.status=='QUEUED' }} {{ 'alert-success' if job.status=='COMPLETE' }} {{ 'alert-primary' if job.status=='RUNNING' }} {{ 'alert-danger' if job.status=='FAILED' }}">
                         <h4>
                             {{job.status}}
-                            {%if job.status=='RUNNING'%}
+                            {%if job.status=='RUNNING' or job.status=='COMPLETE' or job.status=='FAILED'%}
                                 <span class="float-right">{{job.hardware}}</span>
                             {%endif%}
                         </h4>
@@ -80,26 +80,26 @@
                             </span>
                         </div>
                         <div class="card-body">
-				<div>
-					<span class="badge badge-pill badge-warning"><i class="fa fa-list-ul"></i> {{job.queued_time|datetime}}</span>
-                            		{% if ((job.status=='RUNNING') or (job.status=='COMPLETE')) %}
-					<span class="badge badge-pill badge-primary"><i class="fa fa-play"></i> {{job.running_time|datetime}}</span>
-                            		{%endif%}
-                            		{% if job.status=='COMPLETE' %}
-					<span class="badge badge-pill badge-success"><i class="fa fa-flag-checkered"></i> {{job.completed_time|datetime}}</span>
-                            		{%endif%}
-				</div>
+                            <div>
+                                <span class="badge badge-pill badge-warning"><i class="fa fa-list-ul"></i> {{job.queued_time|datetime}}</span>
+                                                {% if ((job.status=='RUNNING') or (job.status=='COMPLETE') or (job.status=='FAILED')) %}
+                                <span class="badge badge-pill badge-primary"><i class="fa fa-play"></i> {{job.running_time|datetime}}</span>
+                                                {%endif%}
+                                                {% if (job.status=='COMPLETE') or (job.status=='FAILED')  %}
+                                <span class="badge badge-pill badge-success"><i class="fa fa-flag-checkered"></i> {{job.completed_time|datetime}}</span>
+                                                {%endif%}
+                            </div>
                             <pre class="card-text" style="white-space: nowrap;overflow-x:scroll;">
-				{% autoescape false %}
-{{job.results|replace("\\n","<br/>")|replace("\\t", "	")}} 
-				{% endautoescape %}
+                                {% autoescape false %}
+                                    {{job.stdout|replace("\\n","<br/>")|replace("\\t", "	")}} 
+                                {% endautoescape %}
                             </pre>
                         </div>
                     </div>            
                 </div>
                 
                 <div class="col-sm-6">
-                    <div id="plot" style="" class="position-sticky" id="plot"></div>
+                    <div id="plot" class="position-sticky" id="plot"></div>
                 </div>  
             </div>
         </div>
