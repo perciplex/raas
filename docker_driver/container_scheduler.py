@@ -6,9 +6,9 @@ from pathlib import Path
 import json
 import socket
 import os
-
 from led_driver import LedMessage
 
+import reset_pendulum
 
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     client = docker.from_env()
@@ -30,7 +30,7 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
         path=dockerfile,
         tag=docker_tag,
         buildargs={"GIT_REPO_URL": gitUrl},   
-        nocache= True
+        nocache=True
     )
 
     # try to make the internal network which disables external network traffic, fails gracefully
@@ -121,6 +121,8 @@ while True:
         led.start()
 
         stdout, data, failed = launch_docker(git_url)
+        print("resetting")
+        #reset_pendulum.reset_pendulum()
 
         led.stop()
 
