@@ -4,7 +4,10 @@ import gym_raas
 from time import sleep
 import numpy as np
 
-settle_time = 30.0
+import zmq
+
+
+settle_time = 15.0
 
 def reset_pendulum():
     # create env
@@ -16,6 +19,10 @@ def reset_pendulum():
     _, _, _, _ = env.step([2]) # start with an initial impulse
     print('Done, sleeping for {} seconds to let it settle...'.format(settle_time))
     sleep(settle_time)
-    _, _, _, _ = env.step([0])
+
+    socket.connect("tcp://172.17.0.1:5555")
+
+    socket.send_pyobj(("Reset", None))
+    _ = socket.recv_pyobj()
 
     print('Done!')
