@@ -1,8 +1,8 @@
 # RaaS
 
-![pendulum swing up](swingup.gif)
-
 <img src="server/static/logo.png" alt="Your image title" width="200"/><img src="server/static/pplex_logo_wordmark.png" alt="Your image title" width="150"/>
+
+![pendulum swing up](swingup.gif)
 
 Reality as a Service (RaaS) is an open source platform for hosting physical OpenAI Gym enviroments. This lowers the barrier to transitioning to real robots in both effort and cost, allows the outsourcing of mantainance of robots to specialists, amoritiized cost of robots over more researchers and RL practitioners, and less useless down-time for expensive robots.
 
