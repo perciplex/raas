@@ -122,7 +122,7 @@ while True:
 
         stdout, data, failed = launch_docker(git_url)
         print("resetting")
-        #reset_pendulum.reset_pendulum()
+        reset_pendulum.reset_pendulum()
 
         led.stop()
 

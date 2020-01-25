@@ -20,9 +20,4 @@ def reset_pendulum():
     print('Done, sleeping for {} seconds to let it settle...'.format(settle_time))
     sleep(settle_time)
 
-    socket.connect("tcp://172.17.0.1:5555")
-
-    socket.send_pyobj(("Reset", None))
-    _ = socket.recv_pyobj()
-
     print('Done!')
