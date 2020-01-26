@@ -152,10 +152,8 @@ if __name__ == "__main__":
                 socket.send_pyobj((encoder.getRadian(), encoder.getRadPerSec()))
             elif message_type == "Reset":
                 encoder.step = 0
-<<<<<<< HEAD
                 socket.send_pyobj("Ack")
-=======
->>>>>>> f72708ee057963ac364051efd8562ee18f7bb3d5
+
         else:
             print("No Message For 500ms")
             motor.stop()
