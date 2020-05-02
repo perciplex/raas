@@ -1,3 +1,10 @@
+import uuid
+import random
+import sys
+import queue
+import datetime
+import time
+from flask_recaptcha import ReCaptcha
 from flask import (
     Flask,
     jsonify,
@@ -5,30 +12,16 @@ from flask import (
     render_template,
     redirect,
     make_response,
-    send_file,
 )
-
 from hardware import Hardware
-
-app = Flask(__name__)
-from enum import Enum
-import uuid
-import random
+from json import JSONEncoder
 
 rd = random.Random()
 rd.seed(0)
-import sys
-import queue
-import json
-from json import JSONEncoder
-import datetime
-import time
-from flask_recaptcha import ReCaptcha
-
-
 app = Flask(__name__)
-app.config.from_pyfile("../../settings.cfg")
+# app.config.from_pyfile("../../settings.cfg")
 recaptcha = ReCaptcha(app=app)
+
 
 # a status enum
 class Status:
@@ -49,14 +42,14 @@ class Job:
         self.hardware = None  # the hardware the job is/was run on, none if queued
         self.stdout = "Results pending."  # job results
         self.data = (
-            None
-        )  # observations, actions, reqards, and times for the job data points
+            None  # observations, actions, reqards, and times for the job data points
+        )
         self.queued_time = time.time()
         self.running_time = None
         self.completed_time = None
 
     def __hash__(
-        self
+        self,
     ):  # define the hash function so that Job objects can be used in a set
         return hash(self.id)
 
@@ -78,7 +71,7 @@ class Job:
             "hardware": self.hardware,
             "queued_time": self.queued_time,
             "running_time": self.running_time,
-            "completed_time": self.completed_time
+            "completed_time": self.completed_time,
         }
 
 
@@ -114,7 +107,7 @@ queued = queue.Queue()  # a queue for the queued jobs
 running = {}  # a set of running jobs
 completed = queue.LifoQueue(maxsize=20)  # a queue of recently completed jobs
 
-hardware_list = ['Omar', 'Goose', 'Nicki', 'Beth']
+hardware_list = ["Omar", "Goose", "Nicki", "Beth"]
 hardware_dict = {name: Hardware(name) for name in hardware_list}
 
 
@@ -126,8 +119,9 @@ def reset_jobs():
     running = {}  # a set of running jobs
     completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
 
+
 def check_ip(ip):
-    return (ip in app.config["PI_IP"])
+    return ip in app.config["PI_IP"]
 
 
 @app.route("/reset")
@@ -144,16 +138,24 @@ def base_route():
     # return send_file("static/index.html")
     return render_template("index.html")
 
+
 @app.route("/status")
 def status_route():
     return render_template("hardware.html")
+
 
 @app.route("/hardware")
 def hardware_route():
     return jsonify(
         sorted(
-            [{'name':hardware.name, 'status':"ONLINE" if hardware.is_alive() else "OFFLINE"} for hardware in hardware_dict.values()],
-            key=lambda hw: hw['name']
+            [
+                {
+                    "name": hardware.name,
+                    "status": "ONLINE" if hardware.is_alive() else "OFFLINE",
+                }
+                for hardware in hardware_dict.values()
+            ],
+            key=lambda hw: hw["name"],
         )
     )
 
@@ -174,7 +176,11 @@ def submit_page_route():
 @app.route("/job", methods=["POST", "GET"])
 def job_route():
     if request.method == "POST":
-        user, name, git = request.form["user"], request.form["name"], request.form["git"]
+        user, name, git = (
+            request.form["user"],
+            request.form["name"],
+            request.form["git"],
+        )
         for job in queued.queue:
             if (user, name) == (job.user, job.name):
                 return redirect("/")
@@ -203,7 +209,7 @@ def job_pop_route():
             print("pop request from non-pi ip")
             return make_response("", 403)
 
-        req_hardware = request.args.get('hardware')
+        req_hardware = request.args.get("hardware")
         print(req_hardware)
         if req_hardware in hardware_dict:
             hardware_dict[req_hardware].heartbeat()
@@ -211,9 +217,9 @@ def job_pop_route():
         if not queued.empty():
 
             pop_job = queued.get()  # get job from queue
-            #pop_job.hardware = (
+            # pop_job.hardware = (
             #    "Pendulum-1"
-            #)  # set hardware of job TODO: actually set this to a meaningful value
+            # )  # set hardware of job TODO: actually set this to a meaningful value
             pop_job.hardware = req_hardware
 
             running[pop_job.id] = pop_job  # add to running dict
@@ -221,7 +227,6 @@ def job_pop_route():
             pop_job.running_time = time.time()
             # return jsonify({"git_url": pop_job.git_url, "id": pop_job.id})
 
-            
             if req_hardware in hardware_dict:
                 hardware_dict[req_hardware].starting_job()
 
@@ -251,7 +256,7 @@ def job_results_route(id):
                 job.status = Status.FAILED
             else:
                 job.status = Status.COMPLETE
-                
+
             print(job.data)
             job.completed_time = time.time()
             return make_response("", 200)

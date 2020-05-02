@@ -28,18 +28,20 @@ import os
 import numpy as np
 
 import sys
+
 if sys.version_info >= (3, 0):
-  from casadi.casadi import *
+    from casadi.casadi import *
 else:
-  from casadi import *
-  import casadi
+    from casadi import *
+    import casadi
 
 # For plugin loading
 GlobalOptions.setCasadiPath(os.path.dirname(__file__))
-GlobalOptions.setCasadiIncludePath(os.path.join(os.path.dirname(__file__),"include"))
+GlobalOptions.setCasadiIncludePath(os.path.join(os.path.dirname(__file__), "include"))
 import types
 
-def wrapper(f, warning,error=False):
+
+def wrapper(f, warning, error=False):
     def new(*args, **kwargs):
         print(("*" * 40))
         print("Deprecation Warning")
@@ -49,30 +51,47 @@ def wrapper(f, warning,error=False):
         if error:
             raise Exception("Deprecation error: " + warning)
         return f(*args, **kwargs)
+
     return new
 
 
 class Deprecate(object):
-    def __new__(self, o, warning,error=False):
-        class temp(o.__class__): pass
+    def __new__(self, o, warning, error=False):
+        class temp(o.__class__):
+            pass
+
         temp.__name__ = "Deprecated_%s" % o.__class__.__name__
         output = temp.__new__(temp, o)
 
         output.warned = True
         wrappable_types = (type(int.__add__), type(zip), types.FunctionType)
-        unwrappable_names = ("__str__", "__unicode__", "__repr__", "__getattribute__", "__setattr__")
+        unwrappable_names = (
+            "__str__",
+            "__unicode__",
+            "__repr__",
+            "__getattribute__",
+            "__setattr__",
+        )
 
         for method_name in dir(temp):
-            if not type(getattr(temp, method_name)) in wrappable_types: continue
-            if method_name in unwrappable_names: continue
+            if not type(getattr(temp, method_name)) in wrappable_types:
+                continue
+            if method_name in unwrappable_names:
+                continue
 
-            setattr(temp, method_name, wrapper(getattr(temp, method_name), warning,error=error))
+            setattr(
+                temp,
+                method_name,
+                wrapper(getattr(temp, method_name), warning, error=error),
+            )
 
         output.warned = False
         return output
 
+
 import warnings
-warnings.filterwarnings("default",".*This CasADi function.*",DeprecationWarning)
+
+warnings.filterwarnings("default", ".*This CasADi function.*", DeprecationWarning)
 
 import contextlib
 
@@ -82,5 +101,5 @@ import re
 
 
 __version__ = CasadiMeta.version()
-if '+' in __version__ and CasadiMeta.git_describe()!='':
-    __version__  = CasadiMeta.git_describe()
+if "+" in __version__ and CasadiMeta.git_describe() != "":
+    __version__ = CasadiMeta.git_describe()

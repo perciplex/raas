@@ -1,6 +1,5 @@
-
-
 from sys import path
+
 path.append(r"/home/pi/raas/scripts/casadi")
 from casadi import *
 
