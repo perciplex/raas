@@ -18,9 +18,9 @@ from json import JSONEncoder
 
 rd = random.Random()
 rd.seed(0)
-app = Flask(__name__)
+application = Flask(__name__)
 # app.config.from_pyfile("../../settings.cfg")
-recaptcha = ReCaptcha(app=app)
+recaptcha = ReCaptcha(app=application)
 
 
 # a status enum
@@ -89,14 +89,14 @@ class JSONEncoderJob(JSONEncoder):
 
 
 # replace the default encoder
-app.json_encoder = JSONEncoderJob
+application.json_encoder = JSONEncoderJob
 
 
 def format_datetime(value):
     return datetime.datetime.fromtimestamp(value).strftime("%m/%d/%y %H:%M:%S")
 
 
-app.jinja_env.filters["datetime"] = format_datetime
+application.jinja_env.filters["datetime"] = format_datetime
 
 # a dictionary of all jobs
 # TODO: replace with a database
@@ -121,10 +121,10 @@ def reset_jobs():
 
 
 def check_ip(ip):
-    return ip in app.config["PI_IP"]
+    return ip in application.config["PI_IP"]
 
 
-@app.route("/reset")
+@application.route("/reset")
 def reset_route():
     if not check_ip(request.remote_addr):
         print("reset request from non-pi ip")
@@ -133,18 +133,18 @@ def reset_route():
     return redirect("/")
 
 
-@app.route("/")
+@application.route("/")
 def base_route():
     # return send_file("static/index.html")
     return render_template("index.html")
 
 
-@app.route("/status")
+@application.route("/status")
 def status_route():
     return render_template("hardware.html")
 
 
-@app.route("/hardware")
+@application.route("/hardware")
 def hardware_route():
     return jsonify(
         sorted(
@@ -160,7 +160,7 @@ def hardware_route():
     )
 
 
-@app.route("/job/<string:id>", methods=["GET"])
+@application.route("/job/<string:id>", methods=["GET"])
 def job_page_route(id):
     if id in jobs:
         return render_template("job.html", job=jobs[id])
@@ -168,12 +168,12 @@ def job_page_route(id):
         return redirect("/")
 
 
-@app.route("/submit", methods=["GET"])
+@application.route("/submit", methods=["GET"])
 def submit_page_route():
     return render_template("submit.html")
 
 
-@app.route("/job", methods=["POST", "GET"])
+@application.route("/job", methods=["POST", "GET"])
 def job_route():
     if request.method == "POST":
         user, name, git = (
@@ -202,7 +202,7 @@ def job_route():
         )
 
 
-@app.route("/job/pop", methods=["GET"])
+@application.route("/job/pop", methods=["GET"])
 def job_pop_route():
     if request.method == "GET":
         if not check_ip(request.remote_addr):
@@ -235,7 +235,7 @@ def job_pop_route():
             return make_response("", 204)
 
 
-@app.route("/job/<string:id>/results", methods=["PUT"])
+@application.route("/job/<string:id>/results", methods=["PUT"])
 def job_results_route(id):
     if request.method == "PUT":
         if not check_ip(request.remote_addr):
@@ -266,6 +266,6 @@ def job_results_route(id):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "prod":
-        app.run(port=80, host="0.0.0.0")
+        application.run(port=80, host="0.0.0.0")
     else:
-        app.run(debug=True)
+        application.run(debug=True)
