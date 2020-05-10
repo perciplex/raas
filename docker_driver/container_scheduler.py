@@ -10,6 +10,7 @@ from led_driver import LedMessage
 
 import reset_pendulum
 
+
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     client = docker.from_env()
 
@@ -29,16 +30,14 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     response = client.images.build(
         path=dockerfile,
         tag=docker_tag,
-        buildargs={"GIT_REPO_URL": gitUrl},   
-        nocache=True
+        buildargs={"GIT_REPO_URL": gitUrl},
+        nocache=True,
     )
 
     # try to make the internal network which disables external network traffic, fails gracefully
     try:
-        client.networks.create("docker_internal",
-            driver= "bridge",
-            internal= True,
-            check_duplicate= True
+        client.networks.create(
+            "docker_internal", driver="bridge", internal=True, check_duplicate=True
         )
     except docker.errors.APIError:
         pass
@@ -49,12 +48,10 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     try:
         stdout = client.containers.run(
             docker_tag,
-            mounts=[
-                {"Type": "bind", "Source": "/tmp/", "Target": "/tmp/", "RW": True}
-            ],
+            mounts=[{"Type": "bind", "Source": "/tmp/", "Target": "/tmp/", "RW": True}],
             network="docker_internal",
-            #auto_remove=True,
-            mem_limit="3g"
+            # auto_remove=True,
+            mem_limit="3g",
         )
 
     except docker.errors.ContainerError as e:
@@ -67,11 +64,10 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
         failed = True
         print(stdout)
 
-    
     try:
         with open("/tmp/log.json") as f:
             data = json.load(f)
-        
+
     except Exception as e:
         print(f"Error {e}")
 
@@ -98,9 +94,9 @@ server_ip = args.server
 
 while True:
     try:
-        response = requests.get(server_ip + "/job/pop", params={
-            "hardware": socket.gethostname() 
-        })
+        response = requests.get(
+            server_ip + "/job/pop", params={"hardware": socket.gethostname()}
+        )
         response_status = response.status_code
         print(response)
     except requests.exceptions.ConnectionError as e:
@@ -133,7 +129,7 @@ while True:
 
         job_json["stdout"] = stdout
         job_json["data"] = data  # data
-        job_json["failed"] = failed 
+        job_json["failed"] = failed
         requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)
     else:
         # Wait and try again
