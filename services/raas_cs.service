@@ -1,0 +1,29 @@
+# systemd file for container_scheduler.py service
+
+
+[Unit]
+
+Description=RaaS Container Scheduler Service
+
+[Service]
+
+# Command to execute when the service is started
+ExecStart=/usr/bin/python3 /home/pi/raas/docker_driver/container_scheduler.py
+
+# Disable Python's buffering of STDOUT and STDERR, so that output from the
+# service shows up immediately in systemd's logs
+Environment=PYTHONUNBUFFERED=1
+
+# Automatically restart the service if it crashes
+Restart=on-failure
+
+# Our service will notify systemd once it is up and running
+Type=notify
+
+# Use a dedicated user to run our service
+User=pi
+
+[Install]
+
+# Tell systemd to automatically start this service when the system boots
+WantedBy=default.target
