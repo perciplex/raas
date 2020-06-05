@@ -1,46 +1,48 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        {% include "header.html" %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.js" crossorigin="anonymous"></script>
 
-        <script>
-            $(document).ready(function($) {
+<head>
+    {% include "header.html" %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.js"
+        crossorigin="anonymous"></script>
 
-                job_list = $('#jobs');
-                
-                
-            $(".link").click(function() {
+    <script>
+        $(document).ready(function ($) {
+
+            job_list = $('#jobs');
+
+
+            $(".link").click(function () {
                 window.document.location = $(this).data("href");
             });
 
-            function build_job(id, user, name, status, hardware, time){
-                    var tr = $('<tr/>')
-                        .addClass("table-row")
-                        .addClass("link")
-                        .attr('data-href', `job/${id}`)
-                        .appendTo(job_list)
-                        .click(function() {
-                            window.document.location = `job/${id}`;
-                        });
-                    
-                    var time = $('<td/>')
-                        //.text(new Date(time*1000).toLocaleTimeString('en-En', {timeStyle: "medium", hour12:false}))
-                        .text(jQuery.timeago(new Date(time*1000)))
-                        .appendTo(tr)
+            function build_job(id, user, name, status, hardware, time) {
+                var tr = $('<tr/>')
+                    .addClass("table-row")
+                    .addClass("link")
+                    .attr('data-href', `job/${id}`)
+                    .appendTo(job_list)
+                    .click(function () {
+                        window.document.location = `job/${id}`;
+                    });
 
-                    var user = $('<td/>')
-                        .text(user)
-                        .appendTo(tr)
+                var time = $('<td/>')
+                    //.text(new Date(time*1000).toLocaleTimeString('en-En', {timeStyle: "medium", hour12:false}))
+                    .text(jQuery.timeago(new Date(time * 1000)))
+                    .appendTo(tr)
 
-                    var name = $('<td/>')
-                        .text(name)
-                        .appendTo(tr)                   
-                        
+                var user = $('<td/>')
+                    .text(user)
+                    .appendTo(tr)
 
-                    badge_type = "";
-                    text = status;
-                    switch(status) {
+                var name = $('<td/>')
+                    .text(name)
+                    .appendTo(tr)
+
+
+                badge_type = "";
+                text = status;
+                switch (status) {
                     case "COMPLETE":
                         badge_type = "badge-success"
                         break;
@@ -56,80 +58,79 @@
                         break;
                     default:
                         badge_type = "badge-warning"
-                    }
-                    var pred = $('<span/>')
-                        .text(text)
-                        .addClass("float-right")
-                        .addClass(badge_type)
-                        .addClass("badge")
-                        .appendTo(name)
                 }
-                
-                function load_jobs() {
-                    $.get( "job", function(jobs) {
-                        
-                        job_list.empty()
-                        
-                        statuses = ['queued', 'running', 'completed'];
-                        statuses.forEach(status => {
-                            jobs[status].sort(job => {job[`${status}_time`]}).forEach(job => {
-                                console.log(job[`${status}_time`])
-                                build_job(job.id, job.user, job.name, job.status, job.hardware, job[`${status}_time`]);
-                            });
+                var pred = $('<span/>')
+                    .text(text)
+                    .addClass("float-right")
+                    .addClass(badge_type)
+                    .addClass("badge")
+                    .appendTo(name)
+            }
+
+            function load_jobs() {
+                $.get("job", function (jobs) {
+
+                    job_list.empty()
+
+                    statuses = ['queued', 'running', 'completed'];
+                    statuses.forEach(status => {
+                        jobs[status].sort(job => { job[`${status}_time`] }).forEach(job => {
+                            console.log(job[`${status}_time`])
+                            build_job(job.id, job.user, job.name, job.status, job.hardware, job[`${status}_time`]);
                         });
                     });
-                }
-                
-                load_jobs();
+                });
+            }
 
-                setInterval(load_jobs, 3000)
+            load_jobs();
 
-            });
-        </script>
-        <style>
-        </style>
-    </head>
-    <body>
-        <div class="container" id="content-container">
-            <div class="jumbotron" id="info">
-                <h3 class="display-4" style="width:70%;font-family: 'Share Tech Mono', monospace;">Reality as a Service</h3>
-                <p style="width:80%;font-family: 'Share Tech Mono', monospace;">
-                    We built real-life versions of the OpenAI Gym enviornments, and you can use them! To start, fork <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a> and edit <code>run.py</code>. <a href="status">Our robots</a> use the same Gym interface you're used to. Just import our custom enviornment and you're ready to go.
-                </p>
-                
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <button type="button" class="btn btn-primary btn-lg btn-block link" data-href='submit'>try it out for yourself</button>
-                    <table class="table table-hover table-striped table-body-scroll">
-                        <thead>
-                            <tr>
-                                <th scope="col">time</th>
-                                <th scope="col">user</th>
-                                <th scope="col">project name</th>
-                            </tr>
-                        </thead>
-                        <tbody id="jobs">
-                        </tbody>
-                    </table> 
-                </div>
-                <div class="col-sm-6">
-                    <div style="" id="twitch-player" class="position-sticky">
-                        <iframe
-                        src="https://player.twitch.tv/?channel=perciplex&muted=true"
-                        width="100%"
-                        height="100%"
-                        style="position:absolute;top:0;left:0;"
-                        frameborder="0"
-                        scrolling="no"
-                        allowfullscreen="true">
-                        </iframe>
-                    </div>                    
-                </div>
-            </div>
-        
-            
+            setInterval(load_jobs, 3000)
+
+        });
+    </script>
+    <style>
+    </style>
+</head>
+
+<body>
+    <div class="container" id="content-container">
+        <div class="jumbotron" id="info">
+            <h3 class="display-4" style="width:70%;font-family: 'Share Tech Mono', monospace;">Reality as a Service</h3>
+            <p style="width:80%;font-family: 'Share Tech Mono', monospace;">
+                We built real-life versions of the OpenAI Gym environments, and you can use them! To start, fork <a
+                    href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a> and edit
+                <code>run.py</code>. <a href="status">Our robots</a> use the same Gym interface you're used to. Just
+                import our custom environment and you're ready to go.
+            </p>
+
         </div>
-    </body>
-</html>
+        <div class="row">
+            <div class="col-sm-6">
+                <button type="button" class="btn btn-primary btn-lg btn-block link" data-href='submit'>try it out for
+                    yourself</button>
+                <table class="table table-hover table-striped table-body-scroll">
+                    <thead>
+                        <tr>
+                            <th scope="col">time</th>
+                            <th scope="col">user</th>
+                            <th scope="col">project name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobs">
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-6">
+                <div style="" id="twitch-player" class="position-sticky">
+                    <iframe src="https://player.twitch.tv/?channel=perciplex&muted=true" width="100%" height="100%"
+                        style="position:absolute;top:0;left:0;" frameborder="0" scrolling="no" allowfullscreen="true">
+                    </iframe>
+                </div>
+            </div>
+        </div>
 
+
+    </div>
+</body>
+
+</html>

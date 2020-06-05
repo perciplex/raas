@@ -4,7 +4,6 @@ import sys
 import queue
 import datetime
 import time
-from flask_recaptcha import ReCaptcha
 from flask import (
     Flask,
     jsonify,
@@ -19,9 +18,9 @@ from json import JSONEncoder
 rd = random.Random()
 rd.seed(0)
 application = Flask(__name__)
-# app.config.from_pyfile("../../settings.cfg")
-recaptcha = ReCaptcha(app=application)
+application.config.from_pyfile("config.cfg")
 
+print(application.config["PI_IPS"])
 
 # a status enum
 class Status:
@@ -121,7 +120,8 @@ def reset_jobs():
 
 
 def check_ip(ip):
-    return ip in application.config["PI_IP"]
+    print(ip)
+    return ip in application.config["PI_IPS"]
 
 
 @application.route("/reset")
