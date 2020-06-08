@@ -92,6 +92,9 @@ parser.add_argument(
 args = parser.parse_args()
 server_ip = args.server
 
+# clear LED screen
+LedMessage(f"").stop()
+
 while True:
     try:
         response = requests.get(
