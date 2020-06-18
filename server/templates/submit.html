@@ -46,7 +46,7 @@
                                 $("#invalid-git").show();
                                 invalid()
                             }
-                            
+
                         }).fail(function (data) {
                             $("#invalid-not-found").show();
                             invalid()
@@ -61,7 +61,7 @@
                 $("#submit-spinner").hide();
                 $(".feedback").hide();
                 $("#github-input").on('input', function() {
-                    $(".feedback").hide();                        
+                    $(".feedback").hide();
                     $("#submit-word").hide();
                     $("#submit-spinner").show();
                     validate_input()
@@ -69,20 +69,20 @@
                     $("#submit-spinner").hide();
 
                 });
-                
+
             });
         </script>
     </head>
     <body>
         <div class="container">
             <div class="row">
-                
-                <div class="col-sm-6">  
+
+                <div class="col-sm-6">
                     <div class="card border-primary mb-3">
                         <div class="card-header">what do I do?</div>
                         <div class="card-body">
                             <div class="card-text">
-                                Start by forking <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a>, or build your own repository. Either way, you must include <code>run.py</code> at the root directory. We use the same interface as OpenAI Gym with a special enviorment. 
+                                Start by forking <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a>, or build your own repository. Either way, you must include <code>run.py</code> at the root directory. We use the same interface as OpenAI Gym with a special enviorment.
                                 <p></p>
                                 <pre>
     import gym
@@ -93,11 +93,11 @@
         env.render()
         env.step(env.action_space.sample()) # take a random action
     env.close()</pre>
-                                
+
                                 When run locally, the above code performs a Gym simulation with phyical parameters set to match our hardware. When run at RaaS, the code controls an actual robot!
                                 </div>
                         </div>
-                    </div>              
+                    </div>
                 </div>
                 <div class="col-sm-6">
                         <div class="form-group has-success">
@@ -109,27 +109,27 @@
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text"><i class="fa fa-lg fa-github"></i></div>
                                                 </div>
-                                                <input type="text" placeholder="GitHub url" class="form-control" id="github-input" name="git">
-    
+                                                <input type="text" placeholder="GitHub url" class="form-control" id="github-input" name="git_url">
+
                                             </div>
                                         </div>
                                     </div>
                                 <div class="form-row">
-                                    
+
                                     <div class="form-group col-md-6">
                                         <label class="control-label" for="username">username</label>
-                                        <input class="form-control" id="username" type="text" placeholder="GitHub username" readonly="" name="user">
+                                        <input class="form-control" id="username" type="text" placeholder="GitHub username" readonly="" name="git_user">
                                     </div>
-                                    
+
                                     <div class="form-group col-md-6">
                                         <label class="control-label" for="name">project name</label>
-                                        <input class="form-control" id="name" type="text" placeholder="GitHub repo name" readonly="" name="name">
+                                        <input class="form-control" id="name" type="text" placeholder="GitHub repo name" readonly="" name="project_name">
                                     </div>
                                 </div>
-    
-                                    
-                                    
-    
+
+
+
+
                                 <button type="submit" class="btn btn-primary float-right" id="submit" disabled>
                                     <span id="submit-word">Submit</span>
                                     <div class="spinner-grow" id="submit-spinner" role="status">
@@ -138,7 +138,7 @@
                                 </button>
                                 <!--{{ recaptcha }}-->
                                 <!--<div class="g-recaptcha" data-sitekey="6LfxhLUUAAAAAB9gcKxdKVxgA_RWY8Z6Yo1GyQr2"></div>-->
-                                
+
                                 <div id="valid" class="feedback float-left text-success">looks ready to go! </div>
                                 <div id="invalid-url" class="feedback float-left text-danger">please enter a valid repository url</div>
                                 <div id="invalid-not-found" class="feedback float-left text-danger">GitHub repository not found</div>
@@ -150,4 +150,3 @@
         </div>
     </body>
 </html>
-

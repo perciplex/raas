@@ -28,7 +28,8 @@
 
                 var time = $('<td/>')
                     //.text(new Date(time*1000).toLocaleTimeString('en-En', {timeStyle: "medium", hour12:false}))
-                    .text(jQuery.timeago(new Date(time * 1000)))
+                    //.text(jQuery.timeago(new Date(time * 1000)))
+                    .text(time)
                     .appendTo(tr)
 
                 var user = $('<td/>')
@@ -70,13 +71,16 @@
             function load_jobs() {
                 $.get("job", function (jobs) {
 
-                    job_list.empty()
-
-                    statuses = ['queued', 'running', 'completed'];
+                    job_list.empty();
+                    console.log(jobs);
+                    var statuses = ['queued', 'running', 'completed'];
+                    var statuses_time_dict = {'queued' : 'submit_time', 'running' : 'start_time', 'completed' : 'end_time'};
                     statuses.forEach(status => {
-                        jobs[status].sort(job => { job[`${status}_time`] }).forEach(job => {
-                            console.log(job[`${status}_time`])
-                            build_job(job.id, job.user, job.name, job.status, job.hardware, job[`${status}_time`]);
+                        console.log('status = ', status);
+                        console.log(jobs["queued"]);
+                        jobs[status].sort(job => { job[statuses_time_dict[status]] }).forEach(job => {
+                            console.log(job[statuses_time_dict[status]]);
+                            build_job(job.id, job.git_user, job.project_name, job.status, job.hardware_name, job[statuses_time_dict[status]]);
                         });
                     });
                 });
