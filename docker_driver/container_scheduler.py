@@ -12,7 +12,7 @@ import reset_pendulum
 import ConfigParser
 
 config = ConfigParser.ConfigParser()
-config.read("config.ini")
+config.read("/home/pi/config.ini")
 FLASK_PASS = config.get("CREDS", "FLASK_PASS")
 
 
