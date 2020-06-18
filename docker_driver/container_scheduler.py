@@ -9,8 +9,11 @@ import os
 from led_driver import LedMessage
 
 import reset_pendulum
+import ConfigParser
 
-FLASK_PASS = os.getenv("FLASK_PASS", None)
+config = ConfigParser.ConfigParser()
+config.read("config.ini")
+FLASK_PASS = config.get("CREDS", "FLASK_PASS")
 
 
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
