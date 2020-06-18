@@ -10,6 +10,8 @@ from led_driver import LedMessage
 
 import reset_pendulum
 
+FLASK_PASS = os.getenv("FLASK_PASS", None)
+
 
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     client = docker.from_env()
@@ -98,7 +100,8 @@ LedMessage(f"").stop()
 while True:
     try:
         response = requests.get(
-            server_ip + "/job/pop", params={"hardware": socket.gethostname()}
+            server_ip + "/job/pop",
+            params={"FLASK_PASS": FLASK_PASS, "hardware": socket.gethostname()},
         )
         response_status = response.status_code
         print(response)
@@ -133,7 +136,11 @@ while True:
         job_json["stdout"] = stdout
         job_json["data"] = data  # data
         job_json["failed"] = failed
-        requests.put(server_ip + "/job/%s/results" % job_id, json=job_json)
+        requests.put(
+            server_ip + "/job/%s/results" % job_id,
+            params={"FLASK_PASS": FLASK_PASS},
+            json=job_json,
+        )
     else:
         # Wait and try again
         time.sleep(1)

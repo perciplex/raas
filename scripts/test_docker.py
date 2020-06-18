@@ -80,7 +80,5 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     build and run that."""
 
 
-
 res = launch_docker("https://github.com/perciplex/raas-starter.git")
 print(res)
-
