@@ -12,6 +12,9 @@ from flask import (
     redirect,
     make_response,
 )
+from flask_sslify import SSLify
+
+
 from hardware import Hardware
 from json import JSONEncoder
 
@@ -19,6 +22,9 @@ rd = random.Random()
 rd.seed(0)
 application = Flask(__name__)
 application.config.from_pyfile("config.cfg")
+
+sslify = SSLify(application)
+
 
 print(application.config["PI_IPS"])
 
