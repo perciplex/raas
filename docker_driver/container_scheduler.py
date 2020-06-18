@@ -71,6 +71,12 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     except Exception as e:
         print(f"Error {e}")
 
+
+    for image in filter(lambda image: not any(['perciplex/raas-base' in tag for tag in image.tags]) , client.images.list()): # clean images
+       client.images.remove(image.id)
+    client.containers.prune() # prune containers
+
+    
     return str(stdout), data, failed
 
     """ok. When this program stops it kills the container.
