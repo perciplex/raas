@@ -25,9 +25,6 @@ application.config.from_pyfile("config.cfg")
 
 sslify = SSLify(application)
 
-
-print(application.config["PI_IPS"])
-
 # a status enum
 class Status:
     QUEUED = "QUEUED"
@@ -125,15 +122,17 @@ def reset_jobs():
     completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
 
 
-def check_ip(ip):
-    print(ip)
-    return ip in application.config["PI_IPS"]
+def check_password(password):
+    if password == application.config["FLASK_PASS"]:
+        print("Bad password from from host")
+        return False
+    else:
+        return True
 
 
 @application.route("/reset")
 def reset_route():
-    if not check_ip(request.remote_addr):
-        print("reset request from non-pi ip")
+    if not check_password(request.args["FLASK_PASS"]):
         return make_response("", 403)
     reset_jobs()
     return redirect("/")
@@ -211,8 +210,7 @@ def job_route():
 @application.route("/job/pop", methods=["GET"])
 def job_pop_route():
     if request.method == "GET":
-        if not check_ip(request.remote_addr):
-            print("pop request from non-pi ip")
+        if not check_password(request.args["FLASK_PASS"]):
             return make_response("", 403)
 
         req_hardware = request.args.get("hardware")
@@ -244,8 +242,7 @@ def job_pop_route():
 @application.route("/job/<string:id>/results", methods=["PUT"])
 def job_results_route(id):
     if request.method == "PUT":
-        if not check_ip(request.remote_addr):
-            print("results request from non-pi ip")
+        if not check_password(request.args["FLASK_PASS"]):
             return make_response("", 403)
         if id in jobs:
             job = jobs[id]  # look up job

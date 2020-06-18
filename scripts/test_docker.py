@@ -9,11 +9,6 @@ import os
 from led_driver import LedMessage
 
 import reset_pendulum
-import ConfigParser
-
-config = ConfigParser.ConfigParser()
-config.read("/home/pi/config.ini")
-FLASK_PASS = config.get("CREDS", "FLASK_PASS")
 
 
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
@@ -85,65 +80,5 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     build and run that."""
 
 
-parser = argparse.ArgumentParser(description="Parse incoming arguments.")
-parser.add_argument(
-    "-s",
-    "--server",
-    dest="server",
-    default="http://raas.perciplex.com",
-    help="Server IP address",
-)
-
-args = parser.parse_args()
-server_ip = args.server
-
-# clear LED screen
-LedMessage(f"").stop()
-
-while True:
-    try:
-        response = requests.get(
-            server_ip + "/job/pop",
-            params={"FLASK_PASS": FLASK_PASS, "hardware": socket.gethostname()},
-        )
-        response_status = response.status_code
-        print(response)
-    except requests.exceptions.ConnectionError as e:
-        response_status = None
-        print("Server not reached {}".format(e))
-
-    # If work is found, launch the work
-    if response_status == 200:
-        # Get response json
-        job_json = response.json()
-        print(job_json)
-        job_id = job_json["id"]
-        git_url = job_json["git_url"]
-        user = job_json["user"]
-        name = job_json["name"]
-
-        led = LedMessage(f"{user}:{name}")
-        led.start()
-
-        stdout, data, failed = launch_docker(git_url)
-        print("resetting")
-        reset_pendulum.reset_pendulum()
-
-        led.stop()
-
-        # stdout, data = results.split("## STARTING DATA SECTION ##")
-        # data = data.split("## ENDING DATA SECTION ##")[0]
-        # print(data)
-        # data = json.loads(data)
-
-        job_json["stdout"] = stdout
-        job_json["data"] = data  # data
-        job_json["failed"] = failed
-        requests.put(
-            server_ip + "/job/%s/results" % job_id,
-            params={"FLASK_PASS": FLASK_PASS},
-            json=job_json,
-        )
-    else:
-        # Wait and try again
-        time.sleep(1)
+res = launch_docker("https://github.com/perciplex/raas-starter.git")
+print(res)
