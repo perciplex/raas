@@ -118,9 +118,9 @@ def reset_jobs():
     completed = queue.Queue(maxsize=20)  # a queue of recently completed jobs
 
 
-def check_password(pword):
-    if pword not in application.config["FLASK_PASS"]:
-        print("Bad password from ip:{}".format(request.remote_addr))
+def check_password(password):
+    if password == application.config["FLASK_PASS"]:
+        print("Bad password from from host")
         return False
     else:
         return True
