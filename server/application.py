@@ -20,7 +20,6 @@ rd.seed(0)
 application = Flask(__name__)
 application.config.from_pyfile("config.cfg")
 
-print(application.config["PI_IPS"])
 
 # a status enum
 class Status:
