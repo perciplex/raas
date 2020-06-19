@@ -93,6 +93,7 @@
                             special enviorment.
                             <p></p>
                             <pre>
+
     import gym
     <strong>import raas_envs</strong>
     env = gym.make('<strong>Pendulum-RaaS</strong>')
@@ -101,7 +102,6 @@
         env.render()
         env.step(env.action_space.sample()) # take a random action
     env.close()</pre>
-
                             When run locally, the above code performs a Gym simulation with phyical parameters set to
                             match our hardware. When run at RaaS, the code controls an actual robot!
                         </div>
