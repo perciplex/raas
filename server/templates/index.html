@@ -29,7 +29,8 @@
                 var time = $('<td/>')
                     //.text(new Date(time*1000).toLocaleTimeString('en-En', {timeStyle: "medium", hour12:false}))
                     //.text(jQuery.timeago(new Date(time * 1000)))
-                    .text(time)
+                    .text(jQuery.timeago(Date.parse(time)))
+                    //.text(time)
                     .appendTo(tr)
 
                 var user = $('<td/>')
@@ -74,7 +75,7 @@
                     job_list.empty();
                     console.log(jobs);
                     var statuses = ['queued', 'running', 'completed'];
-                    var statuses_time_dict = {'queued' : 'submit_time', 'running' : 'start_time', 'completed' : 'end_time'};
+                    var statuses_time_dict = { 'queued': 'submit_time', 'running': 'start_time', 'completed': 'end_time' };
                     statuses.forEach(status => {
                         console.log('status = ', status);
                         console.log(jobs["queued"]);

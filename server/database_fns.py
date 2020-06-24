@@ -21,7 +21,8 @@ def datetime_objs_to_strs(jobs):
     for j in jobs:
         for t in times:
             if j[t] is not None:
-                j[t] = j[t].strftime("%m/%d/%Y, %H:%M:%S")
+                pass
+                # j[t] = j[t].strftime("%m/%d/%Y, %H:%M:%S")
 
     return jobs
 
