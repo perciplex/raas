@@ -9,9 +9,9 @@ import os
 from led_driver import LedMessage
 
 import reset_pendulum
-import ConfigParser
+from configparser import ConfigParser
 
-config = ConfigParser.ConfigParser()
+config = ConfigParser()
 config.read("/home/pi/config.ini")
 FLASK_PASS = config.get("CREDS", "FLASK_PASS")
 
