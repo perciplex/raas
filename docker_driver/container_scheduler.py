@@ -7,6 +7,7 @@ import json
 import socket
 import os
 from led_driver import LedMessage
+import upload_s3_utils
 
 import reset_pendulum
 from configparser import ConfigParser
@@ -72,6 +73,8 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     try:
         with open("/tmp/log.json") as f:
             data = json.load(f)
+
+        upload_s3_utils.upload_results("/tmp/log.json", "test.json")
 
     except Exception as e:
         print(f"Error {e}")
