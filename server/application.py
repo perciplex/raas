@@ -86,7 +86,7 @@ class JobsCache:
     def __init__(self):
 
         self.last_db_read_time = time.time()
-        self.update_period = 1.0  # In seconds
+        self.update_period = 2.0  # In seconds
         self.cache = {
             "queued": deque(),
             "running": {},
@@ -109,8 +109,16 @@ class JobsCache:
             "queued": deque(q),
             "running": r,
             "completed": c,
-            "all_jobs": q+r+c,
+            "all_jobs": q + r + c,
         }
+
+    def get_job_id_in_cache(self, id, cache="all_jobs"):
+        return next((job for job in self.cache[cache] if job["id"] == int(id)), None,)
+
+    def check_job_id_in_cache(self, id, cache="all_jobs"):
+        return (
+            next((item for item in self.cache[cache] if item["id"] == int(id)), None,)
+        ) is not None
 
 
 # a custom json encoder which replaces the default and allows Job objects to be jsonified
@@ -135,7 +143,7 @@ completed = queue.LifoQueue(maxsize=20)  # a queue of recently completed jobs
 hardware_list = ["Omar", "Goose", "Nicki", "Beth"]
 hardware_dict = {name: Hardware(name) for name in hardware_list}
 jobs_cache = JobsCache()
-print(jobs_cache.cache["queued"])
+# print(jobs_cache.cache["all_jobs"])
 
 
 def reset_jobs():
@@ -157,6 +165,8 @@ def check_password(password):
 
 @application.route("/reset")
 def reset_route():
+    pop_job = jobs_cache.cache["queued"].pop()  # get job from queue
+    print(jsonify(pop_job))
     if not check_password(request.args["FLASK_PASS"]):
         return make_response("", 403)
     reset_jobs()
@@ -165,8 +175,6 @@ def reset_route():
 
 @application.route("/")
 def base_route():
-    # return send_file("static/index.html")
-    print(jobs_cache.cache["queued"])
     return render_template("index.html")
 
 
@@ -193,8 +201,12 @@ def hardware_route():
 
 @application.route("/job/<string:id>", methods=["GET"])
 def job_page_route(id):
-    if id in jobs_cache.cache["all_jobs"]:
-        return render_template("job.html", job=jobs_cache.cache["all_jobs"][id])
+    jobs_cache.get_db_cache()
+    print("Looking for {} in {}\n\n\n".format(id, jobs_cache.cache["all_jobs"]))
+    job = jobs_cache.get_job_id_in_cache(id, "queued")
+    if job:
+        print("\n\nCACHE HIT: \n {} \n\n".format(job))
+        return render_template("job.html", job=job)
     else:
         return redirect("/")
 
@@ -206,6 +218,7 @@ def submit_page_route():
 
 @application.route("/job", methods=["POST", "GET"])
 def job_route():
+    jobs_cache.get_db_cache()
     if request.method == "POST":
         git_user, project_name, git_url = (
             request.form["git_user"],
@@ -214,17 +227,9 @@ def job_route():
         )
 
         for job in jobs_cache.cache["queued"]:
-            if (git_user, project_name) == (job.git_user, job.project_name):
+            if (git_user, project_name) == (job["git_user"], job["project_name"]):
                 return redirect("/")
 
-        # new_job = Job(git_user, project_name, git_url)
-        # jobs[new_job.id] = new_job  # add to database
-        # queued.put(new_job)  # add to queue
-
-        # New DB version. Check if submitted job is either queued or running
-        # for job in database_fns.get_all_queued() + database_fns.get_all_running():
-        #     if (git_user, project_name) == (job["git_user"], job["project_name"]):
-        #         return redirect("/")
         # Else, add new job
         database_fns.new_job(project_name, git_url, git_user)
 
@@ -235,43 +240,29 @@ def job_route():
             {
                 "queued": (list(jobs_cache.cache["queued"])),
                 "running": (list(jobs_cache.cache["running"])),
-                "completed": (list(jobs_cache.cache["completed"]))
+                "completed": (list(jobs_cache.cache["completed"])),
             }
         )
-
-        # These are already sorted from the database
-        # return jsonify(
-        #     {
-        #         "queued": database_fns.get_all_queued(),
-        #         "running": database_fns.get_all_running(),
-        #         "completed": database_fns.get_all_completed(),
-        #     }
-        # )
 
 
 @application.route("/job/pop", methods=["GET"])
 def job_pop_route():
+    jobs_cache.get_db_cache()
     if request.method == "GET":
         if not check_password(request.args["FLASK_PASS"]):
-            return make_response("", 403)
+            return make_response("Bad password.", 403)
 
         req_hardware = request.args.get("hardware")
         print(req_hardware)
         if req_hardware in hardware_dict:
             hardware_dict[req_hardware].heartbeat()
 
-        if not jobs_cache.cache["queued"]:
+        if jobs_cache.cache["queued"]:
 
             # job_id = database_fns.get_next_queued()
 
             pop_job = jobs_cache.cache["queued"].pop()  # get job from queue
-            database_fns.start_job(pop_job.id, req_hardware)
-            # pop_job.hardware = req_hardware
-
-            # running[pop_job.id] = pop_job  # add to running dict
-            # pop_job.status = Status.RUNNING
-            # pop_job.start_time = time.time()
-            # return jsonify({"git_url": pop_job.git_url, "id": pop_job.id})
+            database_fns.start_job(pop_job["id"], req_hardware)
 
             if req_hardware in hardware_dict:
                 hardware_dict[req_hardware].starting_job()
@@ -283,10 +274,11 @@ def job_pop_route():
 
 @application.route("/job/<string:id>/results", methods=["PUT"])
 def job_results_route(id):
+    jobs_cache.get_db_cache()
     if request.method == "PUT":
         if not check_password(request.args["FLASK_PASS"]):
             return make_response("", 403)
-        if id in jobs:
+        if jobs_cache.check_job_id_in_cache(id):
 
             database_fns.end_job(id)
 
@@ -295,18 +287,8 @@ def job_results_route(id):
 
             # completed.put(job)  # add to completed buffer
 
-            req_data = request.get_json()
+            # req_data = request.get_json()
 
-            # job.stdout = req_data["stdout"]
-            # job.data = str(req_data["data"])
-
-            # if req_data["failed"]:
-                # job.status = Status.FAILED
-            # else:
-                # job.status = Status.COMPLETE
-
-            # print(job.data)
-            # job.end_time = time.time()
             return make_response("", 200)
         else:
             return make_response("", 404)
