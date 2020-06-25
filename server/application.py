@@ -166,6 +166,7 @@ def reset_route():
 @application.route("/")
 def base_route():
     # return send_file("static/index.html")
+    print(jobs_cache.cache["queued"])
     return render_template("index.html")
 
 
@@ -192,8 +193,8 @@ def hardware_route():
 
 @application.route("/job/<string:id>", methods=["GET"])
 def job_page_route(id):
-    if id in jobs_cache.cache.all_jobs:
-        return render_template("job.html", job=jobs_cache.cache.all_jobs[id])
+    if id in jobs_cache.cache["all_jobs"]:
+        return render_template("job.html", job=jobs_cache.cache["all_jobs"][id])
     else:
         return redirect("/")
 
@@ -212,7 +213,7 @@ def job_route():
             request.form["git_url"],
         )
 
-        for job in jobs_cache.cache.queued:
+        for job in jobs_cache.cache["queued"]:
             if (git_user, project_name) == (job.git_user, job.project_name):
                 return redirect("/")
 
@@ -259,11 +260,11 @@ def job_pop_route():
         if req_hardware in hardware_dict:
             hardware_dict[req_hardware].heartbeat()
 
-        if not jobs_cache.cache.queued:
+        if not jobs_cache.cache["queued"]:
 
             # job_id = database_fns.get_next_queued()
 
-            pop_job = jobs_cache.cache.queued.pop()  # get job from queue
+            pop_job = jobs_cache.cache["queued"].pop()  # get job from queue
             database_fns.start_job(pop_job.id, req_hardware)
             # pop_job.hardware = req_hardware
 
