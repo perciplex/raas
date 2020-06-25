@@ -93,20 +93,6 @@ class JSONEncoderJob(JSONEncoder):
         return JSONEncoder.default(self, job)
 
 
-# replace the default encoder
-# application.json_encoder = JSONEncoderJob
-
-
-def format_datetime(value):
-    return datetime.datetime.fromtimestamp(value).strftime("%m/%d/%y %H:%M:%S")
-
-
-application.jinja_env.filters["datetime"] = format_datetime
-
-# a dictionary of all jobs
-# TODO: replace with a database
-
-
 jobs = {}
 queued = queue.Queue()  # a queue for the queued jobs
 running = {}  # a set of running jobs
@@ -243,7 +229,7 @@ def job_pop_route():
 
         if not queued.empty():
 
-            job_id = database_fns.get_next_pending()
+            job_id = database_fns.get_next_queued()
             database_fns.start_job(job_id, req_hardware)
 
             pop_job = queued.get()  # get job from queue
