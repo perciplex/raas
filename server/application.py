@@ -79,6 +79,31 @@ class Job:
         }
 
 
+# A class that holds the most recent cached results, so the frontend won't
+# ping the database for each page load.
+class JobsCache:
+    def __init__(self):
+
+        self.last_db_read_time = time.time()
+        self.update_period = 1.0  # In seconds
+
+        self.update_db_cache()  # update to begin
+
+    def get_db_cache(self):
+
+        if time.time() - self.last_db_read_time > self.update_period:
+            self.update_db_cache()
+        return self.last_cache
+
+    def update_db_cache(self):
+
+        self.last_cache = {
+            "queued": database_fns.get_all_queued(),
+            "running": database_fns.get_all_running(),
+            "completed": database_fns.get_all_completed(),
+        }
+
+
 # a custom json encoder which replaces the default and allows Job objects to be jsonified
 class JSONEncoderJob(JSONEncoder):
     def default(self, job):
