@@ -56,6 +56,7 @@
 
                     Plotly.newPlot("plot", [x_plot, y_plot, tdot_plot, action_plot], layout);
 
+                    $("#stdout").html(data.stdout.replace(/\\n/g, "<br/>").replace(/\\t/g, "	"))
                 });
         });
     </script>
@@ -99,11 +100,7 @@
                                 {{job["end_time"].strftime("%m/%d/%Y, %H:%M:%S")}}</span>
                             {%endif%}
                         </div>
-                        <pre class="card-text" style="white-space: nowrap;overflow-x:scroll;">
-                                {% autoescape false %}
-                                    {{job.stdout|replace("\\n","<br/>")|replace("\\t", "	")}} 
-                                {% endautoescape %}
-                            </pre>
+                        <pre class="card-text" id="stdout" style="white-space: nowrap;overflow-x:scroll;"></pre>
                     </div>
                 </div>
             </div>
