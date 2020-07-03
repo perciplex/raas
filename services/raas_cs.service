@@ -15,10 +15,10 @@ ExecStart=/usr/bin/python3 /home/pi/raas/docker_driver/container_scheduler.py
 Environment=PYTHONUNBUFFERED=1
 
 # Automatically restart the service if it crashes
-Restart=on-failure
+Restart=always
 
 # Our service will notify systemd once it is up and running
-Type=notify
+Type=simple
 
 # Use a dedicated user to run our service
 User=pi
