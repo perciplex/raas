@@ -21,4 +21,4 @@ The system is not currently operational, but you can find the site at [raas.perc
 
 ### Architecture Diagram
 
-![](diagram.png)
+![](block_diagram.png)
