@@ -282,7 +282,7 @@ def start_job(id, hardware_name):
     command = """
                 UPDATE jobs
                 SET
-                    status = 'running',
+                    status = 'RUNNING',
                     hardware_name = %s,
                     start_time = %s
                 WHERE id = %s;
