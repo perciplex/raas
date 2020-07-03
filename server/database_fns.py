@@ -53,7 +53,7 @@ def get_all_queued():
                 FROM
                 	jobs
                 WHERE
-                    status = 'queued'
+                    status = 'QUEUED'
                 ORDER BY
                 	submit_time ASC;
                 """
@@ -95,7 +95,7 @@ def get_all_running():
                 FROM
                 	jobs
                 WHERE
-                    status = 'running'
+                    status = 'RUNNING'
                 ORDER BY
                 	start_time ASC;
                 """
@@ -137,7 +137,7 @@ def get_all_completed():
                 FROM
                 	jobs
                 WHERE
-                    status = 'completed'
+                    status = 'COMPLETED'
                 ORDER BY
                 	end_time ASC;
                 """
