@@ -87,7 +87,7 @@ class JobsCache:
     def __init__(self):
 
         self.last_db_read_time = time.time()
-        self.update_period = 1.0  # In seconds
+        self.update_period_seconds = 1.0  # In seconds
         self.cache = {
             "queued": deque(),
             "running": {},
@@ -142,6 +142,8 @@ class JobsCache:
         """
         if self.check_job_id_in_cache(id, cache=cache):
             return self.cache[cache][id]
+        else:
+            return None
 
     def check_job_id_in_cache(self, id, cache="all_jobs"):
         """
