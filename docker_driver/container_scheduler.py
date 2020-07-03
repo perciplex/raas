@@ -77,7 +77,7 @@ def launch_docker(git_url, job_id):
     try:
         with open("/tmp/log.json", 'r') as f:
             data = json.load(f)
-            data['stdout'] = stdout
+            data['stdout'] = str(stdout)
 
 
     except Exception as e:
