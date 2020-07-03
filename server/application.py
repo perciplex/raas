@@ -122,7 +122,7 @@ class JobsCache:
         c = list_to_dict(database_fns.get_all_completed())
 
         self.cache = {
-            "queued": deque(q),
+            "queued": deque(q.values()),
             "running": r,
             "completed": c,
             "all_jobs": {**q, **r, **c},
@@ -200,8 +200,6 @@ def check_password(password):
 
 @application.route("/reset")
 def reset_route():
-    pop_job = jobs_cache.cache["queued"].pop()  # get job from queue
-    print(jsonify(pop_job))
     if not check_password(request.args["FLASK_PASS"]):
         return make_response("", 403)
     reset_jobs()
@@ -271,6 +269,7 @@ def job_route():
         return redirect("/")
     # Need to update with DB stuff
     if request.method == "GET":
+        print(list(jobs_cache.cache["queued"]))
         return jsonify(
             {
                 "queued": (list(jobs_cache.cache["queued"])),
