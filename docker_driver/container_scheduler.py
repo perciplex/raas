@@ -149,6 +149,7 @@ while True:
         # data = data.split("## ENDING DATA SECTION ##")[0]
         # print(data)
         # data = json.loads(data)
+        data['stdout'] = stdout
 
         job_json["stdout"] = stdout
         job_json["data"] = data  # data
