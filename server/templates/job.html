@@ -89,14 +89,14 @@
                     <div class="card-body">
                         <div>
                             <span class="badge badge-pill badge-warning"><i class="fa fa-list-ul"></i>
-                                {{job["submit_time"]}}</span>
+                                {{job["submit_time"].strftime("%m/%d/%Y, %H:%M:%S")}}</span>
                             {% if ((job.status=='RUNNING') or (job.status=='COMPLETED') or (job.status=='FAILED')) %}
                             <span class="badge badge-pill badge-primary"><i class="fa fa-play"></i>
-                                {{job["start_time"]}}</span>
+                                {{job["start_time"].strftime("%m/%d/%Y, %H:%M:%S")}}</span>
                             {%endif%}
                             {% if (job.status=='COMPLETED') or (job.status=='FAILED')  %}
                             <span class="badge badge-pill badge-success"><i class="fa fa-flag-checkered"></i>
-                                {{job["end_time"]}}</span>
+                                {{job["end_time"].strftime("%m/%d/%Y, %H:%M:%S")}}</span>
                             {%endif%}
                         </div>
                         <pre class="card-text" style="white-space: nowrap;overflow-x:scroll;">

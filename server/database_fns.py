@@ -14,19 +14,6 @@ DB_KWARGS = {
 }
 
 
-def datetime_objs_to_strs(jobs):
-
-    times = ["submit_time", "start_time", "end_time"]
-
-    for j in jobs:
-        for t in times:
-            if j[t] is not None:
-                # pass
-                j[t] = j[t].strftime("%m/%d/%Y, %H:%M:%S")
-
-    return jobs
-
-
 def real_dicts_to_python_dicts(real_dict_list):
     """
     Convert the postgres psycopg2 RealDictRows to python dict.
@@ -72,7 +59,7 @@ def get_all_queued():
         cur.close()  # close communication with the PostgreSQL database server
         conn.commit()  # commit the changes
 
-        return real_dicts_to_python_dicts(datetime_objs_to_strs(rows))
+        return real_dicts_to_python_dicts(rows)
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
@@ -114,7 +101,7 @@ def get_all_running():
         cur.close()  # close communication with the PostgreSQL database server
         conn.commit()  # commit the changes
 
-        return real_dicts_to_python_dicts(datetime_objs_to_strs(rows))
+        return real_dicts_to_python_dicts(rows)
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
@@ -156,7 +143,7 @@ def get_all_completed():
         cur.close()  # close communication with the PostgreSQL database server
         conn.commit()  # commit the changes
 
-        return real_dicts_to_python_dicts(datetime_objs_to_strs(rows))
+        return real_dicts_to_python_dicts(rows)
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
