@@ -75,10 +75,9 @@ def launch_docker(git_url, job_id):
         print(stdout)
 
     try:
-        with open("/tmp/log.json", 'r') as f:
+        with open("/tmp/log.json", "r") as f:
             data = json.load(f)
-            data['stdout'] = str(stdout)
-
+            data["stdout"] = str(stdout)
 
     except Exception as e:
         print(f"Error {e}")
@@ -144,7 +143,7 @@ while True:
         reset_pendulum.reset_pendulum()
 
         led.stop()
-        
+
         upload_s3_utils.upload_string(job_id, json.dumps(data))
 
         # stdout, data = results.split("## STARTING DATA SECTION ##")

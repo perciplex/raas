@@ -39,10 +39,11 @@ def upload_file(source_file_name, bucket, object_name=None):
 
     return True
 
+
 def upload_string(job_id, string):
     bucket_name = "raas-results"
     subfolder = "run_results"
-    
-    s3 = boto3.resource('s3')
+
+    s3 = boto3.resource("s3")
     object = s3.Object(bucket_name, os.path.join(subfolder, "{}.json".format(job_id)))
     object.put(Body=string)

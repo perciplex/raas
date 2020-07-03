@@ -196,23 +196,7 @@ def get_id_rows(id):
             conn.close()
 
 
-####### High level job control
-
-
-def get_next_queued():
-    """
-
-    Get the next queued job from the DB, sorted by
-    earliest submit_time. Returns the id.
-
-    """
-
-    queued_rows = get_all_queued()
-    if len(queued_rows) > 0:
-        return queued_rows[0]["id"]
-    else:
-        print("No queued jobs!")
-        return None
+#  High level job control
 
 
 def new_job(project_name, git_url, git_user):
