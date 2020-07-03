@@ -30,11 +30,15 @@ def recreate_table():
         DROP TYPE IF EXISTS statuses;
         """,
         """
+        CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        """,
+        """
         CREATE TYPE statuses AS ENUM ('queued', 'running', 'completed', 'failed');
         """,
         """
         CREATE TABLE jobs (
-            id SERIAL PRIMARY KEY,
+
+            id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
             submit_time TIMESTAMPTZ NOT NULL,
             start_time TIMESTAMPTZ,
             end_time TIMESTAMPTZ,
@@ -46,6 +50,7 @@ def recreate_table():
         )
         """,
     )
+    #             id SERIAL PRIMARY KEY,
     conn = None
     try:
         print("trying to connect...")
