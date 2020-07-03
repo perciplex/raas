@@ -1,108 +1,118 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        {% include "header.html" %}
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-        <script>
-            $(document).ready(function($) {
-                var data = JSON.parse("{{job.data}}".replace(/&#39;/g,"\""));
-                console.log(data);
-                var layout = {
-                    margin: {
-                        l: 50,
-                        r: 50,
-                        b: 100,
-                        t: 10,
-                        pad: 0
-                    }
-                };
-                var t0 = data.times[0];
-                var times = data.times.map(t => t-t0);
-                var obs = data.obs;
-                var obs_T = obs[0].map((col, i) => obs.map(row => row[i]));
-                var x_plot = {
-                    x: times,
-                    y: obs_T[0],
-                    name: 'y',
-                    type: 'scatter'
-                };
-                var y_plot = {
-                    x: times,
-                    y: obs_T[1],
-                    name: 'x',
-                    type: 'scatter'
-                }
-                var tdot_plot = {
-                    x: times,
-                    y: obs_T[2],
-                    name: 'theta dot',
-                    type: 'scatter'
-                }
-                var action_plot = {
-                    x: times,
-                    y: data.actions,
-                    name: 'action',
-                    type: 'scatter'
-                }
-                var cost_plot = {
-                    x: times,
-                    y: data.costs,
-                    name: 'cost',
-                    type: 'action'
-                }
 
-                Plotly.newPlot("plot", [x_plot, y_plot, tdot_plot,  action_plot], layout);
-            });
-        </script>
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="alert {{ 'alert-warning' if job.status=='QUEUED' }} {{ 'alert-success' if job.status=='COMPLETE' }} {{ 'alert-primary' if job.status=='RUNNING' }} {{ 'alert-danger' if job.status=='FAILED' }}">
-                        <h4>
-                            {{job.status}}
-                            {%if job.status=='RUNNING' or job.status=='COMPLETE' or job.status=='FAILED'%}
-                                <span class="float-right">{{job.hardware}}</span>
-                            {%endif%}
-                        </h4>
-                    </div>
+<head>
+    {% include "header.html" %}
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        $(document).ready(function ($) {
+            var id = "{{ job.id }}";
+            $.getJSON(`https://raas-results.s3.us-east-2.amazonaws.com/run_results/${id}.json`,
+                function (data) {
+                    console.log(data);
+                    var layout = {
+                        margin: {
+                            l: 50,
+                            r: 50,
+                            b: 100,
+                            t: 10,
+                            pad: 0
+                        }
+                    };
+                    var t0 = data.times[0];
+                    var times = data.times.map(t => t - t0);
+                    var obs = data.obs;
+                    var obs_T = obs[0].map((col, i) => obs.map(row => row[i]));
+                    var x_plot = {
+                        x: times,
+                        y: obs_T[0],
+                        name: 'y',
+                        type: 'scatter'
+                    };
+                    var y_plot = {
+                        x: times,
+                        y: obs_T[1],
+                        name: 'x',
+                        type: 'scatter'
+                    }
+                    var tdot_plot = {
+                        x: times,
+                        y: obs_T[2],
+                        name: 'theta dot',
+                        type: 'scatter'
+                    }
+                    var action_plot = {
+                        x: times,
+                        y: data.actions,
+                        name: 'action',
+                        type: 'scatter'
+                    }
+                    var cost_plot = {
+                        x: times,
+                        y: data.costs,
+                        name: 'cost',
+                        type: 'action'
+                    }
+
+                    Plotly.newPlot("plot", [x_plot, y_plot, tdot_plot, action_plot], layout);
+
+                });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div
+                    class="alert {{ 'alert-warning' if job.status=='QUEUED' }} {{ 'alert-success' if job.status=='COMPLETED' }} {{ 'alert-primary' if job.status=='RUNNING' }} {{ 'alert-danger' if job.status=='FAILED' }}">
+                    <h4>
+                        {{job.status}}
+                        {%if job.status=='RUNNING' or job.status=='COMPLETED' or job.status=='FAILED'%}
+                        <span class="float-right">{{job.hardware}}</span>
+                        {%endif%}
+                    </h4>
                 </div>
             </div>
-            <p></p>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="card border-primary mb-3">
-                        <div class="card-header">
-                            {{job.name}}
-                            <span class="float-right">
-                                {{job.user}}
-                            </span>
+        </div>
+        <p></p>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card border-primary mb-3">
+                    <div class="card-header">
+                        {{job.project_name}}
+                        <span class="float-right">
+                            {{job.git_user}}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <span class="badge badge-pill badge-warning"><i class="fa fa-list-ul"></i>
+                                {{job["submit_time"].strftime("%m/%d/%Y, %H:%M:%S")}}</span>
+                            {% if ((job.status=='RUNNING') or (job.status=='COMPLETED') or (job.status=='FAILED')) %}
+                            <span class="badge badge-pill badge-primary"><i class="fa fa-play"></i>
+                                {{job["start_time"].strftime("%m/%d/%Y, %H:%M:%S")}}</span>
+                            {%endif%}
+                            {% if (job.status=='COMPLETED') or (job.status=='FAILED')  %}
+                            <span class="badge badge-pill badge-success"><i class="fa fa-flag-checkered"></i>
+                                {{job["end_time"].strftime("%m/%d/%Y, %H:%M:%S")}}</span>
+                            {%endif%}
                         </div>
-                        <div class="card-body">
-                            <div>
-                                <span class="badge badge-pill badge-warning"><i class="fa fa-list-ul"></i> {{job["submit_time"]}}</span>
-                                                {% if ((job.status=='RUNNING') or (job.status=='COMPLETE') or (job.status=='FAILED')) %}
-                                <span class="badge badge-pill badge-primary"><i class="fa fa-play"></i> {{job["running_time"]}}</span>
-                                                {%endif%}
-                                                {% if (job.status=='COMPLETE') or (job.status=='FAILED')  %}
-                                <span class="badge badge-pill badge-success"><i class="fa fa-flag-checkered"></i> {{job["completed_time"]}}</span>
-                                                {%endif%}
-                            </div>
-                            <pre class="card-text" style="white-space: nowrap;overflow-x:scroll;">
+                        <pre class="card-text" style="white-space: nowrap;overflow-x:scroll;">
                                 {% autoescape false %}
                                     {{job.stdout|replace("\\n","<br/>")|replace("\\t", "	")}} 
                                 {% endautoescape %}
                             </pre>
-                        </div>
-                    </div>            
+                    </div>
                 </div>
-                
-                <div class="col-sm-6">
-                    <div id="plot" class="position-sticky" id="plot"></div>
-                </div>  
+            </div>
+
+            <div class="col-sm-6">
+                <div id="plot" class="position-sticky" id="plot"></div>
             </div>
         </div>
-    </body>
-</html>
+    </div>
+</body>
 
+</html>
