@@ -17,33 +17,40 @@ config.read("/home/pi/config.ini")
 FLASK_PASS = config.get("CREDS", "FLASK_PASS")
 
 
-def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
+def launch_docker(git_url, job_id):
     client = docker.from_env()
 
-    dockerfile = str(Path(__file__).resolve().parent / "docker_images/final_image")
+    dockerfile = str(
+        Path(__file__).resolve().parent / "docker_images/final_image"
+    )
     docker_tag = "raas-dev-test:latest"
 
     print(dockerfile)
     print(docker_tag)
-    print(gitUrl)
+    print(git_url)
 
     with open("/tmp/log.json", "w") as f:
         pass
 
     os.chmod("/tmp/log.json", 0o777)
 
-    # build the final image using the local raas-base, eventually need to pass in git url
+    # build the final image using the local raas-base, eventually
+    # need to pass in git url
     response = client.images.build(
         path=dockerfile,
         tag=docker_tag,
-        buildargs={"GIT_REPO_URL": gitUrl},
+        buildargs={"GIT_REPO_URL": git_url},
         nocache=True,
     )
 
-    # try to make the internal network which disables external network traffic, fails gracefully
+    # try to make the internal network which disables external
+    # network traffic, fails gracefully
     try:
         client.networks.create(
-            "docker_internal", driver="bridge", internal=True, check_duplicate=True
+            "docker_internal",
+            driver="bridge",
+            internal=True,
+            check_duplicate=True,
         )
     except docker.errors.APIError:
         pass
@@ -54,7 +61,14 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
     try:
         stdout = client.containers.run(
             docker_tag,
-            mounts=[{"Type": "bind", "Source": "/tmp/", "Target": "/tmp/", "RW": True}],
+            mounts=[
+                {
+                    "Type": "bind",
+                    "Source": "/tmp/",
+                    "Target": "/tmp/",
+                    "RW": True,
+                }
+            ],
             network="docker_internal",
             # auto_remove=True,
             mem_limit="3g",
@@ -74,13 +88,17 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):
         with open("/tmp/log.json") as f:
             data = json.load(f)
 
-        upload_s3_utils.upload_results("/tmp/log.json", "test.json")
+        upload_s3_utils.upload_results(
+            "/tmp/log.json", "{}.json".format(job_id)
+        )
 
     except Exception as e:
         print(f"Error {e}")
 
     for image in filter(
-        lambda image: not any(["perciplex/raas-base" in tag for tag in image.tags]),
+        lambda image: not any(
+            ["perciplex/raas-base" in tag for tag in image.tags]
+        ),
         client.images.list(),
     ):  # clean images
         client.images.remove(image.id)
@@ -114,7 +132,10 @@ while True:
     try:
         response = requests.get(
             server_ip + "/job/pop",
-            params={"FLASK_PASS": FLASK_PASS, "hardware": socket.gethostname()},
+            params={
+                "FLASK_PASS": FLASK_PASS,
+                "hardware": socket.gethostname(),
+            },
         )
         response_status = response.status_code
         print(response)
@@ -129,13 +150,13 @@ while True:
         print(job_json)
         job_id = job_json["id"]
         git_url = job_json["git_url"]
-        user = job_json["user"]
-        name = job_json["name"]
+        user = job_json["git_user"]
+        name = job_json["project_name"]
 
         led = LedMessage(f"{user}:{name}")
         led.start()
 
-        stdout, data, failed = launch_docker(git_url)
+        stdout, data, failed = launch_docker(git_url, job_id)
         print("resetting")
         reset_pendulum.reset_pendulum()
 
