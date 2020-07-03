@@ -105,6 +105,7 @@ class JobsCache:
         q = database_fns.get_all_queued()
         r = database_fns.get_all_running()
         c = database_fns.get_all_completed()
+
         self.cache = {
             "queued": deque(q),
             "running": r,
@@ -113,11 +114,11 @@ class JobsCache:
         }
 
     def get_job_id_in_cache(self, id, cache="all_jobs"):
-        return next((job for job in self.cache[cache] if job["id"] == int(id)), None,)
+        return next((job for job in self.cache[cache] if job["id"] == str(id)), None,)
 
     def check_job_id_in_cache(self, id, cache="all_jobs"):
         return (
-            next((item for item in self.cache[cache] if item["id"] == int(id)), None,)
+            next((item for item in self.cache[cache] if item["id"] == str(id)), None,)
         ) is not None
 
 
@@ -143,7 +144,6 @@ completed = queue.LifoQueue(maxsize=20)  # a queue of recently completed jobs
 hardware_list = ["Omar", "Goose", "Nicki", "Beth"]
 hardware_dict = {name: Hardware(name) for name in hardware_list}
 jobs_cache = JobsCache()
-# print(jobs_cache.cache["all_jobs"])
 
 
 def reset_jobs():
@@ -203,7 +203,7 @@ def hardware_route():
 def job_page_route(id):
     jobs_cache.get_db_cache()
     print("Looking for {} in {}\n\n\n".format(id, jobs_cache.cache["all_jobs"]))
-    job = jobs_cache.get_job_id_in_cache(id, "queued")
+    job = jobs_cache.get_job_id_in_cache(id, "all_jobs")
     if job:
         print("\n\nCACHE HIT: \n {} \n\n".format(job))
         return render_template("job.html", job=job)
