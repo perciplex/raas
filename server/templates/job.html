@@ -81,12 +81,12 @@
                         </div>
                         <div class="card-body">
                             <div>
-                                <span class="badge badge-pill badge-warning"><i class="fa fa-list-ul"></i> {{job.queued_time|datetime}}</span>
+                                <span class="badge badge-pill badge-warning"><i class="fa fa-list-ul"></i> {{job["submit_time"]}}</span>
                                                 {% if ((job.status=='RUNNING') or (job.status=='COMPLETE') or (job.status=='FAILED')) %}
-                                <span class="badge badge-pill badge-primary"><i class="fa fa-play"></i> {{job.running_time|datetime}}</span>
+                                <span class="badge badge-pill badge-primary"><i class="fa fa-play"></i> {{job["running_time"]}}</span>
                                                 {%endif%}
                                                 {% if (job.status=='COMPLETE') or (job.status=='FAILED')  %}
-                                <span class="badge badge-pill badge-success"><i class="fa fa-flag-checkered"></i> {{job.completed_time|datetime}}</span>
+                                <span class="badge badge-pill badge-success"><i class="fa fa-flag-checkered"></i> {{job["completed_time"]}}</span>
                                                 {%endif%}
                             </div>
                             <pre class="card-text" style="white-space: nowrap;overflow-x:scroll;">
