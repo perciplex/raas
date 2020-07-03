@@ -26,7 +26,8 @@ rd.seed(0)
 application = Flask(__name__)
 application.config.from_pyfile("config.cfg")
 
-# sslify = SSLify(application)
+sslify = SSLify(application)
+
 
 # a status enum
 class Status:
@@ -96,12 +97,18 @@ class JobsCache:
         self.update_db_cache()  # update to begin
 
     def get_db_cache(self):
-
+        """
+        Get the database cache if the update period has passed since last pull
+        """
         if time.time() - self.last_db_read_time > self.update_period:
             self.update_db_cache()
         return self.cache
 
     def update_db_cache(self):
+        """
+        Update the database cache. Get all queued, running, and completed jobs.
+        Convert queued jobs to a deque.
+        """
         q = database_fns.get_all_queued()
         r = database_fns.get_all_running()
         c = database_fns.get_all_completed()
@@ -113,10 +120,30 @@ class JobsCache:
             "all_jobs": q + r + c,
         }
 
-    def get_job_id_in_cache(self, id, cache="all_jobs"):
+    def get_job_in_cache_from_id(self, id, cache="all_jobs"):
+        """
+        Gets the job if it exists in the cache.
+
+        Args:
+            id (UUID): ID of the job.
+            cache (str): Which cache to check. Defaults to "all_jobs".
+
+        Returns:
+            job (dict)
+        """
         return next((job for job in self.cache[cache] if job["id"] == str(id)), None,)
 
     def check_job_id_in_cache(self, id, cache="all_jobs"):
+        """
+        Checks if the job id exists in the cache.
+
+        Args:
+            id (UUID): ID of the job.
+            cache (str): Which cache to check. Defaults to "all_jobs".
+
+        Returns:
+            bool
+        """
         return (
             next((item for item in self.cache[cache] if item["id"] == str(id)), None,)
         ) is not None
@@ -203,7 +230,7 @@ def hardware_route():
 def job_page_route(id):
     jobs_cache.get_db_cache()
     print("Looking for {} in {}\n\n\n".format(id, jobs_cache.cache["all_jobs"]))
-    job = jobs_cache.get_job_id_in_cache(id, "all_jobs")
+    job = jobs_cache.get_job_in_cache_from_id(id, "all_jobs")
     if job:
         print("\n\nCACHE HIT: \n {} \n\n".format(job))
         return render_template("job.html", job=job)
