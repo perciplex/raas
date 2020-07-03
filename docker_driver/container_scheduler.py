@@ -150,8 +150,8 @@ while True:
         print(job_json)
         job_id = job_json["id"]
         git_url = job_json["git_url"]
-        user = job_json["user"]
-        name = job_json["name"]
+        user = job_json["git_user"]
+        name = job_json["project_name"]
 
         led = LedMessage(f"{user}:{name}")
         led.start()
