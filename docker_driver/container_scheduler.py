@@ -75,8 +75,12 @@ def launch_docker(git_url, job_id):
         print(stdout)
 
     try:
-        with open("/tmp/log.json") as f:
+        with open("/tmp/log.json", 'r') as f:
             data = json.load(f)
+            data['stdout'] = stdout
+        
+        with open("/tmp/log.json", 'w') as f:
+            json.dump(data, f)
 
         upload_s3_utils.upload_results("/tmp/log.json", "{}.json".format(job_id))
 
@@ -149,8 +153,6 @@ while True:
         # data = data.split("## ENDING DATA SECTION ##")[0]
         # print(data)
         # data = json.loads(data)
-        data['stdout'] = stdout
-
         job_json["stdout"] = stdout
         job_json["data"] = data  # data
         job_json["failed"] = failed
