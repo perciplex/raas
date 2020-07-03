@@ -95,6 +95,7 @@ def launch_docker(git_url, job_id):
     except Exception as e:
         print(f"Error {e}")
 
+    client.containers.prune()  # prune containers
     for image in filter(
         lambda image: not any(
             ["perciplex/raas-base" in tag for tag in image.tags]
@@ -102,7 +103,6 @@ def launch_docker(git_url, job_id):
         client.images.list(),
     ):  # clean images
         client.images.remove(image.id)
-    client.containers.prune()  # prune containers
 
     return str(stdout), data, failed
 
