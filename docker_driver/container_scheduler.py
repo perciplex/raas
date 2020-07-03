@@ -77,7 +77,7 @@ def launch_docker(git_url, job_id):
     try:
         with open("/tmp/log.json", 'r') as f:
             data = json.load(f)
-            data['stdout'] = stdout
+            data['stdout'] = str(stdout)
 
 
     except Exception as e:
@@ -145,7 +145,7 @@ while True:
 
         led.stop()
         
-        upload_s3_utils.upload_string(json.dumps(data))
+        upload_s3_utils.upload_string(job_id, json.dumps(data))
 
         # stdout, data = results.split("## STARTING DATA SECTION ##")
         # data = data.split("## ENDING DATA SECTION ##")[0]
