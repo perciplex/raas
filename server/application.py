@@ -100,7 +100,7 @@ class JobsCache:
         """
         Get the database cache if the update period has passed since last pull
         """
-        if time.time() - self.last_db_read_time > self.update_period:
+        if time.time() - self.last_db_read_time > self.update_period_seconds:
             self.update_db_cache()
         return self.cache
 
