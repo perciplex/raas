@@ -26,7 +26,7 @@ rd.seed(0)
 application = Flask(__name__)
 application.config.from_pyfile("config.cfg")
 
-sslify = SSLify(application)
+# sslify = SSLify(application)
 
 
 # a status enum
@@ -87,7 +87,7 @@ class JobsCache:
     def __init__(self):
 
         self.last_db_read_time = time.time()
-        self.update_period = 2.0  # In seconds
+        self.update_period = 15.0  # In seconds
         self.cache = {
             "queued": deque(),
             "running": {},
@@ -109,16 +109,25 @@ class JobsCache:
         Update the database cache. Get all queued, running, and completed jobs.
         Convert queued jobs to a deque.
         """
-        q = database_fns.get_all_queued()
-        r = database_fns.get_all_running()
-        c = database_fns.get_all_completed()
+        def list_to_dict(row_list):
+            if row_list:
+                return {row["id"]: row for row in row_list}
+            else:
+                return {}
+
+        print("Updating db cache.")
+        self.last_db_read_time = time.time()
+        q = list_to_dict(database_fns.get_all_queued())
+        r = list_to_dict(database_fns.get_all_running())
+        c = list_to_dict(database_fns.get_all_completed())
 
         self.cache = {
             "queued": deque(q),
             "running": r,
             "completed": c,
-            "all_jobs": q + r + c,
+            "all_jobs": {**q, **r, **c},
         }
+        print("cache: {}".format(self.cache))
 
     def get_job_in_cache_from_id(self, id, cache="all_jobs"):
         """
@@ -131,7 +140,8 @@ class JobsCache:
         Returns:
             job (dict)
         """
-        return next((job for job in self.cache[cache] if job["id"] == str(id)), None,)
+        if self.check_job_id_in_cache(id, cache=cache):
+            return self.cache[cache][id]
 
     def check_job_id_in_cache(self, id, cache="all_jobs"):
         """
@@ -144,9 +154,7 @@ class JobsCache:
         Returns:
             bool
         """
-        return (
-            next((item for item in self.cache[cache] if item["id"] == str(id)), None,)
-        ) is not None
+        return id in self.cache[cache]
 
 
 # a custom json encoder which replaces the default and allows Job objects to be jsonified
@@ -266,8 +274,8 @@ def job_route():
         return jsonify(
             {
                 "queued": (list(jobs_cache.cache["queued"])),
-                "running": (list(jobs_cache.cache["running"])),
-                "completed": (list(jobs_cache.cache["completed"])),
+                "running": (list(jobs_cache.cache["running"].values())),
+                "completed": (list(jobs_cache.cache["completed"].values())),
             }
         )
 
@@ -308,13 +316,6 @@ def job_results_route(id):
         if jobs_cache.check_job_id_in_cache(id):
 
             database_fns.end_job(id)
-
-            # job = jobs[id]  # look up job
-            # del running[id]  # remove from running dict
-
-            # completed.put(job)  # add to completed buffer
-
-            # req_data = request.get_json()
 
             return make_response("", 200)
         else:

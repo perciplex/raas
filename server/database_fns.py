@@ -35,7 +35,7 @@ def real_dicts_to_python_dicts(real_dict_list):
         real_dict_list (list): The psycopg2 RealDictRow list.
 
     """
-    real_dict_list = [dict(row) for row in real_dict_list] 
+    real_dict_list = [dict(row) for row in real_dict_list]
     return real_dict_list
 
 

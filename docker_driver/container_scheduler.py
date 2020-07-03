@@ -20,9 +20,7 @@ FLASK_PASS = config.get("CREDS", "FLASK_PASS")
 def launch_docker(git_url, job_id):
     client = docker.from_env()
 
-    dockerfile = str(
-        Path(__file__).resolve().parent / "docker_images/final_image"
-    )
+    dockerfile = str(Path(__file__).resolve().parent / "docker_images/final_image")
     docker_tag = "raas-dev-test:latest"
 
     print(dockerfile)
@@ -47,10 +45,7 @@ def launch_docker(git_url, job_id):
     # network traffic, fails gracefully
     try:
         client.networks.create(
-            "docker_internal",
-            driver="bridge",
-            internal=True,
-            check_duplicate=True,
+            "docker_internal", driver="bridge", internal=True, check_duplicate=True,
         )
     except docker.errors.APIError:
         pass
@@ -62,12 +57,7 @@ def launch_docker(git_url, job_id):
         stdout = client.containers.run(
             docker_tag,
             mounts=[
-                {
-                    "Type": "bind",
-                    "Source": "/tmp/",
-                    "Target": "/tmp/",
-                    "RW": True,
-                }
+                {"Type": "bind", "Source": "/tmp/", "Target": "/tmp/", "RW": True,}
             ],
             network="docker_internal",
             # auto_remove=True,
@@ -88,17 +78,13 @@ def launch_docker(git_url, job_id):
         with open("/tmp/log.json") as f:
             data = json.load(f)
 
-        upload_s3_utils.upload_results(
-            "/tmp/log.json", "{}.json".format(job_id)
-        )
+        upload_s3_utils.upload_results("/tmp/log.json", "{}.json".format(job_id))
 
     except Exception as e:
         print(f"Error {e}")
 
     for image in filter(
-        lambda image: not any(
-            ["perciplex/raas-base" in tag for tag in image.tags]
-        ),
+        lambda image: not any(["perciplex/raas-base" in tag for tag in image.tags]),
         client.images.list(),
     ):  # clean images
         client.images.remove(image.id)
@@ -132,10 +118,7 @@ while True:
     try:
         response = requests.get(
             server_ip + "/job/pop",
-            params={
-                "FLASK_PASS": FLASK_PASS,
-                "hardware": socket.gethostname(),
-            },
+            params={"FLASK_PASS": FLASK_PASS, "hardware": socket.gethostname(),},
         )
         response_status = response.status_code
         print(response)
