@@ -247,7 +247,7 @@ def new_job(project_name, git_url, git_user):
         cur = conn.cursor()  # Get cursor
         cur.execute(
             command,
-            (datetime.datetime.now(), "queued", project_name, git_url, git_user),
+            (datetime.datetime.now(), "QUEUED", project_name, git_url, git_user),
         )  # Send the command
 
         cur.close()  # close communication with the PostgreSQL database server
@@ -276,7 +276,7 @@ def start_job(id, hardware_name):
     job_row = id_rows[0]
 
     assert (
-        job_row["status"] == "queued"
+        job_row["status"] == "QUEUED"
     ), "Status must be queued to start job, is currently: {}".format(job_row["status"])
 
     command = """
@@ -322,13 +322,13 @@ def end_job(id):
     job_row = id_rows[0]
 
     assert (
-        job_row["status"] == "running"
+        job_row["status"] == "RUNNING"
     ), "Status must be running to end job, is currently: {}".format(job_row["status"])
 
     command = """
                 UPDATE jobs
                 SET
-                    status = 'completed',
+                    status = 'COMPLETED',
                     end_time = %s
                 WHERE id = %s;
                 """

@@ -33,7 +33,7 @@ def recreate_table():
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
         """,
         """
-        CREATE TYPE statuses AS ENUM ('queued', 'running', 'completed', 'failed');
+        CREATE TYPE statuses AS ENUM ('QUEUED', 'RUNNING', 'COMPLETED', 'FAILED');
         """,
         """
         CREATE TABLE jobs (
