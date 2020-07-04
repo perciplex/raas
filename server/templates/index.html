@@ -3,98 +3,6 @@
 
 <head>
     {% include "header.html" %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.js"
-        crossorigin="anonymous"></script>
-
-    <script>
-        $(document).ready(function ($) {
-
-            job_list = $('#jobs');
-
-
-            $(".link").click(function () {
-                window.document.location = $(this).data("href");
-            });
-
-            function build_job(id, user, name, status, hardware, time) {
-                var tr = $('<tr/>')
-                    .addClass("table-row")
-                    .addClass("link")
-                    .attr('data-href', `job/${id}`)
-                    .appendTo(job_list)
-                    .click(function () {
-                        window.document.location = `job/${id}`;
-                    });
-
-                var time = $('<td/>')
-                    //.text(new Date(time*1000).toLocaleTimeString('en-En', {timeStyle: "medium", hour12:false}))
-                    //.text(jQuery.timeago(new Date(time * 1000)))
-                    .text(jQuery.timeago(Date.parse(time)))
-                    //.text(time)
-                    .appendTo(tr)
-
-                var user = $('<td/>')
-                    .text(user)
-                    .appendTo(tr)
-
-                var name = $('<td/>')
-                    .text(name)
-                    .appendTo(tr)
-
-
-                badge_type = "";
-                text = status;
-                switch (status) {
-                    case "COMPLETED":
-                        badge_type = "badge-success"
-                        break;
-                    case "RUNNING":
-                        badge_type = "badge-primary"
-                        text = ` ${text}@${hardware}`
-                        break;
-                    case "QUEUED":
-                        badge_type = "badge-warning"
-                        break;
-                    case "FAILED":
-                        badge_type = "badge-danger"
-                        break;
-                    default:
-                        badge_type = "badge-warning"
-                }
-                var pred = $('<span/>')
-                    .text(text)
-                    .addClass("float-right")
-                    .addClass(badge_type)
-                    .addClass("badge")
-                    .appendTo(name)
-            }
-
-            function load_jobs() {
-                $.get("job", function (jobs) {
-
-                    job_list.empty();
-                    console.log(jobs);
-                    var statuses = ['queued', 'running', 'completed'];
-                    var statuses_time_dict = { 'queued': 'submit_time', 'running': 'start_time', 'completed': 'end_time' };
-                    statuses.forEach(status => {
-                        console.log('status = ', status);
-                        console.log(jobs["queued"]);
-                        jobs[status].sort(job => { job[statuses_time_dict[status]] }).forEach(job => {
-                            console.log(job[statuses_time_dict[status]]);
-                            build_job(job.id, job.git_user, job.project_name, job.status, job.hardware_name, job[statuses_time_dict[status]]);
-                        });
-                    });
-                });
-            }
-
-            load_jobs();
-
-            setInterval(load_jobs, 3000)
-
-        });
-    </script>
-    <style>
-    </style>
 </head>
 
 <body>
@@ -111,19 +19,11 @@
         </div>
         <div class="row">
             <div class="col-sm-6">
-                <button type="button" class="btn btn-primary btn-lg btn-block link" data-href='submit'>try it out for
+                <button type="button" class="btn btn-primary btn-lg btn-block link" onclick="location.href='submit'">try
+                    it out for
                     yourself</button>
-                <table class="table table-hover table-striped table-body-scroll">
-                    <thead>
-                        <tr>
-                            <th scope="col">time</th>
-                            <th scope="col">user</th>
-                            <th scope="col">project name</th>
-                        </tr>
-                    </thead>
-                    <tbody id="jobs">
-                    </tbody>
-                </table>
+
+                <div id="job_list"></div>
             </div>
             <div class="col-sm-6">
                 <div style="" id="twitch-player" class="position-sticky">
@@ -137,6 +37,10 @@
 
 
     </div>
+
+
+    <!-- Load our React component. -->
+    <script src="/static/job_list.jsx" type="text/babel"></script>
 </body>
 
 </html>

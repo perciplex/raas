@@ -109,6 +109,7 @@ class JobsCache:
         Update the database cache. Get all queued, running, and completed jobs.
         Convert queued jobs to a deque.
         """
+
         def list_to_dict(row_list):
             if row_list:
                 return {row["id"]: row for row in row_list}
@@ -255,6 +256,7 @@ def submit_page_route():
 def job_route():
     jobs_cache.get_db_cache()
     if request.method == "POST":
+        print(request)
         git_user, project_name, git_url = (
             request.form["git_user"],
             request.form["project_name"],
