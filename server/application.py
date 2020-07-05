@@ -1,25 +1,15 @@
-import uuid
+import queue
 import random
 import sys
-import queue
+import time
+import uuid
 from collections import deque
-import datetime
-import time, json
-from flask import (
-    Flask,
-    jsonify,
-    request,
-    render_template,
-    redirect,
-    make_response,
-)
-from flask_sslify import SSLify
-
-
-from hardware import Hardware
 from json import JSONEncoder
 
+from flask import Flask, jsonify, make_response, redirect, render_template, request
+
 import database_fns
+from hardware import Hardware
 
 rd = random.Random()
 rd.seed(0)
@@ -158,7 +148,7 @@ class JobsCache:
         return id in self.cache[cache]
 
 
-# a custom json encoder which replaces the default and allows Job objects to be jsonified
+# Custom json encoder which replaces the default and allows Job objects to be jsonified
 class JSONEncoderJob(JSONEncoder):
     def default(self, job):
         try:

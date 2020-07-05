@@ -1,6 +1,6 @@
 import pickle
+
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
 import numpy as np
 
 anglemap = pickle.load(open("simple_run.p", "rb"))

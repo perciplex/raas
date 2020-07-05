@@ -1,10 +1,8 @@
 import gym
-import gym_raas
 
 from time import sleep
 import numpy as np
 
-from reset import reset
 
 g = 9.81  # earth's gravity
 m = 0.05  # pendulum mass = 40 g

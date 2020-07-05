@@ -1,7 +1,5 @@
 import gym
-from time import sleep
 
-import time
 import numpy as np
 import scipy.linalg as linalg
 

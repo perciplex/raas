@@ -1,11 +1,6 @@
-import gym
-import gym_raas
-
 from time import sleep
-import numpy as np
 
-import zmq
-
+import gym
 
 settle_time = 15.0
 

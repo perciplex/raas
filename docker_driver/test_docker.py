@@ -1,10 +1,7 @@
 import docker
-import requests
-import argparse
 import time
 from pathlib import Path
 import json
-import socket
 import os
 
 from led_driver import LedMessage
@@ -27,15 +24,15 @@ def launch_docker(gitUrl="https://github.com/perciplex/raas-example.git"):
 
     os.chmod("/tmp/log.json", 0o777)
 
-    # build the final image using the local raas-base, eventually need to pass in git url
-    response = client.images.build(
+    # build the final image using the local raas-base
+    client.images.build(
         path=dockerfile,
         tag=docker_tag,
         buildargs={"GIT_REPO_URL": gitUrl},
         nocache=True,
     )
 
-    # try to make the internal network which disables external network traffic, fails gracefully
+    # try to make the internal network which disables external network traffic
     try:
         client.networks.create(
             "docker_internal", driver="bridge", internal=True, check_duplicate=True

@@ -1,5 +1,4 @@
 import os, sys
-from datetime import datetime
 
 
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "../")

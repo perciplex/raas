@@ -1,17 +1,9 @@
-import re
-import time
-
-from luma.led_matrix.device import max7219
-from luma.core.interface.serial import spi, noop
-from luma.core.legacy import text, show_message
-from luma.core.legacy.font import (
-    proportional,
-    CP437_FONT,
-    TINY_FONT,
-    SINCLAIR_FONT,
-    LCD_FONT,
-)
 import multiprocessing
+
+from luma.core.interface.serial import noop, spi
+from luma.core.legacy import show_message
+from luma.core.legacy.font import LCD_FONT, proportional
+from luma.led_matrix.device import max7219
 
 # a class for displaying a single message on the LED matrix display
 
