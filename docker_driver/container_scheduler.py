@@ -76,7 +76,7 @@ def launch_docker(client, git_url, job_id):
         print(dir(e.container))
         stdout = e.container.logs()
         failed = True
-        print(stdout)
+        print("Error running container! Aborting.\n{}".format(e))
         return str(stdout), data, failed
     except Exception as e:
         stdout = e
@@ -160,6 +160,7 @@ if __name__ == "__main__":
             led = LedMessage(f"{user}:{name}")
             led.start()
 
+            print("Launching docker image")
             stdout, data, failed = launch_docker(docker_client, git_url, job_id)
             led.stop()
 
@@ -176,12 +177,13 @@ if __name__ == "__main__":
             job_json["data"] = data
             job_json["failed"] = failed
 
-            print("Return status to webserver")
+            print("Returning status to webserver")
             requests.put(
                 server_ip + "/job/%s/results" % job_id,
                 params={"FLASK_PASS": FLASK_PASS},
                 json=job_json,
             )
+            print("Job done.")
         else:
             # Wait and try again
             time.sleep(2)
