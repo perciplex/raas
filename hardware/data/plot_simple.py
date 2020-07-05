@@ -58,8 +58,8 @@ print(fred.shape)
 plt.plot(keys, np.polyval(fred, keys))
 
 
-#  accel =  0.01223007 * command +  -1.77304897 # Woah. The offset is that good?
-## accel = 0.01223 * command
+# accel = 0.01223007 * command +  -1.77304897 # Woah. The offset is that good?
+# accel = 0.01223 * command
 plt.show()
 
 # omega *
