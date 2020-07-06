@@ -7,8 +7,7 @@ from collections import deque
 from json import JSONEncoder
 
 import database_fns
-from flask import (Flask, jsonify, make_response, redirect, render_template,
-                   request)
+from flask import Flask, jsonify, make_response, redirect, render_template, request
 
 from hardware import Hardware
 
