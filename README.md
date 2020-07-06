@@ -1,5 +1,5 @@
 # RaaS
-
+![CI](https://github.com/perciplex/raas/workflows/CI/badge.svg)
 <div align="center">
 <img src="server/static/logo.png" alt="Your image title" width="200"/>
 
