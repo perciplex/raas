@@ -1,5 +1,5 @@
-import os, sys
-
+import os
+import sys
 
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "../")
 SCRIPTS_DIR = os.path.join(ROOT_DIR, "scripts")

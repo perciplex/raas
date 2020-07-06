@@ -1,7 +1,7 @@
-import gym
-import numpy as np
 from time import sleep
 
+import gym
+import numpy as np
 
 # natural freq: omega = 5.2 ==> f = 5.2/5.3 = 0.82
 

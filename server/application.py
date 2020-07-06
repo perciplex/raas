@@ -6,9 +6,10 @@ import uuid
 from collections import deque
 from json import JSONEncoder
 
-from flask import Flask, jsonify, make_response, redirect, render_template, request
-
 import database_fns
+from flask import (Flask, jsonify, make_response, redirect, render_template,
+                   request)
+
 from hardware import Hardware
 
 rd = random.Random()

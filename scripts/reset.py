@@ -1,6 +1,6 @@
-import gym
-
 from time import sleep
+
+import gym
 
 settle_time = 30.0
 

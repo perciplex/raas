@@ -2,10 +2,7 @@ from sys import path
 
 path.append(r"/home/pi/raas/scripts/casadi")
 from casadi import *
-
-
-import matplotlib.pyplot as plt
-
+from matplotlib import pyplot as plt
 
 T = 3
 dt = 0.05

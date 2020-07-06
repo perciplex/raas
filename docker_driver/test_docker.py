@@ -4,7 +4,6 @@ import time
 from pathlib import Path
 
 import docker
-
 import reset_pendulum
 from led_driver import LedMessage
 

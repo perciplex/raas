@@ -1,8 +1,7 @@
-import gym
-
 from time import sleep
-import numpy as np
 
+import gym
+import numpy as np
 
 g = 9.81  # earth's gravity
 m = 0.05  # pendulum mass = 40 g

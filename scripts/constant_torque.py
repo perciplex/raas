@@ -1,7 +1,7 @@
-import gym
-import numpy as np
 import time
 
+import gym
+import numpy as np
 
 print("Creating gym object...")
 # Creates and returns Pendulum env object

@@ -1,7 +1,8 @@
-import docker
-from pathlib import Path
 import json
 import os
+from pathlib import Path
+
+import docker
 
 
 def launch_docker(gitUrl="https://github.com/perciplex/raas-starter.git"):

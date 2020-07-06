@@ -1,7 +1,6 @@
 import gym
-
 import numpy as np
-import scipy.linalg as linalg
+from scipy import linalg as linalg
 
 lqr = linalg.solve_continuous_are
 

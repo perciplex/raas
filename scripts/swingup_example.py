@@ -1,6 +1,7 @@
+from time import sleep
+
 import gym
 import numpy as np
-from time import sleep
 
 
 def get_action(state):
