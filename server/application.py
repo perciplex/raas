@@ -209,16 +209,6 @@ def reset_route():
     return redirect("/")
 
 
-@application.route("/")
-def base_route():
-    return render_template("index.html")
-
-
-@application.route("/status")
-def status_route():
-    return render_template("hardware.html")
-
-
 @application.route("/hardware")
 def hardware_route():
     return jsonify(
@@ -242,14 +232,9 @@ def job_page_route(id):
     job = jobs_cache.get_job_in_cache_from_id(id, "all_jobs")
     if job:
         print("\n\nCACHE HIT: \n {} \n\n".format(job))
-        return render_template("job.html", job=job)
+        return jsonify(job)
     else:
         return redirect("/")
-
-
-@application.route("/submit", methods=["GET"])
-def submit_page_route():
-    return render_template("submit.html")
 
 
 @application.route("/job", methods=["POST", "GET"])

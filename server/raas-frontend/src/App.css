@@ -1,0 +1,42 @@
+.App {
+}
+
+#twitch-player {
+  top: 10px;
+  position:relative;
+  padding-top:56.25%;
+}
+
+#twitch-player > iframe{
+  position: absolute;
+  top: 5px;
+  left: 0;
+}
+
+#info > h1 {
+  width:70%;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+#info > p {
+  width:80%;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+#info {
+  background-color: transparent;
+  padding: 0px;
+  font-family: 'VT323', monospace;
+}
+
+@media (min-width: 768px) {
+  #content-container {
+      position: relative;
+      top:-100px;
+  }
+}
+
+#job-status-bar{
+  margin-top: 10px;
+}
+
