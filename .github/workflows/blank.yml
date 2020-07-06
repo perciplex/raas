@@ -34,7 +34,7 @@ jobs:
         # Use mypy
         use-mypy: false
         # Use isort
-        use-isort: true
+        use-isort: false
         # Extra options: flake8 $(extra-flake8-options) $(python-root-list)
         extra-flake8-options: "--max-line-length=88"
         # Extra options: isort -rc $(extra-isort-options) $(python-root-list) -c --diff 
