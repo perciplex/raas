@@ -1,5 +1,6 @@
-import upload_s3_utils
 from datetime import datetime
+
+import upload_s3_utils
 
 test_fname = "test_{}.json".format(datetime.now().strftime("%m-%d-%Y_%H-%M-%S"))
 print("\nTrying to upload test file {} now...".format(test_fname))

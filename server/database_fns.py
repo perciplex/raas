@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-import psycopg2
-import psycopg2.extras
 import datetime
 
+import psycopg2
+import psycopg2.extras
 
 DB_KWARGS = {
     "database": "postgres",
@@ -36,13 +36,13 @@ def get_all_queued():
 
     command = """
                 SELECT
-                	*
+                    *
                 FROM
-                	jobs
+                    jobs
                 WHERE
                     status = 'QUEUED'
                 ORDER BY
-                	submit_time ASC;
+                    submit_time ASC;
                 """
 
     conn = None
@@ -78,13 +78,13 @@ def get_all_running():
 
     command = """
                 SELECT
-                	*
+                    *
                 FROM
-                	jobs
+                    jobs
                 WHERE
                     status = 'RUNNING'
                 ORDER BY
-                	start_time ASC;
+                    start_time ASC;
                 """
 
     conn = None
@@ -120,13 +120,13 @@ def get_all_completed():
 
     command = """
                 SELECT
-                	*
+                    *
                 FROM
-                	jobs
+                    jobs
                 WHERE
                     status = 'COMPLETED'
                 ORDER BY
-                	end_time ASC;
+                    end_time ASC;
                 """
 
     conn = None
@@ -167,9 +167,9 @@ def get_id_rows(id):
 
     command = """
                 SELECT
-                	*
+                    *
                 FROM
-                	jobs
+                    jobs
                 WHERE
                     id = %s;
                 """

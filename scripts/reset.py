@@ -1,8 +1,6 @@
-import gym
-import gym_raas
-
 from time import sleep
-import numpy as np
+
+import gym
 
 settle_time = 30.0
 

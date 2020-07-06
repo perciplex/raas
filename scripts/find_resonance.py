@@ -1,8 +1,7 @@
-import path_utils
-import raas_gym
-import numpy as np
 from time import sleep
 
+import numpy as np
+import raas_gym
 
 # natural freq: omega = 5.2 ==> f = 5.2/5.3 = 0.82
 
