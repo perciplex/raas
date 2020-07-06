@@ -1,7 +1,8 @@
 import logging
+import os
+
 import boto3
 from botocore.exceptions import ClientError
-import os
 
 
 def upload_results(source_file_name, target_file_name):

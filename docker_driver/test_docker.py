@@ -1,12 +1,12 @@
-import docker
-import time
-from pathlib import Path
 import json
 import os
+import time
+from pathlib import Path
 
-from led_driver import LedMessage
+import docker
 
 import reset_pendulum
+from led_driver import LedMessage
 
 
 def launch_docker(gitUrl="https://github.com/perciplex/raas-example.git"):

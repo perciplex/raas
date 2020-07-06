@@ -6,9 +6,10 @@ import time
 from configparser import ConfigParser
 from pathlib import Path
 
-from docker import DockerClient
-from docker.errors import APIError, ContainerError, BuildError
 import requests
+from docker import DockerClient
+from docker.errors import APIError, BuildError, ContainerError
+
 import reset_pendulum
 import upload_s3_utils
 from led_driver import LedMessage
