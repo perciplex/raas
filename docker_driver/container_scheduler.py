@@ -134,7 +134,7 @@ if __name__ == "__main__":
     docker_client = DockerClient.from_env()
 
     # clear LED screen
-    LedMessage(f"").stop()
+    LedMessage("").stop()
 
     while True:
         try:

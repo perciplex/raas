@@ -7,13 +7,13 @@ from collections import deque
 from json import JSONEncoder
 
 import database_fns
-from flask import Flask, jsonify, make_response, redirect, render_template, request
+from flask import Flask, jsonify, make_response, redirect, request
 
 from hardware import Hardware
 
 rd = random.Random()
 rd.seed(0)
-application = Flask(__name__, static_folder = "raas-frontend/build", static_url_path = "/")
+application = Flask(__name__, static_folder="raas-frontend/build", static_url_path="/")
 application.config.from_pyfile("config.cfg")
 
 # sslify = SSLify(application)
@@ -191,7 +191,7 @@ def check_password(password):
 
 @application.route("/")
 def index():
-    return application.send_static_file('index.html')
+    return application.send_static_file("index.html")
 
 
 @application.route("/reset")
