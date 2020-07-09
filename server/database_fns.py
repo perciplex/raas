@@ -28,12 +28,16 @@ def real_dicts_to_python_dicts(real_dict_list):
     return real_dict_list
 
 
-def get_all_jobs_by_status(status):
+def get_all_jobs_by_status(status, limit=20):
     """
 
     Get all jobs of one type from the DB, sorted by earliest submit_time.
     Returns them as a list of dicts.
 
+    The limit is the number of jobs to request.
+
+    The default sort order is ascending for queued or running jobs, descending
+    for completed or failed jobs.
     """
 
     assert (
@@ -48,7 +52,6 @@ def get_all_jobs_by_status(status):
         "FAILED": "DESC",
     }
 
-    n_lim = 20  # The number of jobs to get
     command = """
                 SELECT
                     *
@@ -60,7 +63,7 @@ def get_all_jobs_by_status(status):
                     submit_time {}
                 LIMIT {};
                 """.format(
-        status, status_sort_order[status], n_lim
+        status, status_sort_order[status], limit
     )
 
     conn = None
