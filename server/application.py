@@ -13,7 +13,7 @@ from hardware import Hardware
 
 rd = random.Random()
 rd.seed(0)
-application = Flask(__name__)
+application = Flask(__name__, static_folder = "raas-frontend/build", static_url_path = "/")
 application.config.from_pyfile("config.cfg")
 
 # sslify = SSLify(application)
@@ -187,6 +187,11 @@ def check_password(password):
         return False
     else:
         return True
+
+
+@application.route("/")
+def index():
+    return application.send_static_file('index.html')
 
 
 @application.route("/reset")
