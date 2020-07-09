@@ -13,15 +13,15 @@ DB_KWARGS = {
     "port": "5432",
 }
 
-# For COMPLETED, only want the most recent
-status_sort_order = {
+# For COMPLETED and FAILED, only want the most recent
+STATUS_SORT_ORDER = {
     "QUEUED": "ASC",
     "RUNNING": "ASC",
     "COMPLETED": "DESC",
     "FAILED": "DESC",
 }
 
-VALID_STATUSES = list(status_sort_order.keys())
+VALID_STATUSES = list(STATUS_SORT_ORDER.keys())
 
 
 def real_dicts_to_python_dicts(real_dict_list):
@@ -63,7 +63,7 @@ def get_all_jobs_by_status(status, limit=20):
                     submit_time {}
                 LIMIT {};
                 """.format(
-        status, status_sort_order[status], limit
+        status, STATUS_SORT_ORDER[status], limit
     )
 
     conn = None
