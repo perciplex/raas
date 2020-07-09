@@ -4,10 +4,9 @@ import psycopg2
 
 """
 
-This is a script for quickly destroying and recreating the jobs table.
-It has to drop both the statuses type and the table. This makes it easy to
-just "start over" the table if we want to change columns or something.
-
+This is a script for quickly destroying and recreating the jobs table. It has
+to drop both the statuses type and the table. This makes it easy to just "start
+over" the table if we want to change columns or something.
 
 """
 
