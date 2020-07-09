@@ -7,7 +7,14 @@ from collections import deque
 from json import JSONEncoder
 
 import database_fns
-from flask import Flask, jsonify, make_response, redirect, render_template, request
+from flask import (
+    Flask,
+    jsonify,
+    make_response,
+    redirect,
+    render_template,
+    request,
+)
 
 from hardware import Hardware
 
@@ -35,11 +42,12 @@ class Job:
         self.git_user = git_user  # github user id
         self.git_url = git_url  # github hrl
         self.status = Status.QUEUED  # job status
-        self.hardware_name = None  # the hardware the job is/was run on, none if queued
-        self.stdout = "Results pending."  # job results
-        self.data = (
-            None  # observations, actions, reqards, and times for the job data points
+        self.hardware_name = (
+            None  # the hardware the job is/was run on, none if queued
         )
+        self.stdout = "Results pending."  # job results
+        # observations, actions, reqards, and times for the job data points
+        self.data = None
         self.submit_time = time.time()
         self.start_time = None
         self.end_time = None
@@ -107,9 +115,11 @@ class JobsCache:
                 return {}
 
         self.last_db_read_time = time.time()
-        q = list_to_dict(database_fns.get_all_queued())
-        r = list_to_dict(database_fns.get_all_running())
-        c = list_to_dict(database_fns.get_all_completed())
+        q = list_to_dict(database_fns.get_all_jobs_by_status("QUEUED", "ASC"))
+        r = list_to_dict(database_fns.get_all_jobs_by_status("RUNNING", "ASC"))
+        c = list_to_dict(
+            database_fns.get_all_jobs_by_status("COMPLETED", "DESC")
+        )
 
         self.cache = {
             "queued": deque(q.values()),
@@ -183,7 +193,11 @@ def reset_jobs():
 
 def check_password(password):
     if password == application.config["FLASK_PASS"]:
-        print("Bad password from from host: {}".format(request.args.get("hardware")))
+        print(
+            "Bad password from from host: {}".format(
+                request.args.get("hardware")
+            )
+        )
         return False
     else:
         return True
@@ -249,7 +263,10 @@ def job_route():
         )
 
         for job in jobs_cache.cache["queued"]:
-            if (git_user, project_name) == (job["git_user"], job["project_name"]):
+            if (git_user, project_name) == (
+                job["git_user"],
+                job["project_name"],
+            ):
                 return redirect("/")
 
         # Else, add new job
@@ -304,7 +321,11 @@ def job_results_route(id):
             print("{} has completed job {}.".format(req_hardware, id))
             return make_response("", 200)
         else:
-            print("{} has failed to complete job {} in cache.".format(req_hardware, id))
+            print(
+                "{} has failed to complete job {} in cache.".format(
+                    req_hardware, id
+                )
+            )
             return make_response("", 404)
 
 
