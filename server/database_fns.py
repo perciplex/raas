@@ -4,6 +4,11 @@ import datetime
 
 import psycopg2
 import psycopg2.extras
+import os
+
+JOBS_DB_PASS = os.getenv()
+JOBS_DB_HOST = os.getenv()
+
 
 DB_KWARGS = {
     "database": "postgres",
