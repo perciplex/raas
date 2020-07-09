@@ -1,6 +1,6 @@
 import React from 'react';
 import JobForm from './JobForm.jsx'
-import { Container, Image, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 
 
 function Submit() {

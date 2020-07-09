@@ -1,7 +1,7 @@
 import React from 'react';
 import HardwareList from './HardwareList.jsx'
 import './App.css';
-import { Container, Image, Row, Col, Jumbotron } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 
 function TwoColumn() {
@@ -13,7 +13,7 @@ function TwoColumn() {
                 </Col>
                 <Col>
                     <div id="twitch-player" className="position-sticky">
-                        <iframe src="https://player.twitch.tv/?channel=perciplex&muted=true" width="100%" height="100%"
+                        <iframe title="twitch stream" src="https://player.twitch.tv/?channel=perciplex&muted=true" width="100%" height="100%"
                             frameBorder={0} scrolling="no" allowFullScreen={true}>
                         </iframe>
                     </div>

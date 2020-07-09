@@ -18,7 +18,7 @@ class JobForm extends React.Component {
     }
 
     handleChange(event) {
-        var re = RegExp('^(?:https:\/\/|http:\/\/|)(?:www.|)github.com\/([a-z0-9]*)\/([a-z0-9-_]*)(?:\/|)(?:.git|)$')
+        var re = RegExp('^(?:https://|http://)?(?:www.)?github.com/([a-z0-9-_]*)/([a-z0-9-_]*)(?:/)?(?:.git)?$')
 
         var git_user
         var project_name
@@ -83,7 +83,7 @@ class JobForm extends React.Component {
         // returns if the file list contains run.py
         var found = false;
         for (var i = 0, len = files.length; i < len; i++) {
-            if (files[i].path == "run.py") {
+            if (files[i].path === "run.py") {
                 found = true;
             }
         }
@@ -116,7 +116,6 @@ class JobForm extends React.Component {
                                 <InputGroup.Text><FontAwesomeIcon icon={faGithub} /></InputGroup.Text>
                             </InputGroup.Prepend>
                             <Form.Control
-                                type="url"
                                 placeholder="GitHub url"
                                 id="github-input"
                                 name="git_url"
@@ -147,9 +146,9 @@ class JobForm extends React.Component {
                 </Button>
 
                 {this.state.valid && <Alert variant={'success'} className="float-left"> looks ready to go! </Alert>}
-                {this.state.error == "invalid_url" && <Alert variant={'danger'} className="float-left">please enter a valid repository url</Alert>}
-                {this.state.error == "repo_not_found" && <Alert variant={'danger'} className="float-left">repository not foundl</Alert>}
-                {this.state.error == "no_run" && <Alert variant={'danger'} className="float-left">please check repository structure</Alert>}
+                {this.state.error === "invalid_url" && <Alert variant={'danger'} className="float-left">please enter a valid repository url</Alert>}
+                {this.state.error === "repo_not_found" && <Alert variant={'danger'} className="float-left">repository not foundl</Alert>}
+                {this.state.error === "no_run" && <Alert variant={'danger'} className="float-left">please check repository structure</Alert>}
 
             </Form>
         );

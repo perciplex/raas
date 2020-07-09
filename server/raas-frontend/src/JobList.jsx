@@ -1,6 +1,8 @@
 import React from 'react';
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
+import { Badge, Table } from 'react-bootstrap';
+
 
 
 class JobList extends React.Component {
@@ -51,24 +53,24 @@ class JobList extends React.Component {
         var time = false;
         switch (job.status) {
             case "COMPLETED":
-                badge_type = "badge-success"
+                badge_type = "success"
                 time = job.end_time
                 break;
             case "RUNNING":
-                badge_type = "badge-primary"
+                badge_type = "primary"
                 text = ` ${text}@${job.hardware_name}`
                 time = job.start_time
                 break;
             case "QUEUED":
-                badge_type = "badge-warning"
+                badge_type = "warning"
                 time = job.submit_time
                 break;
             case "FAILED":
-                badge_type = "badge-danger"
+                badge_type = "danger"
                 time = job.end_time
                 break;
             default:
-                badge_type = "badge-warning"
+                badge_type = "warning"
                 time = job.submit_time
         }
         return (
@@ -76,7 +78,7 @@ class JobList extends React.Component {
                 <td>{this.time_ago.format(Date.parse(time))}</td>
                 <td>{job.git_user}</td>
                 <td>{job.project_name}
-                    <span className={`float-right badge ${badge_type}`}>{text}</span>
+                    <Badge pill variant={badge_type} className={"float-right"}>{text}</Badge>
                 </td>
             </tr >
         )
@@ -86,9 +88,8 @@ class JobList extends React.Component {
     render() {
         var jobs = this.state.queued.concat(this.state.running, this.state.completed)
         const listItems = jobs.map((job) => this.get_job_row(job));
-        console.log(listItems)
         return (
-            <table className="table table-hover table-striped table-body-scroll">
+            <Table hover striped>
                 <thead>
                     <tr>
                         <th scope="col">time</th>
@@ -99,10 +100,12 @@ class JobList extends React.Component {
                 <tbody id="jobs">
                     {listItems}
                 </tbody>
-            </table>
+            </Table>
         );
 
     }
 }
 
 export default JobList;
+
+

@@ -36,7 +36,28 @@
   }
 }
 
-#job-status-bar{
+#results{
   margin-top: 10px;
 }
 
+.time-badge{
+  margin:5px;
+}
+
+.plot {
+  top: 10px;
+  width:100%;
+  height:500px;
+}
+
+#stdout{
+  font-family: monospace;
+}
+
+.link * { 
+  cursor: pointer;
+}
+
+.badge {
+  font-weight: normal;
+}

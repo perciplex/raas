@@ -58,7 +58,6 @@ class HardwareList extends React.Component {
 
     render() {
         const listItems = this.state.hardware.map((hardware) => this.get_hardware_row(hardware));
-        console.log(listItems)
         return (
             <table className="table table-hover table-striped table-body-scroll">
                 <thead>

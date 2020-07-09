@@ -1,11 +1,8 @@
 import React from 'react';
 import JobList from './JobList.jsx'
 import './App.css';
-import { Container, Image, Row, Col, Jumbotron, Button } from 'react-bootstrap';
+import { Container, Row, Col, Jumbotron, Button } from 'react-bootstrap';
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
     Link
 } from "react-router-dom";
 
@@ -22,12 +19,12 @@ function TwoColumn() {
                     <JobList></JobList>
                 </Col>
                 <Col>
-                    <Link to="/submit"><Button block>
+                    <Link to="/submit"><Button size="lg" block>
                         Try it out for yourself!
                     </Button></Link>
 
                     <div id="twitch-player" className="position-sticky">
-                        <iframe src="https://player.twitch.tv/?channel=perciplex&muted=true" width="100%" height="100%"
+                        <iframe title="twitch stream" src="https://player.twitch.tv/?channel=perciplex&muted=true" width="100%" height="100%"
                             frameBorder={0} scrolling="no" allowFullScreen={true}>
                         </iframe>
                     </div>

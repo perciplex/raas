@@ -4,6 +4,8 @@ import Hardware from './Hardware.jsx'
 import Submit from './Submit.jsx'
 import Job from './Job.jsx'
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+//import 'bootswatch/dist/flatly/bootstrap.min.css';
 import './App.css';
 import banner from './banner_small.png'
 import { Container, Image } from 'react-bootstrap';
@@ -11,7 +13,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 
 
