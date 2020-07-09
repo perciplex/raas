@@ -13,6 +13,8 @@ DB_KWARGS = {
     "port": "5432",
 }
 
+VALID_STATUSES = ["QUEUED", "RUNNING", "COMPLETED", "FAILED"]
+
 
 def real_dicts_to_python_dicts(real_dict_list):
     """
@@ -26,117 +28,51 @@ def real_dicts_to_python_dicts(real_dict_list):
     return real_dict_list
 
 
-def get_all_queued():
+def get_all_jobs_by_status(status):
     """
 
-    Get all queued jobs from the DB, sorted by
-    earliest submit_time. Returns them as a list of dicts.
+    Get all jobs of one type from the DB, sorted by earliest submit_time.
+    Returns them as a list of dicts.
 
     """
 
+    assert (
+        status in VALID_STATUSES
+    ), f"Must provide a valid status! Provided = {status}"
+
+    # For COMPLETED, only want the most recent
+    status_sort_order = {
+        "QUEUED": "ASC",
+        "RUNNING": "ASC",
+        "COMPLETED": "DESC",
+        "FAILED": "DESC",
+    }
+
+    n_lim = 20  # The number of jobs to get
     command = """
                 SELECT
                     *
                 FROM
                     jobs
                 WHERE
-                    status = 'QUEUED'
+                    status = '{}'
                 ORDER BY
-                    submit_time ASC;
-                """
+                    submit_time {}
+                LIMIT {};
+                """.format(
+        status, status_sort_order[status], n_lim
+    )
 
     conn = None
     try:
 
         conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)  # Get cursor
+        cur = conn.cursor(
+            cursor_factory=psycopg2.extras.RealDictCursor
+        )  # Get cursor
         cur.execute(command)  # Send the command
 
-        # Returns just the top one. If there is no queued, this
-        # value should be None.
-        rows = cur.fetchall()
-
-        cur.close()  # close communication with the PostgreSQL database server
-        conn.commit()  # commit the changes
-
-        return real_dicts_to_python_dicts(rows)
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-
-def get_all_running():
-    """
-
-    Get all running jobs from the DB, sorted by
-    earliest submit_time. Returns them as a list of dicts.
-
-    """
-
-    command = """
-                SELECT
-                    *
-                FROM
-                    jobs
-                WHERE
-                    status = 'RUNNING'
-                ORDER BY
-                    start_time ASC;
-                """
-
-    conn = None
-    try:
-
-        conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)  # Get cursor
-        cur.execute(command)  # Send the command
-
-        # Returns just the top one. If there is no queued, this
-        # value should be None.
-        rows = cur.fetchall()
-
-        cur.close()  # close communication with the PostgreSQL database server
-        conn.commit()  # commit the changes
-
-        return real_dicts_to_python_dicts(rows)
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-
-def get_all_completed():
-    """
-
-    Get all completed jobs from the DB, sorted by
-    earliest submit_time. Returns them as a list of dicts.
-
-    """
-
-    command = """
-                SELECT
-                    *
-                FROM
-                    jobs
-                WHERE
-                    status = 'COMPLETED'
-                ORDER BY
-                    end_time ASC;
-                """
-
-    conn = None
-    try:
-
-        conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)  # Get cursor
-        cur.execute(command)  # Send the command
-
-        # Returns just the top one. If there is no queued, this
+        # Returns just the top one. If there are no jobs, this
         # value should be None.
         rows = cur.fetchall()
 
@@ -178,7 +114,9 @@ def get_id_rows(id):
     try:
 
         conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)  # Get cursor
+        cur = conn.cursor(
+            cursor_factory=psycopg2.extras.RealDictCursor
+        )  # Get cursor
         cur.execute(command, (id,))  # Send the command
         # Returns just the top one. If there is no queued, this
         # value should be None.
@@ -218,7 +156,13 @@ def new_job(project_name, git_url, git_user):
         cur = conn.cursor()  # Get cursor
         cur.execute(
             command,
-            (datetime.datetime.now(), "QUEUED", project_name, git_url, git_user),
+            (
+                datetime.datetime.now(),
+                "QUEUED",
+                project_name,
+                git_url,
+                git_user,
+            ),
         )  # Send the command
 
         cur.close()  # close communication with the PostgreSQL database server
@@ -248,7 +192,9 @@ def start_job(id, hardware_name):
 
     assert (
         job_row["status"] == "QUEUED"
-    ), "Status must be queued to start job, is currently: {}".format(job_row["status"])
+    ), "Status must be queued to start job, is currently: {}".format(
+        job_row["status"]
+    )
 
     command = """
                 UPDATE jobs
@@ -294,7 +240,9 @@ def end_job(id):
 
     assert (
         job_row["status"] == "RUNNING"
-    ), "Status must be running to end job, is currently: {}".format(job_row["status"])
+    ), "Status must be running to end job, is currently: {}".format(
+        job_row["status"]
+    )
 
     command = """
                 UPDATE jobs
@@ -319,3 +267,11 @@ def end_job(id):
     finally:
         if conn is not None:
             conn.close()
+
+
+if __name__ == "__main__":
+    # For testing it; not usually meant to be run as a standalone.
+
+    print(get_all_jobs_by_status("QUEUED"))
+    print(get_all_jobs_by_status("RUNNING"))
+    print(get_all_jobs_by_status("COMPLETED"))
