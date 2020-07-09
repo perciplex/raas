@@ -1,6 +1,7 @@
-from raasgym.driver import Encoder, Motor
-from time import sleep, time
 import pickle
+from time import sleep, time
+
+from raasgym.driver import Encoder, Motor
 
 e = Encoder()
 m = Motor()

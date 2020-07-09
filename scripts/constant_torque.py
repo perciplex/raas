@@ -1,9 +1,7 @@
-import path_utils
-import gym
-import raas_envs
-import numpy as np
 import time
 
+import gym
+import numpy as np
 
 print("Creating gym object...")
 # Creates and returns Pendulum env object

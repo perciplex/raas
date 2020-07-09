@@ -1,8 +1,7 @@
-import pigpio
-
-from math import pi
 import atexit
-import time
+from math import pi
+
+import pigpio
 
 # need to run daemon before you can run this
 # `sudo pigpiod`

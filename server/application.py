@@ -1,25 +1,15 @@
-import uuid
+import queue
 import random
 import sys
-import queue
+import time
+import uuid
 from collections import deque
-import datetime
-import time, json
-from flask import (
-    Flask,
-    jsonify,
-    request,
-    render_template,
-    redirect,
-    make_response,
-)
-from flask_sslify import SSLify
-
-
-from hardware import Hardware
 from json import JSONEncoder
 
 import database_fns
+from flask import Flask, jsonify, make_response, redirect, render_template, request
+
+from hardware import Hardware
 
 rd = random.Random()
 rd.seed(0)
@@ -116,7 +106,6 @@ class JobsCache:
             else:
                 return {}
 
-        print("Updating db cache.")
         self.last_db_read_time = time.time()
         q = list_to_dict(database_fns.get_all_queued())
         r = list_to_dict(database_fns.get_all_running())
@@ -128,7 +117,6 @@ class JobsCache:
             "completed": c,
             "all_jobs": {**q, **r, **c},
         }
-        print("cache: {}".format(self.cache))
 
     def get_job_in_cache_from_id(self, id, cache="all_jobs"):
         """
@@ -160,7 +148,7 @@ class JobsCache:
         return id in self.cache[cache]
 
 
-# a custom json encoder which replaces the default and allows Job objects to be jsonified
+# Custom json encoder which replaces the default and allows Job objects to be jsonified
 class JSONEncoderJob(JSONEncoder):
     def default(self, job):
         try:
@@ -195,7 +183,7 @@ def reset_jobs():
 
 def check_password(password):
     if password == application.config["FLASK_PASS"]:
-        print("Bad password from from host")
+        print("Bad password from from host: {}".format(request.args.get("hardware")))
         return False
     else:
         return True
@@ -228,7 +216,6 @@ def hardware_route():
 @application.route("/job/<string:id>", methods=["GET"])
 def job_page_route(id):
     jobs_cache.get_db_cache()
-    print("Looking for {} in {}\n\n\n".format(id, jobs_cache.cache["all_jobs"]))
     job = jobs_cache.get_job_in_cache_from_id(id, "all_jobs")
     if job:
         print("\n\nCACHE HIT: \n {} \n\n".format(job))
@@ -254,11 +241,10 @@ def job_route():
 
         # Else, add new job
         database_fns.new_job(project_name, git_url, git_user)
-
         return redirect("/")
+
     # Need to update with DB stuff
     if request.method == "GET":
-        print(list(jobs_cache.cache["queued"]))
         return jsonify(
             {
                 "queued": (list(jobs_cache.cache["queued"])),
@@ -276,20 +262,17 @@ def job_pop_route():
             return make_response("Bad password.", 403)
 
         req_hardware = request.args.get("hardware")
-        print(req_hardware)
         if req_hardware in hardware_dict:
             hardware_dict[req_hardware].heartbeat()
 
         if jobs_cache.cache["queued"]:
-
-            # job_id = database_fns.get_next_queued()
 
             pop_job = jobs_cache.cache["queued"].pop()  # get job from queue
             database_fns.start_job(pop_job["id"], req_hardware)
 
             if req_hardware in hardware_dict:
                 hardware_dict[req_hardware].starting_job()
-
+            print("{} has popped job {}.".format(req_hardware, pop_job["id"]))
             return jsonify(pop_job)
         else:
             return make_response("", 204)
@@ -298,15 +281,17 @@ def job_pop_route():
 @application.route("/job/<string:id>/results", methods=["PUT"])
 def job_results_route(id):
     jobs_cache.get_db_cache()
+    req_hardware = request.args.get("hardware")
     if request.method == "PUT":
         if not check_password(request.args["FLASK_PASS"]):
             return make_response("", 403)
         if jobs_cache.check_job_id_in_cache(id):
 
             database_fns.end_job(id)
-
+            print("{} has completed job {}.".format(req_hardware, id))
             return make_response("", 200)
         else:
+            print("{} has failed to complete job {} in cache.".format(req_hardware, id))
             return make_response("", 404)
 
 

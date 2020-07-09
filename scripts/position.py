@@ -1,5 +1,5 @@
-from raasgym.driver import Encoder, Motor
 import numpy as np
+from raasgym.driver import Encoder, Motor
 
 motor = Motor()
 encoder = Encoder()

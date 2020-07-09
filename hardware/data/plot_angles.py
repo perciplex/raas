@@ -1,7 +1,8 @@
 import pickle
-import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
+
 import numpy as np
+from matplotlib import pyplot as plt
+from scipy.optimize import curve_fit
 
 angles = pickle.load(open("free_run.p", "rb"))
 

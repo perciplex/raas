@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-import psycopg2
-import psycopg2.extras
 import datetime
 
+import psycopg2
+import psycopg2.extras
 
 DB_KWARGS = {
     "database": "postgres",
@@ -36,13 +36,13 @@ def get_all_queued():
 
     command = """
                 SELECT
-                	*
+                    *
                 FROM
-                	jobs
+                    jobs
                 WHERE
                     status = 'QUEUED'
                 ORDER BY
-                	submit_time ASC;
+                    submit_time ASC;
                 """
 
     conn = None
@@ -78,13 +78,13 @@ def get_all_running():
 
     command = """
                 SELECT
-                	*
+                    *
                 FROM
-                	jobs
+                    jobs
                 WHERE
                     status = 'RUNNING'
                 ORDER BY
-                	start_time ASC;
+                    start_time ASC;
                 """
 
     conn = None
@@ -120,13 +120,13 @@ def get_all_completed():
 
     command = """
                 SELECT
-                	*
+                    *
                 FROM
-                	jobs
+                    jobs
                 WHERE
                     status = 'COMPLETED'
                 ORDER BY
-                	end_time ASC;
+                    end_time ASC;
                 """
 
     conn = None
@@ -167,9 +167,9 @@ def get_id_rows(id):
 
     command = """
                 SELECT
-                	*
+                    *
                 FROM
-                	jobs
+                    jobs
                 WHERE
                     id = %s;
                 """
@@ -196,23 +196,7 @@ def get_id_rows(id):
             conn.close()
 
 
-####### High level job control
-
-
-def get_next_queued():
-    """
-
-    Get the next queued job from the DB, sorted by
-    earliest submit_time. Returns the id.
-
-    """
-
-    queued_rows = get_all_queued()
-    if len(queued_rows) > 0:
-        return queued_rows[0]["id"]
-    else:
-        print("No queued jobs!")
-        return None
+#  High level job control
 
 
 def new_job(project_name, git_url, git_user):

@@ -1,7 +1,8 @@
 import logging
+import os
+
 import boto3
 from botocore.exceptions import ClientError
-import os
 
 
 def upload_results(source_file_name, target_file_name):
@@ -32,17 +33,18 @@ def upload_file(source_file_name, bucket, object_name=None):
     # Upload the file
     s3_client = boto3.client("s3")
     try:
-        response = s3_client.upload_file(source_file_name, bucket, object_name)
+        s3_client.upload_file(source_file_name, bucket, object_name)
     except ClientError as e:
         logging.error(e)
         return False
 
     return True
 
+
 def upload_string(job_id, string):
     bucket_name = "raas-results"
     subfolder = "run_results"
-    
-    s3 = boto3.resource('s3')
+
+    s3 = boto3.resource("s3")
     object = s3.Object(bucket_name, os.path.join(subfolder, "{}.json".format(job_id)))
     object.put(Body=string)
