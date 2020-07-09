@@ -6,16 +6,19 @@ import psycopg2
 import psycopg2.extras
 import os
 
-JOBS_DB_PASS = os.getenv()
-JOBS_DB_HOST = os.getenv()
+JOBS_DB = os.getenv("JOBS_DB", None)
+JOBS_DB_USER = os.getenv("JOBS_DB_USER", None)
+JOBS_DB_PASS = os.getenv("JOBS_DB_PASS", None)
+JOBS_DB_HOST = os.getenv("JOBS_DB_HOST", None)
+JOBS_DB_PORT = os.getenv("JOBS_DB_PORT", None)
 
 
 DB_KWARGS = {
-    "database": "postgres",
-    "user": "perciplex",
-    "password": "TVaH5aKw3iEAenP",
-    "host": "raas-jobs.c0cgyyikkgwi.us-east-2.rds.amazonaws.com",
-    "port": "5432",
+    "database": JOBS_DB,
+    "user": JOBS_DB_USER,
+    "password": JOBS_DB_PASS,
+    "host": JOBS_DB_HOST,
+    "port": JOBS_DB_PORT,
 }
 
 VALID_STATUSES = ["QUEUED", "RUNNING", "COMPLETED", "FAILED"]
