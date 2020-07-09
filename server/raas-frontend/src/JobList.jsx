@@ -2,7 +2,10 @@ import React from 'react';
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 import { Badge, Table } from 'react-bootstrap';
-
+import {
+    withRouter,
+    Link
+} from "react-router-dom";
 
 
 class JobList extends React.Component {
@@ -14,6 +17,7 @@ class JobList extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.props)
         this.update()
         this.timerID = setInterval(
             () => this.update(),
@@ -40,10 +44,6 @@ class JobList extends React.Component {
                     });
                 }
             )
-    }
-
-    go_to_job_page(job) {
-        window.document.location = `job_details/${job.id}`
     }
 
     get_job_row(job) {
@@ -74,7 +74,7 @@ class JobList extends React.Component {
                 time = job.submit_time
         }
         return (
-            <tr className="table-row clickable-row link" key={job.id} onClick={() => this.go_to_job_page(job)} >
+            <tr className="table-row clickable-row link" key={job.id} onClick={() => this.props.history.push(`/job/${job.id}`)} >
                 <td>{this.time_ago.format(Date.parse(time))}</td>
                 <td>{job.git_user}</td>
                 <td>{job.project_name}
@@ -106,6 +106,6 @@ class JobList extends React.Component {
     }
 }
 
-export default JobList;
+export default withRouter(JobList);
 
 
