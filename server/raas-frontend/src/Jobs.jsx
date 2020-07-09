@@ -1,5 +1,7 @@
 import React from 'react';
 import JobList from './JobList.jsx'
+import Twitch from './Twitch.jsx'
+
 import './App.css';
 import { Container, Row, Col, Jumbotron, Button } from 'react-bootstrap';
 import {
@@ -22,12 +24,7 @@ function TwoColumn() {
                     <Link to="/submit"><Button size="lg" block>
                         Try it out for yourself!
                     </Button></Link>
-
-                    <div id="twitch-player" className="position-sticky">
-                        <iframe title="twitch stream" src="https://player.twitch.tv/?channel=perciplex&muted=true" width="100%" height="100%"
-                            frameBorder={0} scrolling="no" allowFullScreen={true}>
-                        </iframe>
-                    </div>
+                    <Twitch></Twitch>
                 </Col>
             </Row>
         </Container>
