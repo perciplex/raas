@@ -30,7 +30,7 @@ function App() {
             <Hardware></Hardware></Route>
           <Route path="/submit">
             <Submit></Submit></Route>
-          <Route path="/job/:jobId" component={Job}>
+          <Route path="/job_details/:jobId" component={Job}>
             <Job></Job></Route>
           <Route path="/">
             <Jobs></Jobs></Route>

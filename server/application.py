@@ -223,7 +223,6 @@ def job_page_route(id):
     jobs_cache.get_db_cache()
     job = jobs_cache.get_job_in_cache_from_id(id, "all_jobs")
     if job:
-        print("\n\nCACHE HIT: \n {} \n\n".format(job))
         return jsonify(job)
     else:
         return redirect("/")

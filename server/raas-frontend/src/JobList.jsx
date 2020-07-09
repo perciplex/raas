@@ -43,7 +43,7 @@ class JobList extends React.Component {
     }
 
     go_to_job_page(job) {
-        window.document.location = `job/${job.id}`
+        window.document.location = `job_details/${job.id}`
     }
 
     get_job_row(job) {
