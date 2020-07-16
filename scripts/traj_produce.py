@@ -13,7 +13,8 @@ def get_traj():
 
     n_steps = 100
     obs = []
-    w = 4.0
+    # Use w = 4 for openAI pend, use w = 5.5 for our pend sim,
+    # w = 4.0
     SIMULATION = True
     time_incr = 0.05
     max_torque = 0.3
