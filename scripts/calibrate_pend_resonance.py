@@ -2,115 +2,114 @@ import gym
 import gym_raas
 import numpy as np
 import time
-
-print("Setting up env...")
-env = gym.make("raaspendulum-v0")
-# env = gym.make("Pendulum-v0")
-print("Set up!")
-env.reset()
-
-obs = []
-# w_range = np.linspace(3, 4, 2)
-w_range = np.linspace(1, 7, 10)
-SIMULATION = False
-print(f"\n\nRUNNING IN SIMULATION MODE: {SIMULATION}\n\n")
-dt = 0.05
-max_torque = 1.0
-n_steps = 200
-# max_torque = 0.3
-max_amps = []
-if SIMULATION:
-    for w in w_range:
-        print("\nResetting env...")
-        found_init = False
-        # print(f'Original env.state is {env.state}')
-        while not found_init:
-            env.reset()
-            th, thdot = env.state
-            if abs(th) > 3.1 and abs(thdot) < 0.05:
-                print("found good init!")
-                print(env.state)
-                found_init = True
-
-        # env.render()
-        print("Running with freq = {:.2f} now".format(w))
-        max_ep_amp = None
-        thetas = []
-        for t in range(n_steps):
-            if np.sin(w * t * dt) > 0:
-                mult = 1.0
-            else:
-                mult = -1.0
-            # action = max_torque * np.sin(w * t * dt)
-            action = mult * max_torque
-            observation, reward, done, info = env.step([action])
-            x, y, _ = observation
-            theta = abs(np.arccos(x))
-
-            if (max_ep_amp is None) or (theta < max_ep_amp):
-                max_ep_amp = theta
-            # env.render()
-            # time.sleep(0.2)
-
-        print("\nMax angle found: ", max_ep_amp)
-        max_amps.append(max_ep_amp)
-        obs.append([np.cos(np.mean(thetas))])
+import pprint
 
 
-else:
+DT = 0.05
 
-    for w in w_range:
-        print("\nRunning with freq = {:.2f} now".format(w))
 
-        print("\nResetting env...")
-        found_init = False
-        # print(f'Original env.state is {env.state}')
-        while not found_init:
+def find_bottom_initial_cond(env, is_hardware):
+
+    print("\nFinding initial condition with pendulum at bottom...")
+    found_init = False
+    while not found_init:
+        if is_hardware:
             time.sleep(1.0)
             print("Trying reset again now...")
-            env.reset()
-            env.step([0.0])
-            th, thdot = env.state
-            if abs(th) > 3.1 and abs(thdot) < 0.05:
-                print("found good init!")
-                print(env.state)
-                found_init = True
-            else:
+
+        env.reset()
+        env.step([0.0])  # So env.state is defined for hardware version
+        th, thdot = env.state
+        if abs(th) > 3.1 and abs(thdot) < 0.05:
+            print("Found good init!")
+            print(env.state)
+            found_init = True
+        else:
+            if is_hardware:
                 print(
                     "Not settled yet, theta = {:.2f}, thetadot = {:.2f}".format(
                         th, thdot
                     )
                 )
 
-        # env.render()
-        max_ep_amp = None
-        thetas = []
-        for t in range(n_steps):
-            if np.sin(w * t * dt) > 0:
-                mult = 1.0
-            else:
-                mult = -1.0
-            # action = max_torque * np.sin(w * t * dt)
-            action = mult * max_torque
-            observation, reward, done, info = env.step([mult * max_torque])
-            x, y, _ = observation
-            theta = abs(np.arccos(x))
 
-            if (max_ep_amp is None) or (theta < max_ep_amp):
-                max_ep_amp = theta
-            # env.render()
+def get_max_amp(env, w, max_torque, n_steps, is_hardware):
+
+    max_ep_amp = None
+
+    for t in range(n_steps):
+        phase = np.sin(w * t * DT)
+        if phase > 0:
+            mult = 1.0
+        else:
+            mult = -1.0
+        # action = max_torque * phase
+        action = mult * max_torque
+        observation, reward, done, info = env.step([action])
+        # x is np.cos(theta), where x=1 at the top and x=-1 at the bottom.
+        x, _, _ = observation
+        if is_hardware:
             time.sleep(0.05)
 
-        print("\nMax angle found: ", max_ep_amp)
-        max_amps.append(max_ep_amp)
-        obs.append([np.cos(np.mean(thetas))])
+        if (max_ep_amp is None) or (x > max_ep_amp):
+            max_ep_amp = x
+
+    return max_ep_amp
 
 
-print("\nRes freqs:")
+use_openai = False
+
+print("Setting up env...")
+if use_openai:
+    env = gym.make("Pendulum-v0")
+    HARDWARE = False
+    name = "simulation_openAI"
+else:
+    env = gym.make("raaspendulum-v0")
+    HARDWARE = env.hardware
+    if HARDWARE:
+        name = "HARDWARE"
+    else:
+        name = "simulation_raas"
+
+print("Set up!")
+print(f"\nUsing OpenAI pendulum: {use_openai}")
+print(f"\n\nRUNNING IN HARDWARE MODE: {HARDWARE}\n\n")
+
+
+# w_range = np.linspace(3, 4, 2)
+w_range = np.linspace(3, 7, 30)
+
+max_torque = 1.0
+
+n_steps = 200
+
+max_amps = []
+
+for w in w_range:
+
+    print("Running with freq = {:.2f} now".format(w))
+
+    find_bottom_initial_cond(env, HARDWARE)
+
+    max_amp = get_max_amp(env, w, max_torque, n_steps, HARDWARE)
+
+    print("\nMax amplitude found: ", max_amp)
+    max_amps.append(max_amp)
+
+
+print("\nFreqs:")
 print(w_range.tolist())
 
 print("\nMax amplitudes:")
 print(max_amps)
 
+
+d = {"name": name, "freqs": w_range.tolist(), "max_amps": max_amps}
+
+
+print("\n")
+pprint.pprint(d)
+print("\n")
 
 env.reset()
