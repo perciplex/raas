@@ -40,6 +40,12 @@ def get_resonant_trajectory(env, w, max_torque, n_steps, is_hardware):
 
     max_ep_amp = None
     action_obs = []
+    o, _, _, _ = env.step([0.0])
+    # x is np.cos(theta), where x=1 at the top and x=-1 at the bottom.
+    x, y, thdot = o
+    theta = np.arctan2(y, x)
+    s = [theta, thdot]
+
     for t in range(n_steps):
         phase = np.sin(w * t * DT)
         if phase > 0:
@@ -48,7 +54,7 @@ def get_resonant_trajectory(env, w, max_torque, n_steps, is_hardware):
             mult = -1.0
         # action = max_torque * phase
         action = mult * max_torque
-        o, reward, done, info = env.step([action])
+        o, _, _, _ = env.step([action])
         # x is np.cos(theta), where x=1 at the top and x=-1 at the bottom.
         x, y, thdot = o
         theta = np.arctan2(y, x)
@@ -74,59 +80,57 @@ def get_max_amp(env, w, max_torque, n_steps, is_hardware):
     return max_ep_amp
 
 
-use_openai = False
+if __name__ == "__main__":
 
-print("Setting up env...")
-if use_openai:
-    env = gym.make("Pendulum-v0")
-    HARDWARE = False
-    name = "simulation_openAI"
-else:
-    env = gym.make("raaspendulum-v0")
-    HARDWARE = env.hardware
-    if HARDWARE:
-        name = "HARDWARE"
+    use_openai = False
+
+    print("Setting up env...")
+    if use_openai:
+        env = gym.make("Pendulum-v0")
+        HARDWARE = False
+        name = "simulation_openAI"
     else:
-        name = "simulation_raas"
+        env = gym.make("raaspendulum-v0")
+        HARDWARE = env.hardware
+        if HARDWARE:
+            name = "HARDWARE"
+        else:
+            name = "simulation_raas"
 
-print("Set up!")
-print(f"\nUsing OpenAI pendulum: {use_openai}")
-print(f"\n\nRUNNING IN HARDWARE MODE: {HARDWARE}\n\n")
+    print("Set up!")
+    print(f"\nUsing OpenAI pendulum: {use_openai}")
+    print(f"\n\nRUNNING IN HARDWARE MODE: {HARDWARE}\n\n")
 
+    # w_range = np.linspace(3, 4, 2)
+    w_range = np.linspace(3, 7, 30)
 
-# w_range = np.linspace(3, 4, 2)
-w_range = np.linspace(3, 7, 30)
+    max_torque = 1.0
 
-max_torque = 1.0
+    n_steps = 200
 
-n_steps = 200
+    max_amps = []
 
-max_amps = []
+    for w in w_range:
 
-for w in w_range:
+        print("Running with freq = {:.2f} now".format(w))
 
-    print("Running with freq = {:.2f} now".format(w))
+        find_bottom_initial_cond(env, HARDWARE)
 
-    find_bottom_initial_cond(env, HARDWARE)
+        max_amp = get_max_amp(env, w, max_torque, n_steps, HARDWARE)
 
-    max_amp = get_max_amp(env, w, max_torque, n_steps, HARDWARE)
+        print("\nMax amplitude found: ", max_amp)
+        max_amps.append(max_amp)
 
-    print("\nMax amplitude found: ", max_amp)
-    max_amps.append(max_amp)
+    print("\nFreqs:")
+    print(w_range.tolist())
 
+    print("\nMax amplitudes:")
+    print(max_amps)
 
-print("\nFreqs:")
-print(w_range.tolist())
+    d = {"name": name, "freqs": w_range.tolist(), "max_amps": max_amps}
 
-print("\nMax amplitudes:")
-print(max_amps)
+    print("\n")
+    pprint.pprint(d)
+    print("\n")
 
-
-d = {"name": name, "freqs": w_range.tolist(), "max_amps": max_amps}
-
-
-print("\n")
-pprint.pprint(d)
-print("\n")
-
-env.reset()
+    env.reset()

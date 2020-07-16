@@ -27,16 +27,14 @@ def get_traj(use_openai):
     print(f"\nUsing OpenAI pendulum: {use_openai}")
     print(f"\n\nRUNNING IN HARDWARE MODE: {HARDWARE}\n\n")
 
-    action_obs, _ = calibrate_pend_resonance.find_bottom_initial_cond(
-        env, HARDWARE
-    )
+    calibrate_pend_resonance.find_bottom_initial_cond(env, HARDWARE)
 
     n_steps = 200
     obs = []
     DT = 0.05
     max_torque = 1.0
 
-    calibrate_pend_resonance.get_resonant_trajectory(
+    action_obs, _ = calibrate_pend_resonance.get_resonant_trajectory(
         env, w, max_torque, n_steps, HARDWARE
     )
 
@@ -45,4 +43,7 @@ def get_traj(use_openai):
 
 if __name__ == "__main__":
 
-    print(get_traj())
+    x = get_traj(False)
+    print("\n\nAction obs list:\n")
+    print(x)
+    print("\n")
