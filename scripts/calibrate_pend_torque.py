@@ -15,8 +15,9 @@ torque_range = np.linspace(0, 2.0, 10)
 try:
     for t in torque_range:
         print("Running with torque = {:.2f} now".format(t))
-        observation, reward, done, info = env.step([t])
-        time.sleep(8.0)
+        for _ in range(5):
+            observation, reward, done, info = env.step([t])
+            time.sleep(0.2)
         obs.append(observation)
 
 except:
