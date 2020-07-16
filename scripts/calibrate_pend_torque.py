@@ -3,7 +3,9 @@ import gym_raas
 import numpy as np
 import time
 
+print("Setting up env...")
 env = gym.make("raaspendulum-v0")
+print("Set up!")
 env.reset()
 obs = []
 
