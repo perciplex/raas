@@ -35,7 +35,7 @@ def get_traj(use_openai):
     max_torque = 1.0
 
     action_obs, _ = calibrate_pend_resonance.get_resonant_trajectory(
-        env, w, max_torque, n_steps, HARDWARE
+        env, w, max_torque, n_steps, HARDWARE, use_phase_torque=True
     )
 
     return action_obs
