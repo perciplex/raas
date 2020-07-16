@@ -20,7 +20,10 @@ def find_bottom_initial_cond(env, is_hardware):
         env.reset()
         env.step([0.0])  # So env.state is defined for hardware version
         th, thdot = env.state
-        if abs(th) > 3.1 and abs(thdot) < 0.05:
+        # We want it to be both at the bottom and stopped. I found that some
+        # of the robots will never actually get to ~3.14, but most will relax
+        # to > 3.0.
+        if abs(th) > 3.0 and abs(thdot) < 0.05:
             print("Found good init!")
             print(env.state)
             found_init = True
