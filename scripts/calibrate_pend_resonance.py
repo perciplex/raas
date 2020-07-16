@@ -15,7 +15,7 @@ w_range = np.linspace(1, 7, 10)
 SIMULATION = False
 print(f"\n\nRUNNING IN SIMULATION MODE: {SIMULATION}\n\n")
 dt = 0.05
-max_torque = 2.0
+max_torque = 1.0
 n_steps = 200
 # max_torque = 0.3
 max_amps = []
@@ -66,7 +66,7 @@ else:
         found_init = False
         # print(f'Original env.state is {env.state}')
         while not found_init:
-            time.sleep(0.2)
+            time.sleep(1.0)
             print("Trying reset again now...")
             env.reset()
             env.step([0.0])
@@ -75,6 +75,12 @@ else:
                 print("found good init!")
                 print(env.state)
                 found_init = True
+            else:
+                print(
+                    "Not settled yet, theta = {:.2f}, thetadot = {:.2f}".format(
+                        th, thdot
+                    )
+                )
 
         # env.render()
         max_ep_amp = None
