@@ -36,10 +36,10 @@ def find_bottom_initial_cond(env, is_hardware):
                 )
 
 
-def get_max_amp(env, w, max_torque, n_steps, is_hardware):
+def get_resonant_trajectory(env, w, max_torque, n_steps, is_hardware):
 
     max_ep_amp = None
-
+    action_obs = []
     for t in range(n_steps):
         phase = np.sin(w * t * DT)
         if phase > 0:
@@ -48,14 +48,28 @@ def get_max_amp(env, w, max_torque, n_steps, is_hardware):
             mult = -1.0
         # action = max_torque * phase
         action = mult * max_torque
-        observation, reward, done, info = env.step([action])
+        o, reward, done, info = env.step([action])
         # x is np.cos(theta), where x=1 at the top and x=-1 at the bottom.
-        x, _, _ = observation
+        x, y, thdot = o
+        theta = np.arctan2(y, x)
+        s_next = [theta, thdot]
+        action_obs.append({"s": s, "u": action, "s_next": s_next})
+        s = s_next
+
         if is_hardware:
-            time.sleep(0.05)
+            time.sleep(DT)
 
         if (max_ep_amp is None) or (x > max_ep_amp):
             max_ep_amp = x
+
+    return action_obs, max_ep_amp
+
+
+def get_max_amp(env, w, max_torque, n_steps, is_hardware):
+
+    _, max_ep_amp = get_resonant_trajectory(
+        env, w, max_torque, n_steps, is_hardware
+    )
 
     return max_ep_amp
 
