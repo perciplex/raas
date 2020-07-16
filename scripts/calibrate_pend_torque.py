@@ -17,7 +17,7 @@ try:
         print("Running with torque = {:.2f} now".format(t))
         for _ in range(5):
             observation, reward, done, info = env.step([t])
-            time.sleep(0.2)
+            time.sleep(0.5)
         obs.append(observation)
 
 except:
