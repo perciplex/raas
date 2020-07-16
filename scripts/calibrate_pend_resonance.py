@@ -12,7 +12,8 @@ env.reset()
 obs = []
 # w_range = np.linspace(3, 4, 2)
 w_range = np.linspace(1, 7, 10)
-SIMULATION = True
+SIMULATION = False
+print(f"\n\nRUNNING IN SIMULATION MODE: {SIMULATION}\n\n")
 dt = 0.05
 max_torque = 2.0
 n_steps = 200
