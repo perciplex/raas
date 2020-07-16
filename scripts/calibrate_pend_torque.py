@@ -24,9 +24,11 @@ except:
 
 
 print("\nTorques:")
-print(torque_range)
+print(torque_range.tolist())
 
 print("\nObservations:")
 [print(o) for o in obs]
+print()
+print(obs)
 
 env.reset()
