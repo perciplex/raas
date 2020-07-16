@@ -23,6 +23,10 @@ except:
     print("Stopped!")
 
 
+print("\nTorques:")
+print(torque_range)
+
+print("\nObservations:")
 [print(o) for o in obs]
 
 env.reset()
