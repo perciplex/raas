@@ -23,6 +23,7 @@ def get_traj():
     # print(f'Original env.state is {env.state}')
     while not found_init:
         env.reset()
+        env.step([0.0])
         th, thdot = env.state
         s = env.state
         if abs(th) > 3.1 and abs(thdot) < 0.05:
