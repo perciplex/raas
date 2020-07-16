@@ -46,7 +46,7 @@ def get_resonant_trajectory(
     # x is np.cos(theta), where x=1 at the top and x=-1 at the bottom.
     x, y, thdot = o
     theta = np.arctan2(y, x)
-    s = [theta, thdot]
+    s = [x, y, thdot, theta]
 
     for t in range(n_steps):
         phase = np.sin(w * t * DT)
@@ -62,7 +62,7 @@ def get_resonant_trajectory(
         # x is np.cos(theta), where x=1 at the top and x=-1 at the bottom.
         x, y, thdot = o
         theta = np.arctan2(y, x)
-        s_next = [theta, thdot]
+        s_next = [x, y, thdot, theta]
         action_obs.append({"s": s, "u": action, "s_next": s_next})
         s = s_next
 

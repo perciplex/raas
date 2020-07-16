@@ -2,6 +2,7 @@ import gym
 import gym_raas
 import numpy as np
 import time
+import matplotlib.pyplot as plt
 
 import calibrate_pend_resonance
 
@@ -35,7 +36,7 @@ def get_traj(use_openai):
     max_torque = 1.0
 
     action_obs, _ = calibrate_pend_resonance.get_resonant_trajectory(
-        env, w, max_torque, n_steps, HARDWARE, use_phase_torque=True
+        env, w, max_torque, n_steps, HARDWARE, use_phase_torque=False
     )
 
     return action_obs
@@ -43,7 +44,14 @@ def get_traj(use_openai):
 
 if __name__ == "__main__":
 
-    x = get_traj(False)
+    traj = get_traj(False)
     print("\n\nAction obs list:\n")
-    print(x)
+    print(traj)
     print("\n")
+
+    exit()
+
+    x = [t["s"][0] for t in traj]
+    y = [t["s"][1] for t in traj]
+    plt.plot(y, x)
+    plt.show()
