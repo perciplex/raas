@@ -13,17 +13,21 @@
     "bootstrap": "^4.5.0",
     "javascript-time-ago": "^2.0.8",
     "jquery": "^3.5.1",
+    "konva": "^7.0.3",
     "node-modules": "^1.0.1",
     "plotly.js": "^1.54.5",
     "plotly.js-basic-dist": "^1.54.5",
+    "rc-slider": "^9.3.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
+    "react-konva": "^16.13.0-3",
     "react-plotly.js": "^2.4.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
-    "source-map-explorer": "^2.4.2"
+    "source-map-explorer": "^2.4.2",
+    "use-image": "^1.0.6"
   },
   "scripts": {
     "start": "react-scripts --max_old_space_size=4096 start",

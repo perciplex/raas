@@ -3,8 +3,7 @@ import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 import { Badge, Table } from 'react-bootstrap';
 import {
-    withRouter,
-    Link
+    withRouter
 } from "react-router-dom";
 
 
@@ -78,7 +77,7 @@ class JobList extends React.Component {
                 <td>{this.time_ago.format(Date.parse(time))}</td>
                 <td>{job.git_user}</td>
                 <td>{job.project_name}
-                    <Badge pill variant={badge_type} className={"float-right"}>{text}</Badge>
+                    <Badge pill variant={badge_type} className={"float-right"}><span className="d-inline d-lg-none">&nbsp;</span><span className="d-none d-lg-block">{text}</span></Badge>
                 </td>
             </tr >
         )

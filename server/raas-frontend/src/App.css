@@ -15,23 +15,24 @@ html {
   left: 0;
 }
 
-#info > h1 {
-  width:70%;
-  font-family: 'Share Tech Mono', monospace;
-}
-
-#info > p {
-  width:80%;
-  font-family: 'Share Tech Mono', monospace;
-}
-
 #info {
   background-color: transparent;
   padding: 0px;
   font-family: 'VT323', monospace;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
+  
+  #info > h1 {
+    width:70%;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  #info > p {
+    width:80%;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
   #content-container {
       position: relative;
       top:-100px;

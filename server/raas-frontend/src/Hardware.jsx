@@ -9,10 +9,10 @@ function Hardware() {
     return (
         <Container>
             <Row>
-                <Col>
+                <Col md={6} sm={12}>
                     <HardwareList></HardwareList>
                 </Col>
-                <Col>
+                <Col md={6} className="d-none d-md-block">
                     <Twitch></Twitch>
                 </Col>
             </Row>

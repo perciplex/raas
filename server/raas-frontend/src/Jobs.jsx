@@ -17,10 +17,10 @@ function TwoColumn() {
                     We built real-life versions of the OpenAI Gym environments, and you can use them! To start, fork <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a> and edit <code>run.py</code>. <Link to="/status">Our robots</Link> use the same Gym interface you're used to. Just import our custom environment and you're ready to go.</p>
             </Jumbotron>
             <Row>
-                <Col>
+                <Col md={6} sm={12}>
                     <JobList></JobList>
                 </Col>
-                <Col>
+                <Col md={6} className="d-none d-md-block">
                     <Link to="/submit"><Button size="lg" block>
                         Try it out for yourself!
                     </Button></Link>
