@@ -1,3 +1,4 @@
+.envrc
 config.ini
 .vscode/*
 *__pycache__/*
