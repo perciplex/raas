@@ -201,7 +201,9 @@ class Job extends React.Component {
                                 },
                                 height: 500,
                                 legend: { orientation: "h" },
-                                shapes: shapes
+                                shapes: shapes,
+                                xaxis: { fixedrange: true },
+                                yaxis: { fixedrange: true }
 
                             },
                         })
