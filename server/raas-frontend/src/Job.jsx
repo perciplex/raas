@@ -21,11 +21,6 @@ import useImage from 'use-image';
 const Plot = createPlotlyComponent(Plotly);
 
 
-const ArrowImage = (props) => {
-    const [image] = useImage(clockwise);
-    return <Image image={image} scaleX={props.scale} scaleY={props.scale} />;
-};
-
 class Job extends React.Component {
     constructor(props) {
         super(props);
@@ -42,8 +37,14 @@ class Job extends React.Component {
             submit_time: false,
             start_time: false,
             end_time: false,
-            frame: 0
-        };
+            frame: 0,
+            config: {},
+            frames: [],
+            layout: {},
+            data: [],
+            data_loaded: false,
+            metadata_loaded: false
+        }
     }
 
     getPendulum() {
@@ -51,9 +52,9 @@ class Job extends React.Component {
         const width = 14
         const length = 120
         const window_width = 250
-        const window_height = 250
+        const window_height = 500
 
-        if (this.state.obs.length > 0) {
+        if (this.state.data_loaded) {
             angle = Math.PI + Math.atan2(this.state.obs[1][this.state.frame], this.state.obs[0][this.state.frame])
         }
         return <Stage width={window_width} height={window_height}>
@@ -73,7 +74,6 @@ class Job extends React.Component {
                     fill="#000200"
                     radius={width / 4}
                 />
-                {/*<ArrowImage scale={this.props.frame}></ArrowImage>*/}
             </Layer>
         </Stage>
     }
@@ -92,15 +92,6 @@ class Job extends React.Component {
             },
             5000
         );
-
-        setInterval(
-            () => {
-                console.log(this.plot.current.props.layout.xaxis)
-                this.plot.current.props.layout.xaxis.range = [0, 1]
-                this.plot.Layout({ xaxis: { range: [0, 1] } })
-                this.setState({ frame: (this.state.frame + 1) % (this.state.times.length - 1) })
-            }
-        )
     }
 
     update() {
@@ -129,6 +120,7 @@ class Job extends React.Component {
                 job.submit_time = this.date_to_string(job.submit_time)
                 job.start_time = this.date_to_string(job.start_time)
                 job.end_time = this.date_to_string(job.end_time)
+                job.metadata_loaded = true
                 this.setState(job)
             })
 
@@ -143,9 +135,82 @@ class Job extends React.Component {
                 const t0 = output.times[0]
                 output.times = output.times.map(t => t - t0);
                 output.obs = output.obs[0].map((col, i) => output.obs.map(row => row[i]));
+                output.data_loaded = true
                 this.setState(output)
+
+                this.setState({
+                    data:
+                        [
+                            {
+                                x: this.state.times,
+                                y: this.state.costs,
+                                type: 'scatter',
+                                name: 'cost',
+                            },
+                            {
+                                x: this.state.times,
+                                y: this.state.actions,
+                                type: 'scatter',
+                                name: 'action',
+                            },
+                            {
+                                x: this.state.times,
+                                y: this.state.obs[0],
+                                type: 'scatter',
+                                name: 'y',
+                            },
+                            {
+                                x: this.state.times,
+                                y: this.state.obs[1],
+                                type: 'scatter',
+                                name: 'x',
+                            },
+                            {
+                                x: this.state.times,
+                                y: this.state.obs[2],
+                                type: 'scatter',
+                                name: 'dθ/dt',
+                            },
+                        ]
+                })
+
+                var seconds_per_frame = this.state.times / this.state.times.length
+
+                setInterval(
+                    () => {
+                        var shapes = [{
+                            type: 'line',
+                            x0: this.state.times[this.state.frame],
+                            x1: this.state.times[this.state.frame],
+                            y0: 0,
+                            y1: 1
+                        }]
+
+
+                        this.setState({
+                            frame: (this.state.frame + 1) % (this.state.times.length - 1)
+                        })
+                        this.setState({
+                            layout: {
+                                margin: {
+                                    l: 30,
+                                    r: 0,
+                                    b: 100,
+                                    t: 10,
+                                    pad: 0
+                                },
+                                height: 500,
+                                legend: { orientation: "h" },
+                                shapes: shapes
+
+                            },
+                        })
+                    }, seconds_per_frame
+                )
             })
             .catch(err => { })
+
+
     }
 
     date_to_string(date) {
@@ -168,58 +233,11 @@ class Job extends React.Component {
                                 <Row>
                                     <Col lg={9} md={12}>
                                         <Plot ref={this.plot} id="plot" className="plot"
-                                            layout={{
-                                                margin: {
-                                                    l: 30,
-                                                    r: 0,
-                                                    b: 100,
-                                                    t: 10,
-                                                    pad: 0
-                                                },
-                                                legend: { orientation: "h" },
-                                                shapes:
-                                                    [{
-                                                        type: 'line',
-                                                        x0: this.state.times[this.state.frame],
-                                                        x1: this.state.times[this.state.frame],
-                                                        y0: -2,
-                                                        y1: 2
-                                                    }]
-
-                                            }}
-                                            data={
-                                                [
-                                                    {
-                                                        x: this.state.times,
-                                                        y: this.state.costs,
-                                                        type: 'scatter',
-                                                        name: 'cost',
-                                                    },
-                                                    {
-                                                        x: this.state.times,
-                                                        y: this.state.actions,
-                                                        type: 'scatter',
-                                                        name: 'action',
-                                                    },
-                                                    {
-                                                        x: this.state.times,
-                                                        y: this.state.obs[0],
-                                                        type: 'scatter',
-                                                        name: 'y',
-                                                    },
-                                                    {
-                                                        x: this.state.times,
-                                                        y: this.state.obs[1],
-                                                        type: 'scatter',
-                                                        name: 'x',
-                                                    },
-                                                    {
-                                                        x: this.state.times,
-                                                        y: this.state.obs[2],
-                                                        type: 'scatter',
-                                                        name: 'dθ/dt',
-                                                    },
-                                                ]}
+                                            data={this.state.data}
+                                            layout={this.state.layout}
+                                            frames={this.state.frames}
+                                            config={this.state.config}
+                                            onInitialized={(figure) => this.setState(figure)}
                                         />
                                     </Col>
                                     <Col lg={3} className="d-none d-lg-block">
@@ -231,9 +249,6 @@ class Job extends React.Component {
                                 </Row>
                                 <Row>
                                     <Col>
-
-                                        {/*<Slider className="d-none d-lg-block" onChange={this.changeSliderValue} max={this.state.times.length - 1}></Slider>
-                                        <br></br>*/}
                                         <Card.Text as="pre" dangerouslySetInnerHTML={{ __html: this.state.stdout.replace(/\\n/g, "<br/>").replace(/\\t/g, "	") }}>
                                         </Card.Text>
                                     </Col>
