@@ -59,11 +59,8 @@ def launch_docker(client, git_url, job_id):
             check_duplicate=True,
             scope="local",
         )
-    except APIError as e:
-        stdout = e
-        failed = True
-        print("Error creating network! Aborting.\n{}".format(e))
-        return str(stdout), data, failed
+    except APIError:
+        pass
 
     try:
         stdout = client.containers.run(
