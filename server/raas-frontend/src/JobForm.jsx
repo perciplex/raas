@@ -98,7 +98,7 @@ class JobForm extends React.Component {
             form_data.append(key, this.state[key]);
         }
 
-        fetch('/job', {
+        fetch('/api/job', {
             method: 'POST',
             body: form_data,
         });

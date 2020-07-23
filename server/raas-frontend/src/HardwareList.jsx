@@ -15,7 +15,7 @@ class HardwareList extends React.Component {
     }
 
     update() {
-        fetch("hardware")
+        fetch("/api/hardware")
             .then(res => res.json())
             .then(
                 (result) => {

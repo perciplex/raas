@@ -25,7 +25,7 @@ class JobList extends React.Component {
     }
 
     update() {
-        fetch("job")
+        fetch("/api/job")
             .then(res => res.json())
             .then(
                 (result) => {

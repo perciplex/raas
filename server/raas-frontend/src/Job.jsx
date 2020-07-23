@@ -95,7 +95,7 @@ class Job extends React.Component {
     }
 
     update() {
-        fetch(`/job/${this.state.id}`)
+        fetch(`/api/job/${this.state.id}`)
             .then(res => res.json())
             .then(job => {
                 var alert_variant = "danger";

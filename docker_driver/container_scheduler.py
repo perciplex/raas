@@ -139,7 +139,7 @@ if __name__ == "__main__":
     while True:
         try:
             response = requests.get(
-                server_ip + "/job/pop",
+                server_ip + "/api/job/pop",
                 params={"FLASK_PASS": FLASK_PASS, "hardware": socket.gethostname()},
             )
             response_status = response.status_code
@@ -179,7 +179,7 @@ if __name__ == "__main__":
 
             print("Returning status to webserver")
             requests.put(
-                server_ip + "/job/%s/results" % job_id,
+                server_ip + "/api/job/%s/results" % job_id,
                 params={"FLASK_PASS": FLASK_PASS},
                 json=job_json,
             )
