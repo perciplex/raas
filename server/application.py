@@ -193,15 +193,7 @@ def index():
     return application.send_static_file("index.html")
 
 
-@application.route("/reset")
-def reset_route():
-    if not check_password(request.args["FLASK_PASS"]):
-        return make_response("", 403)
-    reset_jobs()
-    return redirect("/")
-
-
-@application.route("/hardware")
+@application.route("/api/hardware")
 def hardware_route():
     return jsonify(
         sorted(
@@ -217,7 +209,7 @@ def hardware_route():
     )
 
 
-@application.route("/job/<string:id>", methods=["GET"])
+@application.route("/api/job/<string:id>", methods=["GET"])
 def job_page_route(id):
     jobs_cache.get_db_cache()
     job = jobs_cache.get_job_in_cache_from_id(id, "all_jobs")
@@ -227,7 +219,7 @@ def job_page_route(id):
         return redirect("/")
 
 
-@application.route("/job", methods=["POST", "GET"])
+@application.route("/api/job", methods=["POST", "GET"])
 def job_route():
     jobs_cache.get_db_cache()
     if request.method == "POST":
@@ -257,7 +249,7 @@ def job_route():
         )
 
 
-@application.route("/job/pop", methods=["GET"])
+@application.route("/api/job/pop", methods=["GET"])
 def job_pop_route():
     jobs_cache.get_db_cache()
     if request.method == "GET":
@@ -281,7 +273,7 @@ def job_pop_route():
             return make_response("", 204)
 
 
-@application.route("/job/<string:id>/results", methods=["PUT"])
+@application.route("/api/job/<string:id>/results", methods=["PUT"])
 def job_results_route(id):
     jobs_cache.get_db_cache()
     req_hardware = request.args.get("hardware")
