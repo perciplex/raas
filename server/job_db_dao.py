@@ -5,7 +5,7 @@ import logging as log
 import psycopg2
 import psycopg2.extras
 import os
-import time
+from common import JOB_STATUS
 
 JOBS_DB = os.getenv("JOBS_DB", None)
 JOBS_DB_USER = os.getenv("JOBS_DB_USER", None)
@@ -20,14 +20,6 @@ DB_KWARGS = {
     "password": JOBS_DB_PASS,
     "host": JOBS_DB_HOST,
     "port": JOBS_DB_PORT,
-}
-
-VALID_STATUSES = ["QUEUED", "RUNNING", "COMPLETED", "FAILED"]
-JOB_STATUSES = {
-    "QUEUED": "QUEUED",
-    "RUNNING": "RUNNING",
-    "COMPLETED": "COMPLETED",
-    "FAILED": "FAILED",
 }
 
 
@@ -46,9 +38,10 @@ def reconnect(func):
     return wrapper
 
 
-class Job_DB_Connection:
+class JobDbDao:
     """
-    Class to maintain and act on DB connection.
+    Dao for the jobs table in raas-jobs database. Mmaintains and act on DB connection,
+    add new jobs, updates jobs statuses, deletes jobs, and returns job lists by status.
     """
 
     def __init__(self):
@@ -76,6 +69,7 @@ class Job_DB_Connection:
         """
         Disconnects from the database using close()
         """
+        log.info("Closing DB connection...")
         self.conn.close()
 
     @reconnect
@@ -99,9 +93,11 @@ class Job_DB_Connection:
             real_dict_list = [dict(row) for row in real_dict_list]
             return real_dict_list
 
-        if status not in VALID_STATUSES:
+        if status not in JOB_STATUS.keys():
             log.error(
-                "Invalid status provided! {} not in {}".format(status, VALID_STATUSES)
+                "Invalid status provided! {} not in {}".format(
+                    status, JOB_STATUS.keys()
+                )
             )
             return None
 
@@ -281,18 +277,18 @@ class Job_DB_Connection:
 
 if __name__ == "__main__":
     # For testing it; not usually meant to be run as a standalone.
-    db_conn = Job_DB_Connection()
+    job_dao = JobDbDao()
     debug_id = "e6c8de9f-ebcc-451f-a109-341fd8f8b447"
-    print(db_conn.get_job_by_id(debug_id))
-    db_conn.start_job(debug_id, "GOOSE")
-    db_conn.end_job(debug_id, True)
-    db_conn.delete_job(debug_id)
+    print(job_dao.get_job_by_id(debug_id))
+    job_dao.update_start_job(debug_id, "GOOSE")
+    job_dao.update_end_job(debug_id, True)
+    job_dao.delete_job(debug_id)
 
-    for status in JOB_STATUSES.values():
-        jobs = db_conn.get_jobs_by_status(status, limit=100)
+    job_dao.disconnect_DB()
+    print(job_dao.get_job_by_id(debug_id))
+
+    for status in JOB_STATUS.values():
+        jobs = job_dao.get_jobs_by_status(status, limit=100)
         print("\n{} JOBS ({})".format(status, len(jobs)))
         for j in jobs:
             print(j)
-
-    db_conn.disconnect_DB()
-    print(db_conn.get_job_by_id(debug_id))
