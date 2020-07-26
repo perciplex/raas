@@ -1,10 +1,11 @@
 #!/usr/bin/python
 
 import datetime
-import logging
+import logging as log
 import psycopg2
 import psycopg2.extras
 import os
+import time
 
 JOBS_DB = os.getenv("JOBS_DB", None)
 JOBS_DB_USER = os.getenv("JOBS_DB_USER", None)
@@ -30,6 +31,21 @@ JOB_STATUSES = {
 }
 
 
+def reconnect(func):
+    """
+    Wrapper fumctions to reconnect to DB if connection is dropped
+    """
+
+    def wrapper(db_conn, *args, **kwargs):
+        if not db_conn.is_connected():
+            log.info("Lost DB connection, reconnecting...")
+            db_conn.connect_DB()
+
+        return func(db_conn, *args, **kwargs)
+
+    return wrapper
+
+
 class Job_DB_Connection:
     """
     Class to maintain and act on DB connection.
@@ -37,15 +53,32 @@ class Job_DB_Connection:
 
     def __init__(self):
         # Init logging from basicConfig
-        logging.basicConfig(level=logging.DEBUG)
+        log.basicConfig(level=log.INFO)
 
         # Establish DB connection
-        logging.info("Establishing DB connection...")
+        self.conn = None
+        self.connect_DB()
+
+    def connect_DB(self):
+        """
+        Connect to the database using psycopg2 connect.
+        """
+        log.info("Establishing DB connection...")
         self.conn = psycopg2.connect(**DB_KWARGS)
 
-    def __del__(self):
+    def is_connected(self):
+        """
+        Checks if the DB connection is alive
+        """
+        return self.conn and self.conn.closed == 0
+
+    def disconnect_DB(self):
+        """
+        Disconnects from the database using close()
+        """
         self.conn.close()
 
+    @reconnect
     def get_jobs_by_status(self, status, sort_order="ASC", limit=20):
         """
         Get all jobs of one type from the DB, sorted by earliest submit_time.
@@ -67,7 +100,9 @@ class Job_DB_Connection:
             return real_dict_list
 
         if status not in VALID_STATUSES:
-            logging.info("Must provide a valid status! Provided {}".format(status))
+            log.error(
+                "Invalid status provided! {} not in {}".format(status, VALID_STATUSES)
+            )
             return None
 
         with self.conn:
@@ -86,6 +121,7 @@ class Job_DB_Connection:
 
         return _real_dicts_to_python_dicts(rows)
 
+    @reconnect
     def get_job_by_id(self, id):
         """
         Get the job row corresponding of provided job id.
@@ -112,13 +148,14 @@ class Job_DB_Connection:
         if len(job_rows) == 1:
             return job_rows[0]
         if len(job_rows) > 1:
-            logging.error("ERROR: {} rows found for ID {}!".format(len(job_rows), id))
+            log.error("ERROR: {} rows found for ID {}!".format(len(job_rows), id))
             return None
         else:
-            logging.info("Job not found for ID {}".format(id))
+            log.debug("Job not found for ID {}".format(id))
             return None
 
-    def new_job(self, project_name, git_url, git_user):
+    @reconnect
+    def insert_new_job(self, project_name, git_url, git_user):
         """
         Create the new row for the job in the jobs database.
 
@@ -128,7 +165,7 @@ class Job_DB_Connection:
             git_user (int):         Git user of the job
         """
 
-        logging.info("Adding new job: ", project_name, git_url, git_user)
+        log.info("Adding new job: ", project_name, git_url, git_user)
 
         with self.conn:
             with self.conn.cursor() as curs:
@@ -147,7 +184,8 @@ class Job_DB_Connection:
                     ),
                 )
 
-    def start_job(self, id, hardware_name):
+    @reconnect
+    def update_start_job(self, id, hardware_name):
         """
         Update the state of the job to RUNNING and update the start_time.
         Asserts the job is in QUEUD state before updating.
@@ -159,13 +197,11 @@ class Job_DB_Connection:
 
         job = self.get_job_by_id(id)
         if job is None:
-            logging.info("Aborting job start ... job not found for ID {}".format(id))
+            log.info("Job not found for ID {} ... Aborting job start.".format(id))
             return None
 
         if job["status"] != "QUEUED":
-            logging.info(
-                "Status must be QUEUED to start job, not {}".format(job["status"])
-            )
+            log.info("Status must be QUEUED to start job, not {}".format(job["status"]))
             return None
 
         with self.conn:
@@ -179,7 +215,8 @@ class Job_DB_Connection:
                     (hardware_name, datetime.datetime.now(), id),
                 )
 
-    def end_job(self, id, failed):
+    @reconnect
+    def update_end_job(self, id, failed):
         """
         Update the state of the job to COMPLETE/FAILED based on the failed bool
         and update the end_time.
@@ -193,13 +230,11 @@ class Job_DB_Connection:
         job = self.get_job_by_id(id)
 
         if job is None:
-            logging.info("Aborting job end ... job not found for ID {}".format(id))
+            log.info("Job not found for ID {} ... Aborting job end.".format(id))
             return None
 
         if job["status"] != "RUNNING":
-            logging.info(
-                "Status must be RUNNING to end job, not {}".format(job["status"])
-            )
+            log.info("Status must be RUNNING to end job, not {}".format(job["status"]))
             return None
 
         status = "FAILED" if failed else "COMPLETED"
@@ -229,7 +264,8 @@ class Job_DB_Connection:
         job = self.get_job_by_id(id)
 
         if not job:
-            logging.info("Job not found with ID {}... skipping delete.".format(id))
+            log.info("Job not found for ID {} ... Aborting delete.".format(id))
+            return None
 
         with self.conn:
             with self.conn.cursor() as curs:
@@ -240,7 +276,7 @@ class Job_DB_Connection:
                     """,
                     (id,),
                 )
-            logging.info("Deleted job {} from database.".format(id))
+            log.info("Deleted job {} from database.".format(id))
 
 
 if __name__ == "__main__":
@@ -257,3 +293,6 @@ if __name__ == "__main__":
         print("\n{} JOBS ({})".format(status, len(jobs)))
         for j in jobs:
             print(j)
+
+    db_conn.disconnect_DB()
+    print(db_conn.get_job_by_id(debug_id))
