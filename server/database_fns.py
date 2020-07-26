@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import datetime
-
+import logging
 import psycopg2
 import psycopg2.extras
 import os
@@ -36,7 +36,12 @@ class Job_DB_Connection:
     """
 
     def __init__(self):
-        self.conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
+        # Init logging from basicConfig
+        logging.basicConfig(level=logging.DEBUG)
+
+        # Establish DB connection
+        logging.info("Establishing DB connection...")
+        self.conn = psycopg2.connect(**DB_KWARGS)
 
     def __del__(self):
         self.conn.close()
@@ -61,9 +66,9 @@ class Job_DB_Connection:
             real_dict_list = [dict(row) for row in real_dict_list]
             return real_dict_list
 
-        assert (
-            status in VALID_STATUSES
-        ), f"Must provide a valid status! Provided = {status}"
+        if status not in VALID_STATUSES:
+            logging.info("Must provide a valid status! Provided {}".format(status))
+            return None
 
         with self.conn:
             with self.conn.cursor(
@@ -91,7 +96,6 @@ class Job_DB_Connection:
         returns:
             job (RealDictRow):  A RealDictRows representation of the job
         """
-
         with self.conn:
             with self.conn.cursor(
                 cursor_factory=psycopg2.extras.RealDictCursor
@@ -101,14 +105,18 @@ class Job_DB_Connection:
                     SELECT * FROM jobs
                     WHERE id = %s;
                     """,
-                    (id),
+                    (id,),
                 )
                 job_rows = curs.fetchall()
 
-        assert len(job_rows) == 1, "Invalid len(rows): {}".format(job_rows)
-
-        job = job_rows[0]
-        return job
+        if len(job_rows) == 1:
+            return job_rows[0]
+        if len(job_rows) > 1:
+            logging.error("ERROR: {} rows found for ID {}!".format(len(job_rows), id))
+            return None
+        else:
+            logging.info("Job not found for ID {}".format(id))
+            return None
 
     def new_job(self, project_name, git_url, git_user):
         """
@@ -120,7 +128,7 @@ class Job_DB_Connection:
             git_user (int):         Git user of the job
         """
 
-        print("Adding new job: ", project_name, git_url, git_user)
+        logging.info("Adding new job: ", project_name, git_url, git_user)
 
         with self.conn:
             with self.conn.cursor() as curs:
@@ -150,10 +158,15 @@ class Job_DB_Connection:
         """
 
         job = self.get_job_by_id(id)
+        if job is None:
+            logging.info("Aborting job start ... job not found for ID {}".format(id))
+            return None
 
-        assert (
-            job["status"] == "QUEUED"
-        ), "Status must be queued to start job, is currently: {}".format(job["status"])
+        if job["status"] != "QUEUED":
+            logging.info(
+                "Status must be QUEUED to start job, not {}".format(job["status"])
+            )
+            return None
 
         with self.conn:
             with self.conn.cursor() as curs:
@@ -179,9 +192,15 @@ class Job_DB_Connection:
 
         job = self.get_job_by_id(id)
 
-        assert (
-            job["status"] == "RUNNING"
-        ), "Status must be running to end job, is currently: {}".format(job["status"])
+        if job is None:
+            logging.info("Aborting job end ... job not found for ID {}".format(id))
+            return None
+
+        if job["status"] != "RUNNING":
+            logging.info(
+                "Status must be RUNNING to end job, not {}".format(job["status"])
+            )
+            return None
 
         status = "FAILED" if failed else "COMPLETED"
 
@@ -195,7 +214,8 @@ class Job_DB_Connection:
                     """,
                     (status, datetime.datetime.now(), id),
                 )
-    def end_job(self, id, failed):
+
+    def delete_job(self, id):
         """
         Update the state of the job to COMPLETE/FAILED based on the failed bool
         and update the end_time.
@@ -208,11 +228,8 @@ class Job_DB_Connection:
 
         job = self.get_job_by_id(id)
 
-        assert (
-            job["status"] == "RUNNING"
-        ), "Status must be running to end job, is currently: {}".format(job["status"])
-
-        status = "FAILED" if failed else "COMPLETED"
+        if not job:
+            logging.info("Job not found with ID {}... skipping delete.".format(id))
 
         with self.conn:
             with self.conn.cursor() as curs:
@@ -220,17 +237,23 @@ class Job_DB_Connection:
                     """
                     DELETE FROM jobs
                     WHERE id = %s;
-                    UPDATE jobs
-                    SET status = %s, end_time = %s
-                    WHERE id = %s;
                     """,
-                    (status, datetime.datetime.now(), id),
+                    (id,),
                 )
+            logging.info("Deleted job {} from database.".format(id))
 
 
 if __name__ == "__main__":
     # For testing it; not usually meant to be run as a standalone.
     db_conn = Job_DB_Connection()
-    print(db_conn.get_jobs_by_status("QUEUED", "ASC"))
-    print(db_conn.get_jobs_by_status("RUNNING", "ASC"))
-    print(db_conn.get_jobs_by_status("COMPLETED", "DESC"))
+    debug_id = "e6c8de9f-ebcc-451f-a109-341fd8f8b447"
+    print(db_conn.get_job_by_id(debug_id))
+    db_conn.start_job(debug_id, "GOOSE")
+    db_conn.end_job(debug_id, True)
+    db_conn.delete_job(debug_id)
+
+    for status in JOB_STATUSES.values():
+        jobs = db_conn.get_jobs_by_status(status, limit=100)
+        print("\n{} JOBS ({})".format(status, len(jobs)))
+        for j in jobs:
+            print(j)
