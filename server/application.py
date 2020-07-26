@@ -106,9 +106,11 @@ class JobsCache:
                 return {}
 
         self.last_db_read_time = time.time()
-        q = list_to_dict(database_fns.get_all_jobs_by_status("QUEUED", "ASC"))
-        r = list_to_dict(database_fns.get_all_jobs_by_status("RUNNING", "ASC"))
-        c = list_to_dict(database_fns.get_all_jobs_by_status("COMPLETED", "DESC"))
+        q = list_to_dict(database_fns.get_jobs_by_status("QUEUED"))
+        r = list_to_dict(database_fns.get_jobs_by_status("RUNNING"))
+        c = list_to_dict(
+            database_fns.get_jobs_by_status("COMPLETED", sort_order="DESC")
+        )
 
         self.cache = {
             "queued": deque(q.values()),

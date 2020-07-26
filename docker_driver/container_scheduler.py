@@ -27,6 +27,7 @@ def launch_docker(client, git_url, job_id):
     print(docker_tag)
     print(git_url)
 
+    stdout = None
     failed = False
     data = None
 

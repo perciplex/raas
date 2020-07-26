@@ -22,259 +22,215 @@ DB_KWARGS = {
 }
 
 VALID_STATUSES = ["QUEUED", "RUNNING", "COMPLETED", "FAILED"]
+JOB_STATUSES = {
+    "QUEUED": "QUEUED",
+    "RUNNING": "RUNNING",
+    "COMPLETED": "COMPLETED",
+    "FAILED": "FAILED",
+}
 
 
-def real_dicts_to_python_dicts(real_dict_list):
+class Job_DB_Connection:
     """
-    Convert the postgres psycopg2 RealDictRows to python dict.
-
-    args:
-        real_dict_list (list): The psycopg2 RealDictRow list.
-
-    """
-    real_dict_list = [dict(row) for row in real_dict_list]
-    return real_dict_list
-
-
-def get_all_jobs_by_status(status, sort_order, limit=20):
+    Class to maintain and act on DB connection.
     """
 
-    Get all jobs of one type from the DB, sorted by earliest submit_time.
-    Returns them as a list of dicts.
+    def __init__(self):
+        self.conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
 
-    The limit is the number of jobs to request.
+    def __del__(self):
+        self.conn.close()
 
-    The default sort order is ascending for queued or running jobs, descending
-    for completed or failed jobs.
-    """
+    def get_jobs_by_status(self, status, sort_order="ASC", limit=20):
+        """
+        Get all jobs of one type from the DB, sorted by earliest submit_time.
+        Returns them as a list of dicts.
 
-    assert (
-        status in VALID_STATUSES
-    ), f"Must provide a valid status! Provided = {status}"
+        args:
+            status (str):       Status of jobs to get. Should be in VALID_STATUSES enum
+            sort_order (str):   Sort order of query. Defaults to "ASC" (ascending).
+            limit (int):        Maximum number of jobs to return
+        returns:
+            jobs (list):        A list of dictionaries for each job matching status
+        """
 
-    command = """
-                SELECT
-                    *
-                FROM
-                    jobs
-                WHERE
-                    status = '{}'
-                ORDER BY
-                    submit_time {}
-                LIMIT {};
-                """.format(
-        status, sort_order, limit
-    )
-
-    conn = None
-    try:
-
-        conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
-        cur = conn.cursor(
-            cursor_factory=psycopg2.extras.RealDictCursor
-        )  # Get cursor
-        cur.execute(command)  # Send the command
-
-        # Returns just the top one. If there are no jobs, this
-        # value should be None.
-        rows = cur.fetchall()
-
-        cur.close()  # close communication with the PostgreSQL database server
-        conn.commit()  # commit the changes
-
-        return real_dicts_to_python_dicts(rows)
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-
-def get_id_rows(id):
-
-    """
-
-    Get the rows corresponding to id.
-
-    There should be only 1, but you can use this to check that the id is
-    valid.
-
-    Note: uses different cursor, so it can return a dict for each row.
-
-    """
-
-    command = """
-                SELECT
-                    *
-                FROM
-                    jobs
-                WHERE
-                    id = %s;
-                """
-
-    conn = None
-    try:
-
-        conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
-        cur = conn.cursor(
-            cursor_factory=psycopg2.extras.RealDictCursor
-        )  # Get cursor
-        cur.execute(command, (id,))  # Send the command
-        # Returns just the top one. If there is no queued, this
-        # value should be None.
-        rows = cur.fetchall()
-
-        cur.close()  # close communication with the PostgreSQL database server
-        conn.commit()  # commit the changes
-
-        return rows
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-
-#  High level job control
-
-
-def new_job(project_name, git_url, git_user):
-    """
-
-    Enter a new queued job into the DB.
-
-    """
-    print("Adding new job: ", project_name, git_url, git_user)
-    command = """
-            INSERT INTO jobs(submit_time, status, project_name, git_url, git_user)
-            VALUES(%s, %s, %s, %s, %s) RETURNING id;
+        def _real_dicts_to_python_dicts(real_dict_list):
             """
+            Convert the postgres psycopg2 RealDictRows to python dict.
+            """
+            real_dict_list = [dict(row) for row in real_dict_list]
+            return real_dict_list
 
-    conn = None
-    try:
+        assert (
+            status in VALID_STATUSES
+        ), f"Must provide a valid status! Provided = {status}"
 
-        conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
-        cur = conn.cursor()  # Get cursor
-        cur.execute(
-            command,
-            (
-                datetime.datetime.now(),
-                "QUEUED",
-                project_name,
-                git_url,
-                git_user,
-            ),
-        )  # Send the command
+        with self.conn:
+            with self.conn.cursor(
+                cursor_factory=psycopg2.extras.RealDictCursor
+            ) as curs:
+                curs.execute(
+                    """
+                    SELECT * FROM jobs
+                    WHERE status = %s
+                    LIMIT %s;
+                    """,
+                    (status, limit),
+                )
+                rows = curs.fetchall()
 
-        cur.close()  # close communication with the PostgreSQL database server
-        conn.commit()  # commit the changes
+        return _real_dicts_to_python_dicts(rows)
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
+    def get_job_by_id(self, id):
+        """
+        Get the job row corresponding of provided job id.
+        Asserts there is only 1 job matching ID.
 
+        args:
+            id (str):           ID corresponding to the job to start
+        returns:
+            job (RealDictRow):  A RealDictRows representation of the job
+        """
 
-def start_job(id, hardware_name):
+        with self.conn:
+            with self.conn.cursor(
+                cursor_factory=psycopg2.extras.RealDictCursor
+            ) as curs:
+                curs.execute(
+                    """
+                    SELECT * FROM jobs
+                    WHERE id = %s;
+                    """,
+                    (id),
+                )
+                job_rows = curs.fetchall()
 
-    """
+        assert len(job_rows) == 1, "Invalid len(rows): {}".format(job_rows)
 
-    Start a job. Must supply the unique id. Can get this for the next
-    queued job with get_next_queued().
+        job = job_rows[0]
+        return job
 
-    """
+    def new_job(self, project_name, git_url, git_user):
+        """
+        Create the new row for the job in the jobs database.
 
-    id_rows = get_id_rows(id)
+        args:
+            project_name (str):     Project name of the job
+            git_url (str):          Git url for repo of the jobs
+            git_user (int):         Git user of the job
+        """
 
-    assert len(id_rows) == 1, "Invalid len(id_rows): {}".format(id_rows)
+        print("Adding new job: ", project_name, git_url, git_user)
 
-    job_row = id_rows[0]
+        with self.conn:
+            with self.conn.cursor() as curs:
+                curs.execute(
+                    """
+                    INSERT INTO jobs
+                    (submit_time, status, project_name, git_url, git_user)
+                    VALUES(%s, %s, %s, %s, %s) RETURNING id;
+                    """,
+                    (
+                        datetime.datetime.now(),
+                        "QUEUED",
+                        project_name,
+                        git_url,
+                        git_user,
+                    ),
+                )
 
-    assert (
-        job_row["status"] == "QUEUED"
-    ), "Status must be queued to start job, is currently: {}".format(
-        job_row["status"]
-    )
+    def start_job(self, id, hardware_name):
+        """
+        Update the state of the job to RUNNING and update the start_time.
+        Asserts the job is in QUEUD state before updating.
 
-    command = """
-                UPDATE jobs
-                SET
-                    status = 'RUNNING',
-                    hardware_name = %s,
-                    start_time = %s
-                WHERE id = %s;
-                """
+        args:
+            id (str):               ID corresponding to the job to start
+            hardware_name (str):    Name of hardware job is submitted to.
+        """
 
-    conn = None
-    try:
+        job = self.get_job_by_id(id)
 
-        conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
-        cur = conn.cursor()  # Get cursor
-        cur.execute(
-            command, (hardware_name, datetime.datetime.now(), id)
-        )  # Send the command
+        assert (
+            job["status"] == "QUEUED"
+        ), "Status must be queued to start job, is currently: {}".format(job["status"])
 
-        cur.close()  # close communication with the PostgreSQL database server
-        conn.commit()  # commit the changes
+        with self.conn:
+            with self.conn.cursor() as curs:
+                curs.execute(
+                    """
+                    UPDATE jobs
+                    SET status = 'RUNNING', hardware_name = %s, start_time = %s
+                    WHERE id = %s;
+                    """,
+                    (hardware_name, datetime.datetime.now(), id),
+                )
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
+    def end_job(self, id, failed):
+        """
+        Update the state of the job to COMPLETE/FAILED based on the failed bool
+        and update the end_time.
+        Asserts the job is in RUNNING state before updating.
 
+        args:
+            id (str):           ID corresponding to the job to end
+            failed (bool):      Boolean for if the job failed
+        """
 
-def end_job(id):
+        job = self.get_job_by_id(id)
 
-    """
+        assert (
+            job["status"] == "RUNNING"
+        ), "Status must be running to end job, is currently: {}".format(job["status"])
 
-    End a job. Must supply the unique id.
+        status = "FAILED" if failed else "COMPLETED"
 
-    """
+        with self.conn:
+            with self.conn.cursor() as curs:
+                curs.execute(
+                    """
+                    UPDATE jobs
+                    SET status = %s, end_time = %s
+                    WHERE id = %s;
+                    """,
+                    (status, datetime.datetime.now(), id),
+                )
+    def end_job(self, id, failed):
+        """
+        Update the state of the job to COMPLETE/FAILED based on the failed bool
+        and update the end_time.
+        Asserts the job is in RUNNING state before updating.
 
-    id_rows = get_id_rows(id)
+        args:
+            id (str):           ID corresponding to the job to end
+            failed (bool):      Boolean for if the job failed
+        """
 
-    assert len(id_rows) == 1, "Invalid len(id_rows): {}".format(id_rows)
+        job = self.get_job_by_id(id)
 
-    job_row = id_rows[0]
+        assert (
+            job["status"] == "RUNNING"
+        ), "Status must be running to end job, is currently: {}".format(job["status"])
 
-    assert (
-        job_row["status"] == "RUNNING"
-    ), "Status must be running to end job, is currently: {}".format(
-        job_row["status"]
-    )
+        status = "FAILED" if failed else "COMPLETED"
 
-    command = """
-                UPDATE jobs
-                SET
-                    status = 'COMPLETED',
-                    end_time = %s
-                WHERE id = %s;
-                """
-
-    conn = None
-    try:
-
-        conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
-        cur = conn.cursor()  # Get cursor
-        cur.execute(command, (datetime.datetime.now(), id))  # Send the command
-
-        cur.close()  # close communication with the PostgreSQL database server
-        conn.commit()  # commit the changes
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
+        with self.conn:
+            with self.conn.cursor() as curs:
+                curs.execute(
+                    """
+                    DELETE FROM jobs
+                    WHERE id = %s;
+                    UPDATE jobs
+                    SET status = %s, end_time = %s
+                    WHERE id = %s;
+                    """,
+                    (status, datetime.datetime.now(), id),
+                )
 
 
 if __name__ == "__main__":
     # For testing it; not usually meant to be run as a standalone.
-
-    print(get_all_jobs_by_status("QUEUED", "ASC"))
-    print(get_all_jobs_by_status("RUNNING", "ASC"))
-    print(get_all_jobs_by_status("COMPLETED", "DESC"))
+    db_conn = Job_DB_Connection()
+    print(db_conn.get_jobs_by_status("QUEUED", "ASC"))
+    print(db_conn.get_jobs_by_status("RUNNING", "ASC"))
+    print(db_conn.get_jobs_by_status("COMPLETED", "DESC"))
