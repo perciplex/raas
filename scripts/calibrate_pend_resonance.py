@@ -3,7 +3,7 @@ import gym_raas
 import numpy as np
 import time
 import pprint
-
+import argparse
 
 DT = 0.05
 
@@ -86,7 +86,21 @@ def get_max_amp(env, w, max_torque, n_steps, is_hardware):
 
 if __name__ == "__main__":
 
-    use_openai = False
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--freq_start", type=float, default=3.0, help="The start freq to use")
+    parser.add_argument("--freq_end", type=float, default=7.0, help="The end freq to use")
+    parser.add_argument("--steps", type=int, default=30, help="The steps between the start and end freqs")
+
+    parser.add_argument("--swing_steps", type=int, default=200, help="The number of steps to swing at each freq")
+    parser.add_argument("--max_torque", type=int, default=1.0, help="The number of steps to swing at each freq")
+
+    # False unless you give the openai flag
+    parser.add_argument("--openai", action='store_true', help="Use the openai pendulum env instead")
+    args = parser.parse_args()
+
+
+
+    use_openai = args.openai
 
     print("Setting up env...")
     if use_openai:
@@ -106,11 +120,12 @@ if __name__ == "__main__":
     print(f"\n\nRUNNING IN HARDWARE MODE: {HARDWARE}\n\n")
 
     # w_range = np.linspace(3, 4, 2)
-    w_range = np.linspace(3, 7, 30)
+    #w_range = np.linspace(3, 7, 30)
+    w_range = np.linspace(args.freq_start, args.freq_end, args.steps)
 
-    max_torque = 1.0
+    max_torque = args.max_torque
 
-    n_steps = 200
+    n_steps = args.swing_steps
 
     max_amps = []
 
