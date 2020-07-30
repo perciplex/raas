@@ -6,11 +6,11 @@ import psycopg2
 import psycopg2.extras
 import os
 
-JOBS_DB = "postgres"
-JOBS_DB_USER = "perciplex"
-JOBS_DB_PASS = "TVaH5aKw3iEAenP"
-JOBS_DB_HOST = "raas-jobs.c0cgyyikkgwi.us-east-2.rds.amazonaws.com"
-JOBS_DB_PORT = 5432
+JOBS_DB = os.getenv("JOBS_DB", None)
+JOBS_DB_USER = os.getenv("JOBS_DB_USER", None)
+JOBS_DB_PASS = os.getenv("JOBS_DB_PASS", None)
+JOBS_DB_HOST = os.getenv("JOBS_DB_HOST", None)
+JOBS_DB_PORT = os.getenv("JOBS_DB_PORT", None)
 
 
 DB_KWARGS = {
