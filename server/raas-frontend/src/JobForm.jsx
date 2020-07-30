@@ -18,7 +18,7 @@ class JobForm extends React.Component {
     }
 
     handleChange(event) {
-        var re = RegExp('^(?:https://|http://)?(?:www.)?github.com/([a-z0-9-_]*)/([a-z0-9-_]*)(?:/)?(?:.git)?$')
+        var re = RegExp('^(?:https://|http://)?(?:www.)?github.com/([a-zA-Z0-9-_]*)/([a-zA-Z0-9-_]*)(?:/)?(?:.git)?$')
 
         var git_user
         var project_name

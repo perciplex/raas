@@ -10,7 +10,7 @@ import './App.css';
 import banner from './banner_small.png'
 import { Container, Image } from 'react-bootstrap';
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
