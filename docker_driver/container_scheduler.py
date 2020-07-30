@@ -27,8 +27,9 @@ def launch_docker(client, git_url, job_id):
     print(docker_tag)
     print(git_url)
 
+    stdout = None
     failed = False
-    data = None
+    data = {}
 
     with open("/tmp/log.json", "w") as f:
         pass
@@ -84,7 +85,6 @@ def launch_docker(client, git_url, job_id):
     try:
         with open("/tmp/log.json", "r") as f:
             data = json.load(f)
-            data["stdout"] = str(stdout)
 
     except Exception as e:
         print(f"Error {e}")
@@ -162,6 +162,8 @@ if __name__ == "__main__":
             led.stop()
 
             print("Uploading results to S3")
+            data["stdout"] = str(stdout)
+            data["failed"] = failed
             upload_s3_utils.upload_string(job_id, json.dumps(data))
 
             print("Resetting pendulum")
@@ -170,8 +172,9 @@ if __name__ == "__main__":
             print("Cleaning images")
             cleanup_images(docker_client)
 
-            job_json["stdout"] = stdout
-            job_json["data"] = data
+            # These are pushed to S3, not needed in JSON blob anymore
+            # job_json["stdout"] = stdout
+            # job_json["data"] = data
             job_json["failed"] = failed
 
             print("Returning status to webserver")
