@@ -1,0 +1,66 @@
+html {
+  overflow: -moz-scrollbars-vertical; 
+  overflow-y: scroll;
+}
+
+#twitch-player {
+  top: 10px;
+  position:relative;
+  padding-top:56.25%;
+}
+
+#twitch-player > iframe{
+  position: absolute;
+  top: 5px;
+  left: 0;
+}
+
+#info {
+  background-color: transparent;
+  padding: 0px;
+  font-family: 'VT323', monospace;
+}
+
+@media (min-width: 992px) {
+  
+  #info > h1 {
+    width:70%;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  #info > p {
+    width:80%;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  #content-container {
+      position: relative;
+      top:-100px;
+  }
+}
+
+#results{
+  margin-top: 10px;
+}
+
+.time-badge{
+  margin:5px;
+}
+
+.plot {
+  top: 10px;
+  width:100%;
+  height:500px;
+}
+
+#stdout{
+  font-family: monospace;
+}
+
+.link * { 
+  cursor: pointer;
+}
+
+.badge {
+  font-weight: normal;
+}

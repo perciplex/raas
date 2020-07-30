@@ -1,6 +1,8 @@
 import atexit
 from math import pi
+from socket import gethostname
 
+from motor_config import STEPS_PER_REV
 import pigpio
 
 # need to run daemon before you can run this
@@ -12,7 +14,8 @@ import pigpio
 
 class Encoder:
     def __init__(self):
-        self.steps_per_rev = 120 * 4
+        hostname = gethostname()
+        self.steps_per_rev = STEPS_PER_REV[hostname]
         self.pi = pigpio.pi()
         self.A = False
         self.B = False

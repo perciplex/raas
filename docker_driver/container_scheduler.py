@@ -59,11 +59,8 @@ def launch_docker(client, git_url, job_id):
             check_duplicate=True,
             scope="local",
         )
-    except APIError as e:
-        stdout = e
-        failed = True
-        print("Error creating network! Aborting.\n{}".format(e))
-        return str(stdout), data, failed
+    except APIError:
+        pass
 
     try:
         stdout = client.containers.run(
@@ -134,12 +131,12 @@ if __name__ == "__main__":
     docker_client = DockerClient.from_env()
 
     # clear LED screen
-    LedMessage(f"").stop()
+    LedMessage("").stop()
 
     while True:
         try:
             response = requests.get(
-                server_ip + "/job/pop",
+                server_ip + "/api/job/pop",
                 params={"FLASK_PASS": FLASK_PASS, "hardware": socket.gethostname()},
             )
             response_status = response.status_code
@@ -179,7 +176,7 @@ if __name__ == "__main__":
 
             print("Returning status to webserver")
             requests.put(
-                server_ip + "/job/%s/results" % job_id,
+                server_ip + "/api/job/%s/results" % job_id,
                 params={"FLASK_PASS": FLASK_PASS},
                 json=job_json,
             )

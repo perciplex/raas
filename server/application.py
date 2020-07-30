@@ -7,20 +7,13 @@ from collections import deque
 from json import JSONEncoder
 
 import database_fns
-from flask import (
-    Flask,
-    jsonify,
-    make_response,
-    redirect,
-    render_template,
-    request,
-)
+from flask import Flask, jsonify, make_response, redirect, request
 
 from hardware import Hardware
 
 rd = random.Random()
 rd.seed(0)
-application = Flask(__name__)
+application = Flask(__name__, static_folder="raas-frontend/build", static_url_path="/")
 application.config.from_pyfile("config.cfg")
 
 # sslify = SSLify(application)
@@ -42,9 +35,7 @@ class Job:
         self.git_user = git_user  # github user id
         self.git_url = git_url  # github hrl
         self.status = Status.QUEUED  # job status
-        self.hardware_name = (
-            None  # the hardware the job is/was run on, none if queued
-        )
+        self.hardware_name = None  # the hardware the job is/was run on, none if queued
         self.stdout = "Results pending."  # job results
         # observations, actions, reqards, and times for the job data points
         self.data = None
@@ -117,9 +108,7 @@ class JobsCache:
         self.last_db_read_time = time.time()
         q = list_to_dict(database_fns.get_all_jobs_by_status("QUEUED", "ASC"))
         r = list_to_dict(database_fns.get_all_jobs_by_status("RUNNING", "ASC"))
-        c = list_to_dict(
-            database_fns.get_all_jobs_by_status("COMPLETED", "DESC")
-        )
+        c = list_to_dict(database_fns.get_all_jobs_by_status("COMPLETED", "DESC"))
 
         self.cache = {
             "queued": deque(q.values()),
@@ -193,35 +182,29 @@ def reset_jobs():
 
 def check_password(password):
     if password == application.config["FLASK_PASS"]:
-        print(
-            "Bad password from from host: {}".format(
-                request.args.get("hardware")
-            )
-        )
+        print("Bad password from from host: {}".format(request.args.get("hardware")))
         return False
     else:
         return True
 
 
-@application.route("/reset")
-def reset_route():
-    if not check_password(request.args["FLASK_PASS"]):
-        return make_response("", 403)
-    reset_jobs()
-    return redirect("/")
-
-
 @application.route("/")
-def base_route():
-    return render_template("index.html")
+def index():
+    return application.send_static_file("index.html")
 
+@application.route('/favicon.ico')
+def favicon():
+    return application.send_static_file("favicon.ico")
 
-@application.route("/status")
-def status_route():
-    return render_template("hardware.html")
+@application.route('/favicon-16x16.png')
+def favicon16():
+    return application.send_static_file("favicon-16x16.png")
 
+@application.route('/favicon-32x32.png')
+def favicon32():
+    return application.send_static_file("favicon-32x32.png")
 
-@application.route("/hardware")
+@application.route("/api/hardware")
 def hardware_route():
     return jsonify(
         sorted(
@@ -237,25 +220,21 @@ def hardware_route():
     )
 
 
-@application.route("/job/<string:id>", methods=["GET"])
+@application.route("/api/job/<string:id>", methods=["GET"])
 def job_page_route(id):
     jobs_cache.get_db_cache()
     job = jobs_cache.get_job_in_cache_from_id(id, "all_jobs")
     if job:
-        return render_template("job.html", job=job)
+        return jsonify(job)
     else:
         return redirect("/")
 
 
-@application.route("/submit", methods=["GET"])
-def submit_page_route():
-    return render_template("submit.html")
-
-
-@application.route("/job", methods=["POST", "GET"])
+@application.route("/api/job", methods=["POST", "GET"])
 def job_route():
     jobs_cache.get_db_cache()
     if request.method == "POST":
+        print(request)
         git_user, project_name, git_url = (
             request.form["git_user"],
             request.form["project_name"],
@@ -263,10 +242,7 @@ def job_route():
         )
 
         for job in jobs_cache.cache["queued"]:
-            if (git_user, project_name) == (
-                job["git_user"],
-                job["project_name"],
-            ):
+            if (git_user, project_name) == (job["git_user"], job["project_name"],):
                 return redirect("/")
 
         # Else, add new job
@@ -284,7 +260,7 @@ def job_route():
         )
 
 
-@application.route("/job/pop", methods=["GET"])
+@application.route("/api/job/pop", methods=["GET"])
 def job_pop_route():
     jobs_cache.get_db_cache()
     if request.method == "GET":
@@ -308,7 +284,7 @@ def job_pop_route():
             return make_response("", 204)
 
 
-@application.route("/job/<string:id>/results", methods=["PUT"])
+@application.route("/api/job/<string:id>/results", methods=["PUT"])
 def job_results_route(id):
     jobs_cache.get_db_cache()
     req_hardware = request.args.get("hardware")
@@ -317,15 +293,11 @@ def job_results_route(id):
             return make_response("", 403)
         if jobs_cache.check_job_id_in_cache(id):
 
-            database_fns.end_job(id)
+            database_fns.end_job(id, not request.args.get("hardware"))
             print("{} has completed job {}.".format(req_hardware, id))
             return make_response("", 200)
         else:
-            print(
-                "{} has failed to complete job {} in cache.".format(
-                    req_hardware, id
-                )
-            )
+            print("{} has failed to complete job {} in cache.".format(req_hardware, id))
             return make_response("", 404)
 
 
