@@ -3,9 +3,9 @@ import gym_raas
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-
+import argparse
 import calibrate_pend_resonance
-
+import socket
 
 def get_traj(use_openai):
 
@@ -20,7 +20,7 @@ def get_traj(use_openai):
         HARDWARE = env.hardware
         w = 5.0
         if HARDWARE:
-            name = "HARDWARE"
+            name = socket.gethostname()
         else:
             name = "simulation_raas"
 
@@ -44,7 +44,12 @@ def get_traj(use_openai):
 
 if __name__ == "__main__":
 
-    traj = get_traj(True)
+    parser = argparse.ArgumentParser()
+    # False unless you give the openai flag
+    parser.add_argument("--openai", action='store_true', help="Use the openai pendulum env instead")
+    args = parser.parse_args()
+
+    traj = get_traj(args.openai)
     print("\n\nAction obs list:\n")
     print(traj)
     print("\n")
