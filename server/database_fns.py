@@ -6,11 +6,11 @@ import psycopg2
 import psycopg2.extras
 import os
 
-JOBS_DB = os.getenv("JOBS_DB", None)
-JOBS_DB_USER = os.getenv("JOBS_DB_USER", None)
-JOBS_DB_PASS = os.getenv("JOBS_DB_PASS", None)
-JOBS_DB_HOST = os.getenv("JOBS_DB_HOST", None)
-JOBS_DB_PORT = os.getenv("JOBS_DB_PORT", None)
+JOBS_DB = "postgres"
+JOBS_DB_USER = "perciplex"
+JOBS_DB_PASS = "TVaH5aKw3iEAenP"
+JOBS_DB_HOST = "raas-jobs.c0cgyyikkgwi.us-east-2.rds.amazonaws.com"
+JOBS_DB_PORT = 5432
 
 
 DB_KWARGS = {
@@ -227,7 +227,7 @@ def start_job(id, hardware_name):
             conn.close()
 
 
-def end_job(id):
+def end_job(id, succeeded):
 
     """
 
@@ -247,10 +247,15 @@ def end_job(id):
         job_row["status"]
     )
 
+    if succeeded:
+        status = 'COMPLETED'
+    else:
+        status = 'FAILED'
+
     command = """
                 UPDATE jobs
                 SET
-                    status = 'COMPLETED',
+                    status = '%s',
                     end_time = %s
                 WHERE id = %s;
                 """
@@ -260,7 +265,7 @@ def end_job(id):
 
         conn = psycopg2.connect(**DB_KWARGS)  # Connect to DB
         cur = conn.cursor()  # Get cursor
-        cur.execute(command, (datetime.datetime.now(), id))  # Send the command
+        cur.execute(command, (status, datetime.datetime.now(), id))  # Send the command
 
         cur.close()  # close communication with the PostgreSQL database server
         conn.commit()  # commit the changes

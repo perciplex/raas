@@ -1,21 +1,15 @@
 import React from 'react';
-import { Container, Row, Col, Card, Badge, Spinner, Media } from 'react-bootstrap';
+import { Container, Row, Col, Card, Badge, Spinner } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faListOl, faPlay, faFlagCheckered } from '@fortawesome/free-solid-svg-icons'
 //import Plot from 'react-plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
-import Slider, { Range } from 'rc-slider';
-import 'rc-slider/assets/index.css';
 
 
-import { Stage, Layer, Rect, Image, Circle } from 'react-konva';
-import Konva from 'konva';
-import clockwise from './clockwise.png'
+import { Stage, Layer, Rect, Circle } from 'react-konva';
 
-
-import useImage from 'use-image';
 
 
 const Plot = createPlotlyComponent(Plotly);

@@ -192,6 +192,17 @@ def check_password(password):
 def index():
     return application.send_static_file("index.html")
 
+@application.route('/favicon.ico')
+def favicon():
+    return application.send_static_file("favicon.ico")
+
+@application.route('/favicon-16x16.png')
+def favicon16():
+    return application.send_static_file("favicon-16x16.png")
+
+@application.route('/favicon-32x32.png')
+def favicon32():
+    return application.send_static_file("favicon-32x32.png")
 
 @application.route("/api/hardware")
 def hardware_route():
@@ -282,7 +293,7 @@ def job_results_route(id):
             return make_response("", 403)
         if jobs_cache.check_job_id_in_cache(id):
 
-            database_fns.end_job(id)
+            database_fns.end_job(id, not request.args.get("hardware"))
             print("{} has completed job {}.".format(req_hardware, id))
             return make_response("", 200)
         else:
