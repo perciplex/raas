@@ -282,10 +282,11 @@ def job_pop_route():
 def job_results_route(id):
     req_hardware = request.args.get("hardware")
     if request.method == "PUT":
+        status = request.json["failed"]
         if not check_password(request.args["FLASK_PASS"]):
             return make_response("", 403)
 
-        job_db_dao.update_end_job(id)
+        job_db_dao.update_end_job(id, status)
         log.info("{} has completed job {}.".format(req_hardware, id))
         return make_response("", 200)
 
@@ -297,7 +298,7 @@ job_db_dao = JobDbDao()
 jobs_cache = JobsCache(job_db_dao)
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "dev":
-        application.run(debug=True)
-    else:
+    if len(sys.argv) > 1 and sys.argv[1] == "prod":
         application.run(port=80, host="0.0.0.0")
+    else:
+        application.run(debug=True)
