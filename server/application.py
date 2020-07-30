@@ -179,7 +179,7 @@ def check_password(password):
     returns:
         bool:           If password matches flask config
     """
-    if password == application.config["FLASK_PASS"]:
+    if password != application.config["FLASK_PASS"]:
         log.error(
             "Bad password from from host: {}".format(request.args.get("hardware"))
         )
