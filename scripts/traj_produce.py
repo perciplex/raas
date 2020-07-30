@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import argparse
 import calibrate_pend_resonance
 import socket
+import pprint
+import json
 
 def get_traj(use_openai):
 
@@ -51,7 +53,10 @@ if __name__ == "__main__":
 
     traj = get_traj(args.openai)
     print("\n\nAction obs list:\n")
-    print(traj)
+
+    print("\n")
+    print("\n")
+    print(json.dumps(traj, indent=4))
     print("\n")
 
     exit()
