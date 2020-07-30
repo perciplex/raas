@@ -2,18 +2,43 @@ import gym
 import gym_raas
 import numpy as np
 import time
+import pprint
+import argparse
 
-print("Setting up env...")
-env = gym.make("raaspendulum-v0")
-# env = gym.make("Pendulum-v0")
-print("Set up!")
-env.reset()
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--torque_start", type=float, default=0.0, help="The start torque to use")
+parser.add_argument("--torque_end", type=float, default=2.0, help="The end torque to use")
+parser.add_argument("--steps", type=int, default=10, help="The steps between the start and end torques")
+
+# False unless you give the openai flag
+parser.add_argument("--openai", action='store_true', help="Use the openai pendulum env instead")
+args = parser.parse_args()
+
 
 obs = []
-torque_range = np.linspace(0, 2.0, 10)
-SIMULATION = True
+torque_range = np.linspace(args.torque_start, args.torque_end, args.steps)
 
-if SIMULATION:
+
+use_openai = args.openai
+
+print("Setting up env...")
+if use_openai:
+    env = gym.make("Pendulum-v0")
+    HARDWARE = False
+    name = "simulation_openAI"
+else:
+    env = gym.make("raaspendulum-v0")
+    HARDWARE = env.hardware
+    if HARDWARE:
+        name = "HARDWARE"
+    else:
+        name = "simulation_raas"
+
+
+
+
+if not HARDWARE:
 
     for t in torque_range:
         print("Resetting env...")
@@ -27,14 +52,14 @@ if SIMULATION:
                 print(env.state)
                 found_init = True
 
-        env.render()
+        #env.render()
         print("Running with torque = {:.2f} now".format(t))
         thetas = []
         for _ in range(500):
             observation, reward, done, info = env.step([t])
             theta = np.arccos(observation[0])
             thetas.append(theta)
-            env.render()
+            #env.render()
 
         obs.append([np.cos(np.mean(thetas))])
 
@@ -60,5 +85,11 @@ print("\nObservations:")
 [print(o) for o in obs]
 print()
 print(obs)
+
+d = {"name": name, "torques": torque_range.tolist(), "obs": obs}
+
+print("\n")
+pprint.pprint(d)
+
 
 env.reset()
