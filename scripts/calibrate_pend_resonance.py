@@ -37,7 +37,7 @@ def find_bottom_initial_cond(env, is_hardware):
 
 
 def get_resonant_trajectory(
-    env, w, max_torque, n_steps, is_hardware, use_phase_torque=False
+    env, w, max_torque, n_steps, is_hardware, use_phase_torque=False, use_rand_max_torque=False,
 ):
 
     max_ep_amp = None
@@ -58,6 +58,10 @@ def get_resonant_trajectory(
             else:
                 mult = -1.0
             action = mult * max_torque
+
+        if use_rand_max_torque:
+            action *= (1 + 0.5*np.random.randn())
+
         o, _, _, _ = env.step([action])
         # x is np.cos(theta), where x=1 at the top and x=-1 at the bottom.
         x, y, thdot = o

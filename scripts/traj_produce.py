@@ -18,7 +18,7 @@ def get_traj(use_openai):
     else:
         env = gym.make("raaspendulum-v0")
         HARDWARE = env.hardware
-        w = 5.5
+        w = 5.0
         if HARDWARE:
             name = "HARDWARE"
         else:
@@ -36,7 +36,7 @@ def get_traj(use_openai):
     max_torque = 1.0
 
     action_obs, _ = calibrate_pend_resonance.get_resonant_trajectory(
-        env, w, max_torque, n_steps, HARDWARE, use_phase_torque=False
+        env, w, max_torque, n_steps, HARDWARE, use_rand_max_torque=True
     )
 
     return action_obs
@@ -44,7 +44,7 @@ def get_traj(use_openai):
 
 if __name__ == "__main__":
 
-    traj = get_traj(False)
+    traj = get_traj(True)
     print("\n\nAction obs list:\n")
     print(traj)
     print("\n")
