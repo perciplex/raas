@@ -93,7 +93,6 @@ class Job extends React.Component {
             .then(res => res.json())
             .then(job => {
                 var alert_variant = "danger";
-
                 switch (job.status) {
                     case "COMPLETED":
                         alert_variant = "success"
@@ -121,6 +120,7 @@ class Job extends React.Component {
         fetch(`https://raas-results.s3.us-east-2.amazonaws.com/run_results/${this.state.id}.json`)
             .then(res => res.json())
             .then(output => {
+                this.setState(output)
                 output.times.shift()
                 output.obs.shift()
                 output.actions.shift()
