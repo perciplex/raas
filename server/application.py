@@ -3,6 +3,7 @@ import sys
 import time
 import uuid
 import logging as log
+import os
 from collections import deque
 from json import JSONEncoder
 from common import JobStatus
@@ -11,11 +12,10 @@ from hardware import Hardware
 from job_db_dao import JobDbDao
 from flask import Flask, jsonify, make_response, redirect, request
 
-
+FLASK_PASS = os.environ.get("FLASK_PASS")
 rd = random.Random()
 rd.seed(0)
 application = Flask(__name__, static_folder="raas-frontend/build", static_url_path="/")
-application.config.from_pyfile("config.cfg")
 
 # sslify = SSLify(application)
 
@@ -179,12 +179,10 @@ def check_password(password):
     returns:
         bool:           If password matches flask config
     """
-    # Disabling this until I can debug
-    return True
 
-    if password != application.config["FLASK_PASS"]:
+    if password != FLASK_PASS:
         log.error(
-            "Bad password from from host: {}".format(request.args.get("hardware"))
+            "Bad password from from host: {}. Attempted {}, not {}".format(request.args.get("hardware"), password, application.config["FLASK_PASS"])
         )
         return False
     else:
