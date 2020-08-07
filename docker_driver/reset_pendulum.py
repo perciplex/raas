@@ -1,7 +1,7 @@
 from time import sleep
 
 import gym
-import gym_raas # noqa
+import gym_raas  # noqa
 
 settle_time = 15.0
 

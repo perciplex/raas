@@ -5,6 +5,7 @@ class Hardware:
     """
     Class for maintaining hardware state
     """
+
     def __init__(self, name):
         self.name = name
         self.last_heartbeat = time.time() - 1000  # initialize to a time a while ago

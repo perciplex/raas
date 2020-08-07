@@ -7,12 +7,20 @@ import argparse
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--torque_start", type=float, default=0.0, help="The start torque to use")
-parser.add_argument("--torque_end", type=float, default=2.0, help="The end torque to use")
-parser.add_argument("--steps", type=int, default=10, help="The steps between the start and end torques")
+parser.add_argument(
+    "--torque_start", type=float, default=0.0, help="The start torque to use"
+)
+parser.add_argument(
+    "--torque_end", type=float, default=2.0, help="The end torque to use"
+)
+parser.add_argument(
+    "--steps", type=int, default=10, help="The steps between the start and end torques"
+)
 
 # False unless you give the openai flag
-parser.add_argument("--openai", action='store_true', help="Use the openai pendulum env instead")
+parser.add_argument(
+    "--openai", action="store_true", help="Use the openai pendulum env instead"
+)
 args = parser.parse_args()
 
 
@@ -36,8 +44,6 @@ else:
         name = "simulation_raas"
 
 
-
-
 if not HARDWARE:
 
     for t in torque_range:
@@ -52,14 +58,14 @@ if not HARDWARE:
                 print(env.state)
                 found_init = True
 
-        #env.render()
+        # env.render()
         print("Running with torque = {:.2f} now".format(t))
         thetas = []
         for _ in range(500):
             observation, reward, done, info = env.step([t])
             theta = np.arccos(observation[0])
             thetas.append(theta)
-            #env.render()
+            # env.render()
 
         obs.append([np.cos(np.mean(thetas))])
 
