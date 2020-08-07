@@ -75,12 +75,12 @@ def launch_docker(client, git_url, job_id):
         stdout = e.container.logs()
         failed = True
         print("Error running container! Aborting.\n{}".format(e))
-        return str(stdout), data, failed
+        return stdout, data, failed
     except Exception as e:
         stdout = e
         failed = True
         print(stdout)
-        return str(stdout), data, failed
+        return stdout, data, failed
 
     try:
         with open("/tmp/log.json", "r") as f:
@@ -89,7 +89,7 @@ def launch_docker(client, git_url, job_id):
     except Exception as e:
         print(f"Error {e}")
 
-    return str(stdout), data, failed
+    return stdout, data, failed
 
 
 def cleanup_images(client):
@@ -162,7 +162,7 @@ if __name__ == "__main__":
             led.stop()
 
             print("Uploading results to S3")
-            data["stdout"] = str(stdout)
+            data["stdout"] = str(stdout.decode())
             data["failed"] = failed
             upload_s3_utils.upload_string(job_id, json.dumps(data))
 
