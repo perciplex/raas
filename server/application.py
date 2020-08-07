@@ -182,7 +182,7 @@ def check_password(password):
 
     if password != FLASK_PASS:
         log.error(
-            "Bad password from from host: {}. Attempted {}, not {}".format(request.args.get("hardware"), password, application.config["FLASK_PASS"])
+            "Bad password from from host: {}.".format(request.args.get("hardware"))
         )
         return False
     else:
