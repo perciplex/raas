@@ -37,7 +37,13 @@ def find_bottom_initial_cond(env, is_hardware):
 
 
 def get_resonant_trajectory(
-    env, w, max_torque, n_steps, is_hardware, use_phase_torque=False, use_rand_max_torque=False,
+    env,
+    w,
+    max_torque,
+    n_steps,
+    is_hardware,
+    use_phase_torque=False,
+    use_rand_max_torque=False,
 ):
 
     max_ep_amp = None
@@ -60,7 +66,7 @@ def get_resonant_trajectory(
             action = mult * max_torque
 
         if use_rand_max_torque:
-            action *= (1 + 0.5*np.random.randn())
+            action *= 1 + 0.5 * np.random.randn()
 
         o, _, _, _ = env.step([action])
         # x is np.cos(theta), where x=1 at the top and x=-1 at the bottom.
@@ -81,9 +87,7 @@ def get_resonant_trajectory(
 
 def get_max_amp(env, w, max_torque, n_steps, is_hardware):
 
-    _, max_ep_amp = get_resonant_trajectory(
-        env, w, max_torque, n_steps, is_hardware
-    )
+    _, max_ep_amp = get_resonant_trajectory(env, w, max_torque, n_steps, is_hardware)
 
     return max_ep_amp
 
@@ -91,18 +95,37 @@ def get_max_amp(env, w, max_torque, n_steps, is_hardware):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--freq_start", type=float, default=3.0, help="The start freq to use")
-    parser.add_argument("--freq_end", type=float, default=7.0, help="The end freq to use")
-    parser.add_argument("--steps", type=int, default=30, help="The steps between the start and end freqs")
+    parser.add_argument(
+        "--freq_start", type=float, default=3.0, help="The start freq to use"
+    )
+    parser.add_argument(
+        "--freq_end", type=float, default=7.0, help="The end freq to use"
+    )
+    parser.add_argument(
+        "--steps",
+        type=int,
+        default=30,
+        help="The steps between the start and end freqs",
+    )
 
-    parser.add_argument("--swing_steps", type=int, default=200, help="The number of steps to swing at each freq")
-    parser.add_argument("--max_torque", type=int, default=1.0, help="The number of steps to swing at each freq")
+    parser.add_argument(
+        "--swing_steps",
+        type=int,
+        default=200,
+        help="The number of steps to swing at each freq",
+    )
+    parser.add_argument(
+        "--max_torque",
+        type=int,
+        default=1.0,
+        help="The number of steps to swing at each freq",
+    )
 
     # False unless you give the openai flag
-    parser.add_argument("--openai", action='store_true', help="Use the openai pendulum env instead")
+    parser.add_argument(
+        "--openai", action="store_true", help="Use the openai pendulum env instead"
+    )
     args = parser.parse_args()
-
-
 
     use_openai = args.openai
 
@@ -124,7 +147,7 @@ if __name__ == "__main__":
     print(f"\n\nRUNNING IN HARDWARE MODE: {HARDWARE}\n\n")
 
     # w_range = np.linspace(3, 4, 2)
-    #w_range = np.linspace(3, 7, 30)
+    # w_range = np.linspace(3, 7, 30)
     w_range = np.linspace(args.freq_start, args.freq_end, args.steps)
 
     max_torque = args.max_torque

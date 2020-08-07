@@ -9,6 +9,7 @@ import socket
 import pprint
 import json
 
+
 def get_traj(use_openai):
 
     print("Setting up env...")
@@ -48,7 +49,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     # False unless you give the openai flag
-    parser.add_argument("--openai", action='store_true', help="Use the openai pendulum env instead")
+    parser.add_argument(
+        "--openai", action="store_true", help="Use the openai pendulum env instead"
+    )
     args = parser.parse_args()
 
     traj = get_traj(args.openai)

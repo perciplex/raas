@@ -104,18 +104,20 @@ class JobDbDao:
             )
             return None
 
+        # Had to use the str format rather than standard method for sort_order feature.
+        command = """
+                SELECT *
+                FROM jobs
+                WHERE status = '{}'
+                ORDER BY submit_time {}
+                LIMIT {};
+                """.format(status, sort_order, limit)
+
         with self.conn:
             with self.conn.cursor(
                 cursor_factory=psycopg2.extras.RealDictCursor
             ) as curs:
-                curs.execute(
-                    """
-                    SELECT * FROM jobs
-                    WHERE status = %s
-                    LIMIT %s;
-                    """,
-                    (status, limit),
-                )
+                curs.execute(command)
                 rows = curs.fetchall()
 
         return _real_dicts_to_python_dicts(rows)
