@@ -22,7 +22,7 @@
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
-    "react-konva": "^16.13.0-3",
+    "react-konva": "^16.13.0-5",
     "react-plotly.js": "^2.4.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",

@@ -166,7 +166,9 @@ if __name__ == "__main__":
             data["failed"] = failed
             upload_s3_utils.upload_string(job_id, json.dumps(data))
 
+            # Add desired return values to job_json
             job_json["failed"] = failed
+            job_json["hardware"] = socket.gethostname()
             print("Returning status to webserver")
             requests.put(
                 server_ip + "/api/job/%s/results" % job_id,
