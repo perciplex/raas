@@ -166,23 +166,20 @@ if __name__ == "__main__":
             data["failed"] = failed
             upload_s3_utils.upload_string(job_id, json.dumps(data))
 
-            print("Resetting pendulum")
-            reset_pendulum.reset_pendulum()
-
-            print("Cleaning images")
-            cleanup_images(docker_client)
-
-            # These are pushed to S3, not needed in JSON blob anymore
-            # job_json["stdout"] = stdout
-            # job_json["data"] = data
             job_json["failed"] = failed
-
             print("Returning status to webserver")
             requests.put(
                 server_ip + "/api/job/%s/results" % job_id,
                 params={"FLASK_PASS": FLASK_PASS},
                 json=job_json,
             )
+
+            print("Resetting pendulum")
+            reset_pendulum.reset_pendulum()
+
+            print("Cleaning images")
+            cleanup_images(docker_client)
+
             print("Job done.")
         else:
             # Wait and try again
