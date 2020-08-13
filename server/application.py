@@ -256,7 +256,6 @@ def job_route():
         job_db_dao.insert_new_job(project_name, git_url, git_user)
         return redirect("/")
 
-    # Need to update with DB stuff
     if request.method == "GET":
         return jsonify(
             {
@@ -290,6 +289,8 @@ def job_pop_route():
             hardware_dict[req_hardware].starting_job()
 
             pop_job = jobs_cache.cache["queued"].pop()  # get job from queue
+            # Adding to running to prevent it from dropping between cache polls
+            jobs_cache.cache["running"][pop_job["id"]]: pop_job
             job_db_dao.update_start_job(pop_job["id"], req_hardware)
 
             log.info("{} has popped job {}.".format(req_hardware, pop_job["id"]))

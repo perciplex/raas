@@ -284,7 +284,9 @@ if __name__ == "__main__":
 
     # Get all jobs
     for status in JOB_STATUS_LIST:
-        jobs = job_dao.get_jobs_by_status(status, limit=20)
+        jobs = job_dao.get_jobs_by_status(status, limit=40)
         print("\n{} JOBS ({})".format(status, len(jobs)))
         for j in jobs:
             print(j)
+            if j["project_name"] == "raas-chaosmonkey":
+                job_dao.delete_job(j["id"])
