@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>My Docs</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body class="homepage">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href=".">My Docs</a>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#reality-as-a-service-raas" class="nav-link">Reality as a Service (RaaS)</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#getting-started" class="nav-link">Getting Started</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#how-it-works" class="nav-link">How It Works</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#building-your-own-pendulum" class="nav-link">Building Your Own Pendulum</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="reality-as-a-service-raas">Reality as a Service (RaaS)</h1>
+<p>Reality as a Service (RaaS) is an open source platform for hosting physical OpenAI Gym environments. This lowers the barrier to transitioning to real robots in both effort and cost, allows the outsourcing of maintenance of robots to specialists, amoritized cost of robots over more researchers and RL practitioners, and less useless down-time for expensive robots.</p>
+<p>The robot is controlled via a custom gym environment found <a href="https://github.com/perciplex/gym-raas">here</a>. It is designed to be a simple drop-in replacement for the usual OpenAI gym, having the same API as the corresponding OpenAI gym environment.</p>
+<p>Try RaaS out here! <a href="http://raas.perciplex.com">raas.perciplex.com</a>.</p>
+<p><img alt="" src="img/swingup.gif" /></p>
+<h2 id="getting-started">Getting Started</h2>
+<h3 id="install-gym-environment">Install Gym Environment</h3>
+<p>We use the same interface as OpenAI Gym with a <a href="https://github.com/perciplex/gym-raas">custom environment</a>.
+To install the simulated gym-raas environment first install the standard <a href="https://gym.openai.com/docs/">OpenAI gym</a></p>
+<pre><code class="sh">pip3 install gym
+</code></pre>
+
+<p>Then clone and install our custom environment.</p>
+<pre><code class="sh">git clone https://github.com/perciplex/gym-raas
+cd gym_raas
+pip3 install -e .
+</code></pre>
+
+<h3 id="make-a-controller">Make a Controller</h3>
+<p>To start a new gym-raas controller, create a new project on Github or fork (it's a button in the right upper corner) our <a href="https://github.com/perciplex/raas-starter">starter repository on GitHub</a>. Either way, you must include <code>run.py</code> at the root directory of the repo which is the entrypoint invoked by our RaaS servers. </p>
+<p>gym-raas implements an identical interface to the standard OpenAI gym. See <a href="https://gym.openai.com/docs/">their documentation</a> for more information. The following implements a simple random controller</p>
+<pre><code class="python"> import gym
+ import gym_raas
+
+ env = gym.make('raaspendulum-v0')
+ env.reset()
+
+ for _ in range(1000):
+   env.render()
+   env.step(env.action_space.sample()) # take a random action
+
+ env.close()
+</code></pre>
+
+<p>When run locally, the above code performs a Gym simulation with physical parameters set to match our hardware. When run at RaaS, the code controls an actual robot! The gym-raas environment automatically detects when hardware is available, so no code changes are necessary to transfer from simulation to hardware. In addition, it will add a 0.05 second delay between each call to <code>env.step</code> in order to maintain real-time control at a rate that matches the simulation. </p>
+<p>You may be interested in some of our other example projects</p>
+<ul>
+<li><a href="https://github.com/perciplex/raas-example">https://github.com/perciplex/raas-example</a> - An energy shaping swing-up controller</li>
+<li><a href="https://github.com/perciplex/raas-rwg">https://github.com/perciplex/raas-rwg</a> - A controller built by random guessing weights in a neural network </li>
+</ul>
+<h3 id="submit-job">Submit Job</h3>
+<p>To submit, copy the url of your repo into our <a href="https://raas.perciplex.com/#/submit">job submit page</a></p>
+<h2 id="how-it-works">How It Works</h2>
+<p>The webpage is hosted on an AWS server which is constantly being pinged by a fleet of Raspberry Pis.</p>
+<p>The server is responsible for taking POST requests for new jobs, maintaining a queue of jobs, and serving data from completed jobs. It's code may be found in the <a href="https://github.com/perciplex/raas/tree/master/server">/server</a> folder.</p>
+<p>The Raspberry Pis have a python program running called <a href="https://github.com/perciplex/raas/blob/master/docker_driver/container_scheduler.py">container_scheduler.py</a>. This program queries the server to pop jobs off the queue. It loads up an Ubuntu <a href="https://github.com/perciplex/raas/tree/master/docker_driver/docker_images">docker image</a> which builds your project by cloning your Github repo and invoking <code>python3 run.py</code> with a timeout of 120 seconds. Upon completion the data of the job is sent to an S3 bucket.</p>
+<p>The motor is controlled by a program called <a href="https://github.com/perciplex/raas/blob/master/docker_driver/motor_controller.py">motor_controller.py</a> which communicates into the docker container via ZeroMQ. It in turn uses the <a href="http://abyz.me.uk/rpi/pigpio/pigpiod.html">pigpiod daemon</a> for low level control of the motor and sensing of the encoder.</p>
+<p><img alt="" src="img/block_diagram.png" /></p>
+<h2 id="building-your-own-pendulum">Building Your Own Pendulum</h2>
+<p>The pendulum is built using easily available hardware. The following are instructions for purchase and assembly.</p>
+<ul>
+<li>Raspberry Pi (We use a Pi 4)</li>
+<li>Power Supply for Pi</li>
+<li>SD card for Pi</li>
+<li>L298N Motor Driver Board.</li>
+<li>Ribbon cable</li>
+<li>Gearbox Motor with built in encoder. 12V 600 RPM</li>
+<li>12V Power Supply</li>
+<li>Power supply female donkus plug. DC Power Jack Plug adapter</li>
+<li>Wire</li>
+<li>Paint Stirrer Rod. Only the best for us!</li>
+<li>Mounting 2x4</li>
+<li>4mm Flange Shaft Coupling</li>
+<li>25mm DC Gearbox Motor Bracket</li>
+<li>4x m3 12mm nuts and boltd</li>
+<li>Mounting nuts </li>
+</ul>
+<p>Amazon shopping cart link : <a href="https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO">https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO</a></p>
+<p>More information can be found in the <a href="https://github.com/perciplex/raas/tree/master/hardware">hardware</a> folder of the repo</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.1.2
+Build Date UTC : 2020-08-20 02:04:51.441724+00:00
+-->
