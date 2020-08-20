@@ -95,3 +95,10 @@ The pendulum is built using easily available hardware. The following are instruc
 Amazon shopping cart link : [https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO](https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO)
 
 More information can be found in the [hardware](https://github.com/perciplex/raas/tree/master/hardware) folder of the repo
+
+## Learning More
+
+- https://spinningup.openai.com/
+- http://www.incompleteideas.net/book/the-book-2nd.html
+- http://underactuated.mit.edu/
+- https://www.youtube.com/channel/UCm5mt-A4w61lknZ9lCsZtBw
