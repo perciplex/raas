@@ -98,7 +98,7 @@ More information can be found in the [hardware](https://github.com/perciplex/raa
 
 ## Learning More
 
-- https://spinningup.openai.com/
-- http://www.incompleteideas.net/book/the-book-2nd.html
-- http://underactuated.mit.edu/
-- https://www.youtube.com/channel/UCm5mt-A4w61lknZ9lCsZtBw
+- [OpenAI Spinning Up in Deep RL](https://spinningup.openai.com/)
+- [Reinforcement Learning: An Introduction by Sutton and Barto](http://www.incompleteideas.net/book/the-book-2nd.html)
+- [Underactuated Robotics](http://underactuated.mit.edu/)
+- [Steve Brunton's Control Theory Channel](https://www.youtube.com/channel/UCm5mt-A4w61lknZ9lCsZtBw)
