@@ -1,9 +1,9 @@
 # RaaS
 ![CI](https://github.com/perciplex/raas/workflows/CI/badge.svg)
 <div align="center">
-<img src="server/static/logo.png" alt="Your image title" width="200"/>
+<img src="/server/raas-frontend/public/logo.png" alt="Your image title" width="200"/>
 
-<img src="server/static/pplex_logo_wordmark.png" alt="Your image title" width="150"/>
+<img src="server/raas-frontend/public/pplex_logo_wordmark.png" alt="Your image title" width="150"/>
 </div>
 <br/>
 <br/>
