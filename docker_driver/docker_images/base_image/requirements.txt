@@ -1,4 +1,4 @@
 gym==0.15.3
-#torch==1.2.0
+torch==1.2.0
+tensorflow==2.3.0
 #boto3==1.9.170
-

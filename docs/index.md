@@ -1,10 +1,15 @@
 # Reality as a Service (RaaS)
 
-Reality as a Service (RaaS) is an open source platform for hosting physical OpenAI Gym environments. This lowers the barrier to transitioning to real robots in both effort and cost, allows the outsourcing of maintenance of robots to specialists, amoritized cost of robots over more researchers and RL practitioners, and less useless down-time for expensive robots.
+Reality as a Service (RaaS) is an open source platform for hosting physical OpenAI Gym environments. A few motivations for it are:
+
+* it lowers the barrier to transitioning to real robots in both effort and cost,
+* it allows the outsourcing of maintenance of robots to specialists,
+* it amortizes the cost of robots over more researchers and RL practitioners, and
+* it results in less down-time for expensive robots
 
 The robot is controlled via a custom gym environment found [here](https://github.com/perciplex/gym-raas). It is designed to be a simple drop-in replacement for the usual OpenAI gym, having the same API as the corresponding OpenAI gym environment.
 
-Try RaaS out here! [raas.perciplex.com](http://raas.perciplex.com).
+Try out RaaS here! [raas.perciplex.com](http://raas.perciplex.com).
 
 ![](img/swingup.gif)
 
@@ -14,12 +19,12 @@ Try RaaS out here! [raas.perciplex.com](http://raas.perciplex.com).
 
 ### Install Gym Environment
 We use the same interface as OpenAI Gym with a [custom environment](https://github.com/perciplex/gym-raas).
-To install the simulated gym-raas environment first install the standard [OpenAI gym](https://gym.openai.com/docs/)
+To install the simulated gym-raas environment first install the standard [OpenAI gym](https://gym.openai.com/docs/):
 ```sh
 pip3 install gym
 ```
 
-Then clone and install our custom environment.
+Then clone and install our custom environment:
 
 ```sh
 git clone https://github.com/perciplex/gym-raas
@@ -29,7 +34,7 @@ pip3 install -e .
 
 ### Make a Controller
 
-To start a new gym-raas controller, create a new project on Github or fork (it's a button in the right upper corner) our [starter repository on GitHub](https://github.com/perciplex/raas-starter). Either way, you must include `run.py` at the root directory of the repo which is the entrypoint invoked by our RaaS servers. 
+To start a new gym-raas controller, create a new project on Github or fork (it's a button in the right upper corner) our [starter repository on GitHub](https://github.com/perciplex/raas-starter). Either way, you must include `run.py` at the root directory of the repo which is the entrypoint invoked by our RaaS servers.
 
 gym-raas implements an identical interface to the standard OpenAI gym. See [their documentation](https://gym.openai.com/docs/) for more information. The following implements a simple random controller
 
@@ -47,12 +52,12 @@ gym-raas implements an identical interface to the standard OpenAI gym. See [thei
  env.close()
 ```
 
-When run locally, the above code performs a Gym simulation with physical parameters set to match our hardware. When run at RaaS, the code controls an actual robot! The gym-raas environment automatically detects when hardware is available, so no code changes are necessary to transfer from simulation to hardware. In addition, it will add a 0.05 second delay between each call to `env.step` in order to maintain real-time control at a rate that matches the simulation. 
+When run locally, the above code performs a Gym simulation with physical parameters set to match our hardware. When run at RaaS, the code controls an actual robot! The gym-raas environment automatically detects when hardware is available, so no code changes are necessary to transfer from simulation to hardware. In addition, it will add a 0.05 second delay between each call to `env.step` in order to maintain real-time control at a rate that matches the simulation.
 
 You may be interested in some of our other example projects
 
 - [https://github.com/perciplex/raas-example](https://github.com/perciplex/raas-example) - An energy shaping swing-up controller
-- [https://github.com/perciplex/raas-rwg](https://github.com/perciplex/raas-rwg) - A controller built by random guessing weights in a neural network 
+- [https://github.com/perciplex/raas-rwg](https://github.com/perciplex/raas-rwg) - A controller built by random guessing weights in a neural network
 
 
 ### Submit Job
@@ -90,7 +95,7 @@ The pendulum is built using easily available hardware. The following are instruc
 - 4mm Flange Shaft Coupling
 - 25mm DC Gearbox Motor Bracket
 - 4x m3 12mm nuts and boltd
-- Mounting nuts 
+- Mounting nuts
 
 Amazon shopping cart link : [https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO](https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO)
 
