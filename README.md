@@ -1,5 +1,6 @@
 # RaaS
 ![CI](https://github.com/perciplex/raas/workflows/CI/badge.svg)
+[![Foo](docs/img/passing-flat.svg)](https://perciplex.github.io/raas)
 <div align="center">
 <img src="server/raas-frontend/public/logo.png" alt="Your image title" width="200"/>
 
