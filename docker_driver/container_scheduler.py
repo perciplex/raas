@@ -203,7 +203,9 @@ if __name__ == "__main__":
             )
 
             print("Resetting pendulum")
-            reset_stdout = reset_robot(docker_client, "perciplex/raas-reset-pendulum:0.0.4")
+            reset_stdout = reset_robot(
+                docker_client, "perciplex/raas-reset-pendulum:0.0.4"
+            )
             print(reset_stdout)
 
             print("Cleaning images")
