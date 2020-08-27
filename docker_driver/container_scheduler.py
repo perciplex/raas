@@ -7,7 +7,6 @@ from configparser import ConfigParser
 from pathlib import Path
 
 import requests
-import reset_pendulum
 import upload_s3_utils
 from docker import DockerClient
 from docker.errors import APIError, BuildError, ContainerError
@@ -90,6 +89,33 @@ def launch_docker(client, git_url, job_id):
         print(f"Error {e}")
 
     return stdout, data, failed
+
+
+def reset_robot(client, image_name):
+    """
+    Resets the current robot to its initial state by running device
+    specific container.
+
+    Args:
+    client (DockerClient):  Docker client object for env
+    image_name (str):       Docker image name for resetting the device.
+
+    Returns:
+    stdout of container.
+    """
+    try:
+        stdout = client.containers.run(
+            image_name,
+            mounts=[{"Type": "bind", "Source": "/tmp/", "Target": "/tmp/", "RW": True}],
+            network="docker_internal",
+            mem_limit="3g",
+        )
+    except ContainerError as e:
+        print(dir(e.container))
+        stdout = e.container.logs()
+        print("Error running clkeanup container! Aborting.\n{}".format(e))
+
+    return stdout
 
 
 def cleanup_images(client):
@@ -177,7 +203,10 @@ if __name__ == "__main__":
             )
 
             print("Resetting pendulum")
-            reset_pendulum.reset_pendulum()
+            reset_stdout = reset_robot(
+                docker_client, "perciplex/raas-reset-pendulum:0.0.4"
+            )
+            print(reset_stdout)
 
             print("Cleaning images")
             cleanup_images(docker_client)
