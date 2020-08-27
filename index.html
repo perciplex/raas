@@ -7,14 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="None">
   
-  
   <link rel="shortcut icon" href="img/favicon.ico">
-  <title>RaaS</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
-
-  <link rel="stylesheet" href="css/theme.css" />
-  <link rel="stylesheet" href="css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <title>Reality as a Service (RaaS) - RaaS</title>
+  <link rel="stylesheet" href="css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
   <script>
     // Current page data
@@ -25,7 +22,7 @@
   
   <script src="js/jquery-2.1.1.min.js" defer></script>
   <script src="js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
 </head>
@@ -36,7 +33,6 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-    <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href="." class="icon icon-home"> RaaS</a>
         <div role="search">
@@ -47,30 +43,40 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href=".">Reality as a Service (RaaS)</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a>
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href=".">Reality as a Service (RaaS)</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#reality-as-a-service-raas">Reality as a Service (RaaS)</a></li>
+    
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#install-gym-environment">Install Gym Environment</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#make-a-controller">Make a Controller</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#submit-job">Submit Job</a>
-    </li>
+        
+            <li><a class="toctree-l3" href="#getting-started">Getting Started</a></li>
+        
+            <li><a class="toctree-l3" href="#how-it-works">How It Works</a></li>
+        
+            <li><a class="toctree-l3" href="#building-your-own-pendulum">Building Your Own Pendulum</a></li>
+        
+            <li><a class="toctree-l3" href="#learning-more">Learning More</a></li>
+        
         </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#how-it-works">How It Works</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#building-your-own-pendulum">Building Your Own Pendulum</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#learning-more">Learning More</a>
-    </li>
+    
+
     </ul>
-                    </li>
-                </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="faqs/">FAQs</a>
+	    </li>
+          
+        </ul>
       </div>
-    </div>
+      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -98,32 +104,37 @@
       
     </li>
   </ul>
-  
   <hr/>
 </div>
           <div role="main">
             <div class="section">
               
                 <h1 id="reality-as-a-service-raas">Reality as a Service (RaaS)</h1>
-<p>Reality as a Service (RaaS) is an open source platform for hosting physical OpenAI Gym environments. This lowers the barrier to transitioning to real robots in both effort and cost, allows the outsourcing of maintenance of robots to specialists, amoritized cost of robots over more researchers and RL practitioners, and less useless down-time for expensive robots.</p>
+<p>Reality as a Service (RaaS) is an open source platform for hosting physical OpenAI Gym environments. A few motivations for it are:</p>
+<ul>
+<li>it lowers the barrier to transitioning to real robots in both effort and cost,</li>
+<li>it allows the outsourcing of maintenance of robots to specialists,</li>
+<li>it amortizes the cost of robots over more researchers and RL practitioners, and</li>
+<li>it results in less down-time for expensive robots</li>
+</ul>
 <p>The robot is controlled via a custom gym environment found <a href="https://github.com/perciplex/gym-raas">here</a>. It is designed to be a simple drop-in replacement for the usual OpenAI gym, having the same API as the corresponding OpenAI gym environment.</p>
-<p>Try RaaS out here! <a href="http://raas.perciplex.com">raas.perciplex.com</a>.</p>
+<p>Try out RaaS here! <a href="http://raas.perciplex.com">raas.perciplex.com</a>.</p>
 <p><img alt="" src="img/swingup.gif" /></p>
 <h2 id="getting-started">Getting Started</h2>
 <h3 id="install-gym-environment">Install Gym Environment</h3>
 <p>We use the same interface as OpenAI Gym with a <a href="https://github.com/perciplex/gym-raas">custom environment</a>.
-To install the simulated gym-raas environment first install the standard <a href="https://gym.openai.com/docs/">OpenAI gym</a></p>
+To install the simulated gym-raas environment first install the standard <a href="https://gym.openai.com/docs/">OpenAI gym</a>:</p>
 <pre><code class="sh">pip3 install gym
 </code></pre>
 
-<p>Then clone and install our custom environment.</p>
+<p>Then clone and install our custom environment:</p>
 <pre><code class="sh">git clone https://github.com/perciplex/gym-raas
 cd gym_raas
 pip3 install -e .
 </code></pre>
 
 <h3 id="make-a-controller">Make a Controller</h3>
-<p>To start a new gym-raas controller, create a new project on Github or fork (it's a button in the right upper corner) our <a href="https://github.com/perciplex/raas-starter">starter repository on GitHub</a>. Either way, you must include <code>run.py</code> at the root directory of the repo which is the entrypoint invoked by our RaaS servers. </p>
+<p>To start a new gym-raas controller, create a new project on Github or fork (it's a button in the right upper corner) our <a href="https://github.com/perciplex/raas-starter">starter repository on GitHub</a>. Either way, you must include <code>run.py</code> at the root directory of the repo which is the entrypoint invoked by our RaaS servers.</p>
 <p>gym-raas implements an identical interface to the standard OpenAI gym. See <a href="https://gym.openai.com/docs/">their documentation</a> for more information. The following implements a simple random controller</p>
 <pre><code class="python"> import gym
  import gym_raas
@@ -138,11 +149,11 @@ pip3 install -e .
  env.close()
 </code></pre>
 
-<p>When run locally, the above code performs a Gym simulation with physical parameters set to match our hardware. When run at RaaS, the code controls an actual robot! The gym-raas environment automatically detects when hardware is available, so no code changes are necessary to transfer from simulation to hardware. In addition, it will add a 0.05 second delay between each call to <code>env.step</code> in order to maintain real-time control at a rate that matches the simulation. </p>
+<p>When run locally, the above code performs a Gym simulation with physical parameters set to match our hardware. When run at RaaS, the code controls an actual robot! The gym-raas environment automatically detects when hardware is available, so no code changes are necessary to transfer from simulation to hardware. In addition, it will add a 0.05 second delay between each call to <code>env.step</code> in order to maintain real-time control at a rate that matches the simulation.</p>
 <p>You may be interested in some of our other example projects</p>
 <ul>
 <li><a href="https://github.com/perciplex/raas-example">https://github.com/perciplex/raas-example</a> - An energy shaping swing-up controller</li>
-<li><a href="https://github.com/perciplex/raas-rwg">https://github.com/perciplex/raas-rwg</a> - A controller built by random guessing weights in a neural network </li>
+<li><a href="https://github.com/perciplex/raas-rwg">https://github.com/perciplex/raas-rwg</a> - A controller built by random guessing weights in a neural network</li>
 </ul>
 <h3 id="submit-job">Submit Job</h3>
 <p>To submit, copy the url of your repo into our <a href="https://raas.perciplex.com/#/submit">job submit page</a></p>
@@ -169,7 +180,7 @@ pip3 install -e .
 <li>4mm Flange Shaft Coupling</li>
 <li>25mm DC Gearbox Motor Bracket</li>
 <li>4x m3 12mm nuts and boltd</li>
-<li>Mounting nuts </li>
+<li>Mounting nuts</li>
 </ul>
 <p>Amazon shopping cart link : <a href="https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO">https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO</a></p>
 <p>More information can be found in the <a href="https://github.com/perciplex/raas/tree/master/hardware">hardware</a> folder of the repo</p>
@@ -185,6 +196,13 @@ pip3 install -e .
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="faqs/" class="btn btn-neutral float-right" title="FAQs">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
 
   <hr/>
 
@@ -193,7 +211,7 @@ pip3 install -e .
     
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
       
         </div>
@@ -203,28 +221,25 @@ pip3 install -e .
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
           <a href="https://github.com/perciplex/raas/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
       
+        <span style="margin-left: 15px"><a href="faqs/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
     </span>
 </div>
     <script>var base_url = '.';</script>
     <script src="js/theme.js" defer></script>
       <script src="search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
-            SphinxRtdTheme.Navigation.enable(true);
-        };
-    </script>
 
 </body>
 </html>
 
 <!--
-MkDocs version : 1.1.2
-Build Date UTC : 2020-08-20 03:07:44.067384+00:00
+MkDocs version : 1.0.4
+Build Date UTC : 2020-08-27 02:50:23
 -->
