@@ -8,14 +8,14 @@
   <meta name="description" content="None">
   
   <link rel="shortcut icon" href="img/favicon.ico">
-  <title>Reality as a Service (RaaS) - RaaS</title>
+  <title>Reality as a Service - RaaS</title>
   <link rel="stylesheet" href="css/theme.css" type="text/css" />
   <link rel="stylesheet" href="css/theme_extra.css" type="text/css" />
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Reality as a Service (RaaS)";
+    var mkdocs_page_name = "Reality as a Service";
     var mkdocs_page_input_path = "index.md";
     var mkdocs_page_url = null;
   </script>
@@ -48,7 +48,7 @@
           
             <li class="toctree-l1 current">
 		
-    <a class="current" href=".">Reality as a Service (RaaS)</a>
+    <a class="current" href=".">Reality as a Service</a>
     <ul class="subnav">
             
     <li class="toctree-l2"><a href="#reality-as-a-service-raas">Reality as a Service (RaaS)</a></li>
@@ -96,7 +96,7 @@
     
       
     
-    <li>Reality as a Service (RaaS)</li>
+    <li>Reality as a Service</li>
     <li class="wy-breadcrumbs-aside">
       
         <a href="https://github.com/perciplex/raas/edit/master/docs/index.md"
@@ -136,17 +136,18 @@ pip3 install -e .
 <h3 id="make-a-controller">Make a Controller</h3>
 <p>To start a new gym-raas controller, create a new project on Github or fork (it's a button in the right upper corner) our <a href="https://github.com/perciplex/raas-starter">starter repository on GitHub</a>. Either way, you must include <code>run.py</code> at the root directory of the repo which is the entrypoint invoked by our RaaS servers.</p>
 <p>gym-raas implements an identical interface to the standard OpenAI gym. See <a href="https://gym.openai.com/docs/">their documentation</a> for more information. The following implements a simple random controller</p>
-<pre><code class="python"> import gym
- import gym_raas
+<pre><code>python
+import gym
+import gym_raas
 
- env = gym.make('raaspendulum-v0')
- env.reset()
+env = gym.make('raaspendulum-v0')
+env.reset()
 
- for _ in range(1000):
-   env.render()
-   env.step(env.action_space.sample()) # take a random action
+for _ in range(1000):
+  env.render()
+  env.step(env.action_space.sample()) # take a random action
 
- env.close()
+env.close()
 </code></pre>
 
 <p>When run locally, the above code performs a Gym simulation with physical parameters set to match our hardware. When run at RaaS, the code controls an actual robot! The gym-raas environment automatically detects when hardware is available, so no code changes are necessary to transfer from simulation to hardware. In addition, it will add a 0.05 second delay between each call to <code>env.step</code> in order to maintain real-time control at a rate that matches the simulation.</p>
@@ -241,5 +242,5 @@ pip3 install -e .
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2020-08-27 02:50:23
+Build Date UTC : 2020-08-27 02:57:47
 -->
