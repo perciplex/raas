@@ -34,9 +34,9 @@ pip3 install -e .
 
 ### Make a Controller
 
-To start a new gym-raas controller, create a new project on Github or fork (it's a button in the right upper corner) our [starter repository on GitHub](https://github.com/perciplex/raas-starter). Either way, you must include `run.py` at the root directory of the repo which is the entrypoint invoked by our RaaS servers.
+To start a new `gym-raas` controller, create a new project on Github or fork (it's a button in the right upper corner) our [starter repository on GitHub](https://github.com/perciplex/raas-starter). Either way, you must include `run.py` at the root directory of the repo which is the entrypoint invoked by our RaaS servers.
 
-gym-raas implements an identical interface to the standard OpenAI gym. See [their documentation](https://gym.openai.com/docs/) for more information. The following implements a simple random controller
+`gym-raas` implements an identical interface to the standard OpenAI gym. See [their documentation](https://gym.openai.com/docs/) for more information. The following implements a simple random controller
 
 ```
 python
@@ -70,7 +70,7 @@ To submit, copy the url of your repo into our [job submit page](https://raas.per
 
 The [webpage](http://raas.perciplex.com) is hosted on an AWS server which is constantly being pinged by a fleet of Raspberry Pis.
 
-The server is responsible for taking POST requests for new jobs, maintaining a queue of jobs, and serving data from completed jobs. Its code may be found in the [/server](https://github.com/perciplex/raas/tree/master/server) folder.
+The server is responsible for taking `POST` requests for new jobs, maintaining a queue of jobs, and serving data from completed jobs. Its code may be found in the [/server](https://github.com/perciplex/raas/tree/master/server) folder.
 
 The Raspberry Pis have a python program running called [container_scheduler.py](https://github.com/perciplex/raas/blob/master/docker_driver/container_scheduler.py). This program queries the server to pop jobs off the queue. It loads up an Ubuntu [docker image](https://github.com/perciplex/raas/tree/master/docker_driver/docker_images) which builds your project by cloning your Github repo and invoking `python3 run.py` with a timeout of 120 seconds. Upon job completion, the data of the job is sent to an S3 bucket.
 
