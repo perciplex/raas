@@ -9,7 +9,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>FAQs - RaaS</title>
+  <title>Common pitfalls - RaaS</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,8 +18,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "FAQs";
-    var mkdocs_page_input_path = "faqs.md";
+    var mkdocs_page_name = "Common pitfalls";
+    var mkdocs_page_input_path = "common_pitfalls.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -51,22 +51,26 @@
                     <li class="toctree-l1"><a class="reference internal" href="..">Reality as a Service</a>
                     </li>
                 </ul>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">FAQs</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#what-does-my-repo-and-script-need">What does my repo and script need?</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#what-packages-can-i-use">What packages can I use?</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#how-do-i-download-my-results">How do I download my results?</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#_1"></a>
-    </li>
-    </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../faqs/">FAQs</a>
                     </li>
                 </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../common_pitfalls/">Common pitfalls</a>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Common pitfalls</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#submitting-jobs-to-raas">Submitting jobs to RaaS</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#using-unsupported-packages">Using unsupported packages</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-gym-raas-locally">Running gym-raas locally</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#environment-isnt-recognized">Environment isn't recognized</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
                     </li>
                 </ul>
       </div>
@@ -90,10 +94,10 @@
     
       
     
-    <li>FAQs</li>
+    <li>Common pitfalls</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/perciplex/raas/edit/master/docs/faqs.md"
+        <a href="https://github.com/perciplex/raas/edit/master/docs/common_pitfalls.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -104,30 +108,13 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="faqs">FAQs</h1>
-<h2 id="what-does-my-repo-and-script-need">What does my repo and script need?</h2>
-<p>The file that the system will run when your job is submitted must be called <code>run.py</code>. It can have other files/packages in it, but it must have that one to be run.</p>
-<p>To build the env, it's nearly identical to using OpenAI gym:</p>
-<pre><code>import gym
-import gym_raas
-
-env = gym.make('RaasPendulum-v0')
-
-# env.reset(), env.step(), etc...
-</code></pre>
-
-<h2 id="what-packages-can-i-use">What packages can I use?</h2>
-<p>Since your repo will be run from within a Docker container that has no internet access, it can't pull arbitrary packages. However, it's built with many common packages you might use for ML/DL/RL:</p>
-<ul>
-<li><code>numpy</code></li>
-<li><code>scipy</code></li>
-<li><code>gym==0.15.3</code></li>
-<li><code>torch==1.2.0</code></li>
-<li><code>tensorflow=2.3.0</code></li>
-</ul>
-<h2 id="how-do-i-download-my-results">How do I download my results?</h2>
-<p>There's a small download button under the plot, on the right hand side. This will download the episode data and stdout as a JSON file.</p>
-<h2 id="_1"></h2>
+                <h1 id="common-pitfalls">Common pitfalls</h1>
+<p>Here's an overview of various ways use of RaaS might fail.</p>
+<h2 id="submitting-jobs-to-raas">Submitting jobs to RaaS</h2>
+<h3 id="using-unsupported-packages">Using unsupported packages</h3>
+<p>Requirements.txt, etc</p>
+<h2 id="running-gym-raas-locally">Running <code>gym-raas</code> locally</h2>
+<h3 id="environment-isnt-recognized">Environment isn't recognized</h3>
               
             </div>
           </div>
@@ -135,10 +122,8 @@ env = gym.make('RaasPendulum-v0')
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../common_pitfalls/" class="btn btn-neutral float-right" title="Common pitfalls">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-      
-        <a href=".." class="btn btn-neutral" title="Reality as a Service"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../faqs/" class="btn btn-neutral" title="FAQs"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -166,10 +151,8 @@ env = gym.make('RaasPendulum-v0')
           <a href="https://github.com/perciplex/raas/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../faqs/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
-      
-        <span style="margin-left: 15px"><a href="../common_pitfalls/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
