@@ -63,6 +63,10 @@
     <li class="toctree-l2"><a class="reference internal" href="#how-it-works">How It Works</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#building-your-own-pendulum">Building Your Own Pendulum</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#bill-of-materials">Bill of Materials:</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#learning-more">Learning More</a>
     </li>
@@ -150,21 +154,22 @@ env.close()
 </code></pre>
 
 <p>When run locally, the above code performs a Gym simulation with physical parameters set to match our hardware. When run at RaaS, the code controls an actual robot! The gym-raas environment automatically detects when hardware is available, so no code changes are necessary to transfer from simulation to hardware. In addition, it will add a 0.05 second delay between each call to <code>env.step</code> in order to maintain real-time control at a rate that matches the simulation.</p>
-<p>You may be interested in some of our other example projects</p>
+<p>You may be interested in some of our other example projects:</p>
 <ul>
 <li><a href="https://github.com/perciplex/raas-example">https://github.com/perciplex/raas-example</a> - An energy shaping swing-up controller</li>
 <li><a href="https://github.com/perciplex/raas-rwg">https://github.com/perciplex/raas-rwg</a> - A controller built by random guessing weights in a neural network</li>
 </ul>
 <h3 id="submit-job">Submit Job</h3>
-<p>To submit, copy the url of your repo into our <a href="https://raas.perciplex.com/#/submit">job submit page</a></p>
+<p>To submit, copy the url of your repo into our <a href="https://raas.perciplex.com/#/submit">job submit page</a>.</p>
 <h2 id="how-it-works">How It Works</h2>
-<p>The webpage is hosted on an AWS server which is constantly being pinged by a fleet of Raspberry Pis.</p>
-<p>The server is responsible for taking POST requests for new jobs, maintaining a queue of jobs, and serving data from completed jobs. It's code may be found in the <a href="https://github.com/perciplex/raas/tree/master/server">/server</a> folder.</p>
-<p>The Raspberry Pis have a python program running called <a href="https://github.com/perciplex/raas/blob/master/docker_driver/container_scheduler.py">container_scheduler.py</a>. This program queries the server to pop jobs off the queue. It loads up an Ubuntu <a href="https://github.com/perciplex/raas/tree/master/docker_driver/docker_images">docker image</a> which builds your project by cloning your Github repo and invoking <code>python3 run.py</code> with a timeout of 120 seconds. Upon completion the data of the job is sent to an S3 bucket.</p>
-<p>The motor is controlled by a program called <a href="https://github.com/perciplex/raas/blob/master/docker_driver/motor_controller.py">motor_controller.py</a> which communicates into the docker container via ZeroMQ. It in turn uses the <a href="http://abyz.me.uk/rpi/pigpio/pigpiod.html">pigpiod daemon</a> for low level control of the motor and sensing of the encoder.</p>
+<p>The <a href="http://raas.perciplex.com">webpage</a> is hosted on an AWS server which is constantly being pinged by a fleet of Raspberry Pis.</p>
+<p>The server is responsible for taking POST requests for new jobs, maintaining a queue of jobs, and serving data from completed jobs. Its code may be found in the <a href="https://github.com/perciplex/raas/tree/master/server">/server</a> folder.</p>
+<p>The Raspberry Pis have a python program running called <a href="https://github.com/perciplex/raas/blob/master/docker_driver/container_scheduler.py">container_scheduler.py</a>. This program queries the server to pop jobs off the queue. It loads up an Ubuntu <a href="https://github.com/perciplex/raas/tree/master/docker_driver/docker_images">docker image</a> which builds your project by cloning your Github repo and invoking <code>python3 run.py</code> with a timeout of 120 seconds. Upon job completion, the data of the job is sent to an S3 bucket.</p>
+<p>The motor is controlled by a program called <a href="https://github.com/perciplex/raas/blob/master/docker_driver/motor_controller.py">motor_controller.py</a> which communicates with the docker container via ZeroMQ. It in turn uses the <a href="http://abyz.me.uk/rpi/pigpio/pigpiod.html">pigpiod daemon</a> for low level control of the motor and sensing of the encoder.</p>
 <p><img alt="" src="img/block_diagram.png" /></p>
 <h2 id="building-your-own-pendulum">Building Your Own Pendulum</h2>
 <p>The pendulum is built using easily available hardware. The following are instructions for purchase and assembly.</p>
+<h3 id="bill-of-materials">Bill of Materials:</h3>
 <ul>
 <li>Raspberry Pi (We use a Pi 4)</li>
 <li>Power Supply for Pi</li>
@@ -179,11 +184,11 @@ env.close()
 <li>Mounting 2x4</li>
 <li>4mm Flange Shaft Coupling</li>
 <li>25mm DC Gearbox Motor Bracket</li>
-<li>4x m3 12mm nuts and boltd</li>
+<li>4x m3 12mm nuts and bolts</li>
 <li>Mounting nuts</li>
 </ul>
-<p>Amazon shopping cart link : <a href="https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO">https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO</a></p>
-<p>More information can be found in the <a href="https://github.com/perciplex/raas/tree/master/hardware">hardware</a> folder of the repo</p>
+<p><a href="https://www.amazon.com/ideas/amzn1.account.AHWUEKBOXRZZ2YOBITVMXOZ7P2XA/2R26EST3LRFIO">Here is an Amazon shopping cart link with the materials.</a></p>
+<p>More information can be found in the <a href="https://github.com/perciplex/raas/tree/master/hardware">hardware</a> folder of the repo.</p>
 <h2 id="learning-more">Learning More</h2>
 <ul>
 <li><a href="https://spinningup.openai.com/">OpenAI Spinning Up in Deep RL</a></li>
@@ -246,5 +251,5 @@ env.close()
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-08-27 03:10:34.874685+00:00
+Build Date UTC : 2020-08-27 03:24:35.657778+00:00
 -->
