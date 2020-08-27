@@ -137,8 +137,8 @@ pip3 install -e .
 </code></pre>
 
 <h3 id="make-a-controller">Make a Controller</h3>
-<p>To start a new gym-raas controller, create a new project on Github or fork (it's a button in the right upper corner) our <a href="https://github.com/perciplex/raas-starter">starter repository on GitHub</a>. Either way, you must include <code>run.py</code> at the root directory of the repo which is the entrypoint invoked by our RaaS servers.</p>
-<p>gym-raas implements an identical interface to the standard OpenAI gym. See <a href="https://gym.openai.com/docs/">their documentation</a> for more information. The following implements a simple random controller</p>
+<p>To start a new <code>gym-raas</code> controller, create a new project on Github or fork (it's a button in the right upper corner) our <a href="https://github.com/perciplex/raas-starter">starter repository on GitHub</a>. Either way, you must include <code>run.py</code> at the root directory of the repo which is the entrypoint invoked by our RaaS servers.</p>
+<p><code>gym-raas</code> implements an identical interface to the standard OpenAI gym. See <a href="https://gym.openai.com/docs/">their documentation</a> for more information. The following implements a simple random controller</p>
 <pre><code>python
 import gym
 import gym_raas
@@ -163,7 +163,7 @@ env.close()
 <p>To submit, copy the url of your repo into our <a href="https://raas.perciplex.com/#/submit">job submit page</a>.</p>
 <h2 id="how-it-works">How It Works</h2>
 <p>The <a href="http://raas.perciplex.com">webpage</a> is hosted on an AWS server which is constantly being pinged by a fleet of Raspberry Pis.</p>
-<p>The server is responsible for taking POST requests for new jobs, maintaining a queue of jobs, and serving data from completed jobs. Its code may be found in the <a href="https://github.com/perciplex/raas/tree/master/server">/server</a> folder.</p>
+<p>The server is responsible for taking <code>POST</code> requests for new jobs, maintaining a queue of jobs, and serving data from completed jobs. Its code may be found in the <a href="https://github.com/perciplex/raas/tree/master/server">/server</a> folder.</p>
 <p>The Raspberry Pis have a python program running called <a href="https://github.com/perciplex/raas/blob/master/docker_driver/container_scheduler.py">container_scheduler.py</a>. This program queries the server to pop jobs off the queue. It loads up an Ubuntu <a href="https://github.com/perciplex/raas/tree/master/docker_driver/docker_images">docker image</a> which builds your project by cloning your Github repo and invoking <code>python3 run.py</code> with a timeout of 120 seconds. Upon job completion, the data of the job is sent to an S3 bucket.</p>
 <p>The motor is controlled by a program called <a href="https://github.com/perciplex/raas/blob/master/docker_driver/motor_controller.py">motor_controller.py</a> which communicates with the docker container via ZeroMQ. It in turn uses the <a href="http://abyz.me.uk/rpi/pigpio/pigpiod.html">pigpiod daemon</a> for low level control of the motor and sensing of the encoder.</p>
 <p><img alt="" src="img/block_diagram.png" /></p>
@@ -251,5 +251,5 @@ env.close()
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-08-27 03:24:35.657778+00:00
+Build Date UTC : 2020-08-27 03:28:18.232640+00:00
 -->
