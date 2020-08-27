@@ -1,3 +1,6 @@
 site_name: RaaS
 repo_url: https://github.com/perciplex/raas
 theme: readthedocs
+nav:
+    - Reality as a Service: 'index.md'
+    - FAQs: 'faqs.md'

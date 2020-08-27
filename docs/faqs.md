@@ -22,8 +22,9 @@ Since your repo will be run from within a Docker container that has no internet 
 
 * `numpy`
 * `scipy`
-* `pytorch`
-* `tensorflow`
+* `gym==0.15.3`
+* `torch==1.2.0`
+* `tensorflow=2.3.0`
 
 
 ## How do I download my results?
