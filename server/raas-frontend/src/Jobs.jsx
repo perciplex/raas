@@ -14,7 +14,7 @@ function TwoColumn() {
             <Jumbotron id="info">
                 <h3 className="display-4">Reality as a Service</h3>
                 <p>
-                    We built real-life versions of the OpenAI Gym environments, and you can use them! To start, fork <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a> and edit <code>run.py</code>. <Link to="/status">Our robots</Link> use the same Gym interface you're used to. Just import our custom environment and you're ready to go.</p>
+                    We built real-life versions of the OpenAI Gym environments, and you can use them! To start, fork <a href="https://github.com/perciplex/raas-starter">our starter repository on GitHub</a> and build your controller inside <code>run.py</code>. <Link to="/status">Our robots</Link> use the same Gym interface you're used to. Just import our custom environment and you're ready to go. Check out <a href="https://perciplex.github.io/raas/">our documentation</a> for more info.</p>
             </Jumbotron>
             <Row>
                 <Col md={6} sm={12}>

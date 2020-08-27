@@ -1,8 +1,9 @@
 import React from 'react';
-import { Container, Row, Col, Card, Badge, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Card, Badge, Spinner, ListGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faListOl, faPlay, faFlagCheckered } from '@fortawesome/free-solid-svg-icons'
+import { faUpload, faPlay, faFlagCheckered, faDownload } from '@fortawesome/free-solid-svg-icons'
+
 //import Plot from 'react-plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
@@ -168,8 +169,8 @@ class Job extends React.Component {
                         ]
                 })
 
-                var seconds_per_frame = this.state.times / this.state.times.length
-
+                var seconds_per_frame = this.state.times[this.state.times.length - 1] / this.state.times.length
+                console.log(seconds_per_frame)
                 setInterval(
                     () => {
                         var shapes = [{
@@ -201,7 +202,7 @@ class Job extends React.Component {
 
                             },
                         })
-                    }, seconds_per_frame
+                    }, 1000 * seconds_per_frame
                 )
             })
             .catch(err => { })
@@ -221,35 +222,59 @@ class Job extends React.Component {
                     <Col>
                         <Card id="results" border={this.state.alert_variant}>
                             <Card.Header bg={this.state.alert_variant}>
-                                <h4>{this.state.git_user}/{this.state.project_name}<span className="float-right">{this.state.status}@{this.state.hardware_name}</span></h4></Card.Header>
-                            <Card.Body>
-                                <Badge variant="warning" className="time-badge"><FontAwesomeIcon icon={faListOl} /> {this.state.submit_time || <Spinner animation="border" size="sm" />}</Badge>
-                                <Badge variant="primary" className="time-badge"><FontAwesomeIcon icon={faPlay} /> {this.state.start_time || <Spinner animation="border" size="sm" />}</Badge>
-                                <Badge variant="success" className="time-badge"><FontAwesomeIcon icon={faFlagCheckered} /> {this.state.end_time || <Spinner animation="border" size="sm" />}</Badge>
-                                <Row>
-                                    <Col lg={9} md={12}>
-                                        <Plot ref={this.plot} id="plot" className="plot"
-                                            data={this.state.data}
-                                            layout={this.state.layout}
-                                            frames={this.state.frames}
-                                            config={this.state.config}
-                                            onInitialized={(figure) => this.setState(figure)}
-                                        />
-                                    </Col>
-                                    <Col lg={3} className="d-none d-lg-block">
-                                        <center>
-                                            {this.getPendulum()}
+                                <h4>Results – <b>{this.state.git_user}/{this.state.project_name}</b><span className="float-right"><b>{this.state.status}</b>@{this.state.hardware_name}</span></h4></Card.Header>
+                            <ListGroup>
+                                <ListGroup.Item>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={<Tooltip>job submit time</Tooltip>}
+                                    >
+                                        <Badge variant="warning" className="time-badge"><FontAwesomeIcon icon={faUpload} size="lg" /> {this.state.submit_time || <Spinner animation="border" size="sm" />}</Badge>
+                                    </OverlayTrigger>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={<Tooltip> job start time</Tooltip>}
+                                    >
+                                        <Badge variant="primary" className="time-badge"><FontAwesomeIcon icon={faPlay} size="lg" /> {this.state.start_time || <Spinner animation="border" size="sm" />}</Badge>
+                                    </OverlayTrigger>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={<Tooltip>job complete time</Tooltip>}
+                                    >
+                                        <Badge variant="success" className="time-badge"><FontAwesomeIcon icon={faFlagCheckered} size="lg" /> {this.state.end_time || <Spinner animation="border" size="sm" />}</Badge>
+                                    </OverlayTrigger>
+                                    <Row>
+                                        <Col lg={9} md={12}>
+                                            <Plot ref={this.plot} id="plot" className="plot"
+                                                data={this.state.data}
+                                                layout={this.state.layout}
+                                                frames={this.state.frames}
+                                                config={this.state.config}
+                                                onInitialized={(figure) => this.setState(figure)}
+                                            />
+                                        </Col>
+                                        <Col lg={3} className="d-none d-lg-block">
+                                            <center>
+                                                {this.getPendulum()}
 
-                                        </center>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col>
-                                        <Card.Text as="pre" dangerouslySetInnerHTML={{ __html: this.state.stdout.replace(/\\n/g, "<br/>").replace(/\\t/g, "	") }}>
-                                        </Card.Text>
-                                    </Col>
-                                </Row>
-                            </Card.Body>
+                                            </center>
+                                        </Col>
+                                    </Row>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    <span className="float-left"><h5>Job Stdout</h5></span>
+                                    <span className="float-right"><a href={`https://raas-results.s3.us-east-2.amazonaws.com/run_results/${this.state.id}.json`} target="_blank" download>download <FontAwesomeIcon icon={faDownload} /></a></span>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    <Row>
+                                        <Col>
+                                            <Card.Text as="pre">
+                                                {this.state.stdout.replace(/\\n/g, "<br/>").replace(/\\t/g, "	")}
+                                            </Card.Text>
+                                        </Col>
+                                    </Row>
+                                </ListGroup.Item>
+                            </ListGroup>
                         </Card>
                     </Col>
                 </Row>

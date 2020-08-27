@@ -41,24 +41,14 @@ class JobForm extends React.Component {
             this.resetState("invalid_url")
             return
         }
-        /*
-        fetch(`https://api.github.com/repos/${git_user}/${project_name}/contents`)
+        fetch(`https://raw.githubusercontent.com/${git_user}/${project_name}/master/run.py`)
             .then(
                 (result) => {
                     console.log(result)
                     if (result.ok) {
-                        result.json().then((data) => {
-                            if (!this.run_exists(data)) {
-                                this.setState({
-                                    valid: false,
-                                    error: "no_run"
-                                });
-                            } else {
-                                this.setState({
-                                    valid: true,
-                                    error: "none"
-                                });
-                            }
+                        this.setState({
+                            valid: true,
+                            error: "none"
                         })
                     } else {
                         this.setState({
@@ -75,7 +65,6 @@ class JobForm extends React.Component {
                     });
                 }
             )
-            */
 
     }
 
@@ -147,7 +136,7 @@ class JobForm extends React.Component {
 
                 {this.state.valid && <Alert variant={'success'} className="float-left"> looks ready to go! </Alert>}
                 {this.state.error === "invalid_url" && <Alert variant={'danger'} className="float-left">please enter a valid repository url</Alert>}
-                {this.state.error === "repo_not_found" && <Alert variant={'danger'} className="float-left">repository not foundl</Alert>}
+                {this.state.error === "repo_not_found" && <Alert variant={'danger'} className="float-left">repository or <code>run.py</code> not found</Alert>}
                 {this.state.error === "no_run" && <Alert variant={'danger'} className="float-left">please check repository structure</Alert>}
 
             </Form>
