@@ -4,7 +4,7 @@ The pendulum is built using easily available hardware. The following are instruc
 
 ## Bill of Materials
 
-- Raspberry Pi (We use a Pi Zero W)
+- Raspberry Pi (We use a Pi 4)
   + Power Supply for Pi
   + SD card for Pi
 - L298N Motor Driver Board.
@@ -83,6 +83,8 @@ http://abyz.me.uk/rpi/pigpio/python.html
 https://github.com/pootle/pimotors
 
 ## Calibration
+
+A blog post describing a calibration mechanism is described [here](https://www.philipzucker.com/system-identification-of-a-pendulum-with-scikit-learn/)
 
 Calibration programs and procedure.
 
