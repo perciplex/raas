@@ -24,8 +24,14 @@ To install the simulated gym-raas environment first install the standard [OpenAI
 pip3 install gym
 ```
 
-Then clone and install our custom environment:
+Then install our custom OpenAI gym environment:
 
+Via `pip` on PyPI
+```sh
+pip3 install gym-raas
+```
+
+Manual install
 ```sh
 git clone https://github.com/perciplex/gym-raas
 cd gym_raas
@@ -43,7 +49,7 @@ python
 import gym
 import gym_raas
 
-env = gym.make('raaspendulum-v0')
+env = gym.make('RaasPendulum-v0')
 env.reset()
 
 for _ in range(1000):
