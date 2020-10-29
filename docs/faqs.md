@@ -6,7 +6,7 @@ The file that the system will run when your job is submitted must be called `run
 
 To build the env, it's nearly identical to using OpenAI gym:
 
-```
+```python
 import gym
 import gym_raas
 
@@ -32,4 +32,12 @@ Since your repo will be run from within a Docker container that has no internet 
 There's a small download button under the plot, on the right hand side. This will download the episode data and stdout as a JSON file.
 
 
-##
+## What are the physical parameters of the pendulum?
+
+The gym-raas simulator is modified version of the stock OpenAI gym pendulum environment with parameters changed to match the measured dynamics of our physical pendulums. The simulation code with parameters may be found [here](https://github.com/perciplex/gym-raas/blob/41021e4ebf8efbd6ca8f96434313916c9252544f/gym_raas/envs/PendulumEnv.py#L90) and the methodology for measuring these parameters [here](https://www.philipzucker.com/system-identification-of-a-pendulum-with-scikit-learn/). The hardware gym environment is throttled to 20 steps per second to match the speed of the simulation.
+
+However, the simulator is a significantly simplified model of the pendulum and is not 100% accurate to reality, as is always the case.
+Godspeed and good luck!
+
+
+
