@@ -60,7 +60,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#how-do-i-download-my-results">How do I download my results?</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#_1"></a>
+    <li class="toctree-l2"><a class="reference internal" href="#what-are-the-physical-parameters-of-the-pendulum">What are the physical parameters of the pendulum?</a>
     </li>
     </ul>
                     </li>
@@ -108,7 +108,7 @@
 <h2 id="what-does-my-repo-and-script-need">What does my repo and script need?</h2>
 <p>The file that the system will run when your job is submitted must be called <code>run.py</code>. It can have other files/packages in it, but it must have that one to be run.</p>
 <p>To build the env, it's nearly identical to using OpenAI gym:</p>
-<pre><code>import gym
+<pre><code class="python">import gym
 import gym_raas
 
 env = gym.make('RaasPendulum-v0')
@@ -127,7 +127,10 @@ env = gym.make('RaasPendulum-v0')
 </ul>
 <h2 id="how-do-i-download-my-results">How do I download my results?</h2>
 <p>There's a small download button under the plot, on the right hand side. This will download the episode data and stdout as a JSON file.</p>
-<h2 id="_1"></h2>
+<h2 id="what-are-the-physical-parameters-of-the-pendulum">What are the physical parameters of the pendulum?</h2>
+<p>The raas-gym simulator is modified version of the stock OpenAI gym pendulum environment with parameters changed to match the measured dynamics of the physical pendulum. The simulation code with parameters may be found <a href="https://github.com/perciplex/gym-raas/blob/41021e4ebf8efbd6ca8f96434313916c9252544f/gym_raas/envs/PendulumEnv.py#L90">here</a> and the methodology for measuring these parameters <a href="https://www.philipzucker.com/system-identification-of-a-pendulum-with-scikit-learn/">here</a>. The hardware gym environment is throttled to 20 steps per second to match the speed of the simulation.</p>
+<p>However, the simulator is a significantly simplified model of the pendulum and is not 100% accurate to reality, as is always the case.
+Godspeed and good luck!</p>
               
             </div>
           </div>
