@@ -1,4 +1,4 @@
-FROM perciplex/raas-base:0.0.4
+FROM perciplex/raas-base:0.1.0
 
 # Expose port for pyzmq
 #EXPOSE 5555
