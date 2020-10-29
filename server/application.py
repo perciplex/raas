@@ -1,6 +1,7 @@
 import random
 import sys
 import time
+import datetime
 import uuid
 import logging as log
 import os
@@ -24,6 +25,8 @@ class Job:
     """
     Class for queued, running, or completed jobs
     """
+
+    TIME_LIMIT = datetime.timedelta(minutes=1)
 
     def __init__(self, git_user, project_name, git_url):
         self.id = str(uuid.UUID(int=rd.getrandbits(128)))  # a random id
@@ -108,20 +111,29 @@ class JobsCache:
                 return {}
 
         self.last_db_read_time = time.time()
-        q = list_to_dict(self.job_db_dao.get_jobs_by_status(JobStatus.QUEUED))
-        r = list_to_dict(self.job_db_dao.get_jobs_by_status(JobStatus.RUNNING))
-        c = list_to_dict(
+        queued = list_to_dict(self.job_db_dao.get_jobs_by_status(JobStatus.QUEUED))
+        running = list_to_dict(self.job_db_dao.get_jobs_by_status(JobStatus.RUNNING))
+        completed = list_to_dict(
             self.job_db_dao.get_jobs_by_status(JobStatus.COMPLETED, sort_order="DESC")
         )
-        f = list_to_dict(
+        failed = list_to_dict(
             self.job_db_dao.get_jobs_by_status(JobStatus.FAILED, sort_order="DESC")
         )
 
+        # kill any jobs older than
+        for id, job in running.items():
+            start_time = job["start_time"]
+            if (
+                datetime.datetime.now(tz=start_time.tzinfo) - start_time
+                > Job.TIME_LIMIT
+            ):
+                self.job_db_dao.update_end_job(id, failed=True)
+
         self.cache = {
-            "queued": deque(q.values()),
-            "running": r,
-            "completed": {**c, **f},
-            "all_jobs": {**q, **r, **c, **f},
+            "queued": deque(queued.values()),
+            "running": running,
+            "completed": {**completed, **failed},
+            "all_jobs": {**queued, **running, **completed, **failed},
         }
 
     def get_job_in_cache_from_id(self, id, cache="all_jobs"):
@@ -248,7 +260,10 @@ def job_route():
 
         # If git project already in queued cache, dont create job.
         for job in jobs_cache.cache["queued"]:
-            if (git_user, project_name) == (job["git_user"], job["project_name"],):
+            if (git_user, project_name) == (
+                job["git_user"],
+                job["project_name"],
+            ):
                 log.info("Job already in queued. Skipping creation.")
                 return redirect("/")
 
