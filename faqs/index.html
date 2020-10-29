@@ -66,7 +66,7 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../common_pitfalls/">Common pitfalls</a>
+                    <li class="toctree-l1"><a class="" href="../common_pitfalls.md">Common pitfalls</a>
                     </li>
                 </ul>
       </div>
@@ -128,7 +128,7 @@ env = gym.make('RaasPendulum-v0')
 <h2 id="how-do-i-download-my-results">How do I download my results?</h2>
 <p>There's a small download button under the plot, on the right hand side. This will download the episode data and stdout as a JSON file.</p>
 <h2 id="what-are-the-physical-parameters-of-the-pendulum">What are the physical parameters of the pendulum?</h2>
-<p>The raas-gym simulator is modified version of the stock OpenAI gym pendulum environment with parameters changed to match the measured dynamics of the physical pendulum. The simulation code with parameters may be found <a href="https://github.com/perciplex/gym-raas/blob/41021e4ebf8efbd6ca8f96434313916c9252544f/gym_raas/envs/PendulumEnv.py#L90">here</a> and the methodology for measuring these parameters <a href="https://www.philipzucker.com/system-identification-of-a-pendulum-with-scikit-learn/">here</a>. The hardware gym environment is throttled to 20 steps per second to match the speed of the simulation.</p>
+<p>The gym-raas simulator is modified version of the stock OpenAI gym pendulum environment with parameters changed to match the measured dynamics of our physical pendulums. The simulation code with parameters may be found <a href="https://github.com/perciplex/gym-raas/blob/41021e4ebf8efbd6ca8f96434313916c9252544f/gym_raas/envs/PendulumEnv.py#L90">here</a> and the methodology for measuring these parameters <a href="https://www.philipzucker.com/system-identification-of-a-pendulum-with-scikit-learn/">here</a>. The hardware gym environment is throttled to 20 steps per second to match the speed of the simulation.</p>
 <p>However, the simulator is a significantly simplified model of the pendulum and is not 100% accurate to reality, as is always the case.
 Godspeed and good luck!</p>
               
@@ -137,8 +137,6 @@ Godspeed and good luck!</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../common_pitfalls/" class="btn btn-neutral float-right" title="Common pitfalls">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href=".." class="btn btn-neutral" title="Reality as a Service"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -171,8 +169,6 @@ Godspeed and good luck!</p>
       
         <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
       
-      
-        <span style="margin-left: 15px"><a href="../common_pitfalls/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
