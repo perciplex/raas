@@ -44,8 +44,7 @@ To start a new `gym-raas` controller, create a new project on Github or fork (it
 
 `gym-raas` implements an identical interface to the standard OpenAI gym. See [their documentation](https://gym.openai.com/docs/) for more information. The following implements a simple random controller
 
-```
-python
+```python
 import gym
 import gym_raas
 

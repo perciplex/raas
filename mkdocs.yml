@@ -4,4 +4,3 @@ theme: readthedocs
 nav:
     - Reality as a Service: 'index.md'
     - FAQs: 'faqs.md'
-    - Common pitfalls: 'common_pitfalls.md'
